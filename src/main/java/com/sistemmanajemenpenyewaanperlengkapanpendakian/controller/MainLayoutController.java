@@ -6,10 +6,14 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.*;
 
+import javafx.scene.image.Image;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.*;
+
+import java.lang.RuntimeException;
 
 import javafx.fxml.FXML;
 import javafx.collections.*;
@@ -98,6 +102,14 @@ public class MainLayoutController {
     @FXML void initialize(){
         styleSidebar();
         aturTombolAktif(tombolDashboard);
+        
+        styleHeader();
+
+        try{
+            tampilkanHalaman("dashboard");
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
     }
 
 //#region
@@ -106,7 +118,11 @@ public class MainLayoutController {
         paneVbox.setStyle(
             "-fx-background-color: #FFFFFF;" +
             "-fx-border-color: transparent #2F5B3A transparent transparent;" +
-            "-fx-border-width: 0 1 0 0;"
+            "-fx-border-width: 0 1 0 0;"+
+            "-fx-background-radius: 14;"+
+            "-fx-border-radius:14;"+
+            "-fx-background-insets:0;"+
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0,2,2);"
         );
     }
 
@@ -137,6 +153,46 @@ public class MainLayoutController {
             }
         }
     }
+
+    private void styleHeader(){
+        headerContainer.setStyle(
+            "-fx-background-color: #FFFFFF;"+
+            "-fx-background-radius: 14;"
+        );
+
+        searchContainer.setStyle(
+            "-fx-background-color: transparent;"+
+            "-fx-border-color: #2F5B3A;"+
+            "-fx-background-radius:24;"+
+            "-fx-border-radius:24;"+
+            "-fx-border-width: 1.5;"+
+            "-fx-padding: 0 12 0 12;"+
+            "-fx-spacing: 8;"
+        );
+        searchField.setStyle(
+            "-fx-background-color: transparent;"+
+            "-fx-border-color: transparent;"+
+            "-fx-background-insets: 0, 0;" +
+            "-fx-background-radius: 0,0;"+
+            "-fx-border-insets: 0;"+
+            "-fx-padding: 8 0 8 0;"+
+            "-fx-focus-color: transparent;"+
+            "-fx-faint-focus-color: transparent;"
+        );
+
+        tombolNotifikasi.setStyle(
+            "-fx-background-color: #FFFFFF;"+
+            "-fx-background-radius: 8;"+
+            "-fx-background-color: transparent;"+
+            "-fx-border-radius: 10;"+
+            "-fx-focus-color: transparent;"+
+            "-fx-faint-focus-color: transparent;"
+        );
+    }
+
+    
+
+//#endregion
     private void tampilkanHalaman(String namaFxml) throws IOException {
     String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/"
             + namaFxml + ".fxml";
