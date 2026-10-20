@@ -17,7 +17,6 @@ public class ItemTransaksiController {
  
     private Runnable aksiDetail;
  
-    /** Dipanggil dari TransaksiController untuk mengisi kartu. */
     public void setData(String namaBarang, String penyewa,
                         String tglSewa, String tglKembali,
                         String status, String pathGambar,

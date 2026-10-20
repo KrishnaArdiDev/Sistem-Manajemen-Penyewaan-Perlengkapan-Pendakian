@@ -50,7 +50,7 @@ public class TransaksiController {
     @FXML
     private void tambahTransaksi() {
         System.out.println("Tambah transaksi diklik");
-        // TODO: buka form tambah transaksi
+        
     }
 }
  

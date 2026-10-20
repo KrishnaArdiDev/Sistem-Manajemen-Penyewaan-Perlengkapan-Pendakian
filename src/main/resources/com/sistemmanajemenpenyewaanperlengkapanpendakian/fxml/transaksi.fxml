@@ -24,7 +24,7 @@
             </children>
         </HBox>
 
-        <!-- Panel putih berisi daftar kartu -->
+        <!-- Panel putih  -->
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS"
                     style="-fx-background: white; -fx-background-color: white; -fx-background-radius: 30; -fx-border-radius: 30;">
             <content>
@@ -32,7 +32,6 @@
                     <padding>
                         <Insets bottom="30.0" left="40.0" right="40.0" top="25.0" />
                     </padding>
-                    <!-- kartu ditambahkan dari TransaksiController -->
                 </VBox>
             </content>
         </ScrollPane>

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <!-- Satu kartu transaksi -->
-<HBox alignment="CENTER_LEFT" prefHeight="119.0" spacing="20.0"
+<HBox alignment="CENTER_LEFT" prefHeight="119.0" spacing="45.0"
       style="-fx-background-color: #F5F5F5; -fx-background-radius: 10;"
       xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.ItemTransaksiController">
@@ -41,12 +41,12 @@
         <Region HBox.hgrow="ALWAYS" />
 
         <!-- status + tombol detail -->
-        <VBox alignment="TOP_RIGHT" spacing="40.0" prefWidth="240.0" maxHeight="Infinity">
+        <VBox alignment="TOP_RIGHT" spacing="40.0" prefWidth="280.0" maxHeight="100.0">
             <children>
                 <Label fx:id="labelStatus" alignment="CENTER" maxWidth="180.0" text="Berhasil" />
-                <Button fx:id="tombolDetail" maxWidth="190.0" prefWidth="158.0" mnemonicParsing="false"
+                <Button fx:id="tombolDetail" maxWidth="150.0" prefWidth="50.0" mnemonicParsing="false" maxHeight="20.0" prefHeight="2.0"
                         onAction="#bukaDetail" text="Detail"
-                        style="-fx-font-size: 16px; -fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" />
+                        style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" />
             </children>
             <padding>
                 <Insets bottom="8.0" top="6.0" />
