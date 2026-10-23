@@ -24,3 +24,6 @@ Thumbs.db
 # Kredensial Database / Konfigurasi Rahasia
 .env
 config.properties
+
+db.properties
+.env
