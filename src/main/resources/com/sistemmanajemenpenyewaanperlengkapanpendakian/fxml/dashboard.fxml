@@ -1,20 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #FFFFFF;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.DashboardController">
+<VBox fx:id="containerDashboard" spacing="18.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.DashboardController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #FFFFF;">
+      <HBox fx:id="containerStatistik" maxWidth="1.7976931348623157E308" prefHeight="180.0" spacing="24.0" style="-fx-background-color: #FFFFF;">
          <children>
-            <VBox prefHeight="200.0" prefWidth="100.0" />
-            <VBox prefHeight="200.0" prefWidth="100.0" />
-            <VBox prefHeight="200.0" prefWidth="100.0" />
+            <VBox fx:id="cardBarangTersedia" alignment="TOP_CENTER" maxHeight="180.0" maxWidth="1.7976931348623157E308" prefHeight="180.0" prefWidth="360.0" spacing="30.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                        <Label fx:id="labelJumlahBarangTersedia" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="160.0" text="Total Barang Tersedia" wrapText="true" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/iconTotal-barangTersedia.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <Label fx:id="labelJumlahTersedia" text="Barang">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="25.0" left="10.0" right="10.0" top="10.0" />
+               </padding></VBox>
+            <VBox fx:id="cardBarangDisewakan" alignment="TOP_CENTER" layoutX="10.0" layoutY="10.0" maxHeight="180.0" maxWidth="1.7976931348623157E308" prefHeight="180.0" prefWidth="360.0" spacing="30.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                        <Label fx:id="labelBarangDisewa" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="160.0" text="Total Barang Disewakan" wrapText="true" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/iconTotal-barangTersedia.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <Label fx:id="labelJumlahDisewa" text="Barang">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="25.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+            <VBox fx:id="cardSeluruhBarang" alignment="TOP_CENTER" layoutX="284.0" layoutY="10.0" maxHeight="180.0" maxWidth="1.7976931348623157E308" prefHeight="180.0" prefWidth="360.0" spacing="30.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox maxWidth="1.7976931348623157E308" spacing="5.0">
+                     <children>
+                        <Label fx:id="labelTotalSeluruhBarang" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="160.0" text="Total Seluruh Barang" wrapText="true" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/iconTotal-barangTersedia.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <Label fx:id="labelJumlahSeluruh" text="Barang">
+                     <font>
+                        <Font size="32.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="25.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
          </children>
       </HBox>
+      <Label fx:id="labelJudulDaftarProduk" text="Produk Disewa" />
+      <VBox fx:id="productSectionContainer" prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox fx:id="containerDaftarProdukSewa" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" spacing="12.0">
+               <children>
+                  <HBox fx:id="itemProduk1" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="12.0">
+                     <children>
+                        <ImageView fx:id="gambarProduk" fitHeight="97.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true" />
+                        <VBox fx:id="infoProduk" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="6.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="labelNamaPerlengkapan" text="Nama Perlengkapan" />
+                              <Label fx:id="labelNamaPenyewa" text="Nama Penyewa" />
+                              <HBox fx:id="containerTanggalSewa" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="labelTanggalSewa" text="Tanggal sewa" />
+                                    <Label fx:id="labelPemisahTanggalSewa" text="|" />
+                                    <Label fx:id="labelTanggalSelesaiSewa" text="Tanggal Selesai" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                     </padding>
+                  </HBox>
+                  <Region prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                  <HBox fx:id="containerPagination" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="200.0" spacing="8.0" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
    </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
 </VBox>

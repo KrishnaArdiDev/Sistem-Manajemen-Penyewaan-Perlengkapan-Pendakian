@@ -23,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 
 
@@ -110,6 +111,7 @@ public class MainLayoutController {
         } catch (IOException e){
             throw new RuntimeException(e);
         }
+        
     }
 
 //#region
@@ -123,6 +125,14 @@ public class MainLayoutController {
             "-fx-border-radius:14;"+
             "-fx-background-insets:0;"+
             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0,2,2);"
+        );
+    }
+
+    private void ikonAktifSide(ImageView ikon, boolean aktif, String ikonNormal, String ikonAktif){
+        String path = aktif ? ikonAktif:ikonNormal;
+
+        ikon.setImage(
+            new Image(App.class.getResource(path).toExternalForm())
         );
     }
 
@@ -152,6 +162,11 @@ public class MainLayoutController {
                 );
             }
         }
+        ikonAktifSide(iconDashboard, tombolAktif == tombolDashboard, "/images/logo-home-hijau.png", "/images/logo-home-putih.png");
+        ikonAktifSide(iconDataPerlengkapan, tombolAktif == tombolDataPerleng, "/images/logo-dataPerlengkapan-hijau.png", "/images/logo-dataPerlengkapan-putih.png");
+        ikonAktifSide(iconPengembalian, tombolAktif == tombolPengembalian, "/images/logo-pengembalian-hijau.png", "/images/logo-pengembalian-putih.png");
+        ikonAktifSide(iconTransaksi, tombolAktif == tombolTransaksi, "/images/logo-transaksi-hijau.png", "/images/logo-transaksi-putih.png");
+        ikonAktifSide(iconKeluar, tombolAktif == tombolKeluar, "/images/logo-keluar-hijau.png", "/images/logo-keluar-hijau.png");
     }
 
     private void styleHeader(){
@@ -200,6 +215,7 @@ public class MainLayoutController {
     FXMLLoader loader = new FXMLLoader(App.class.getResource(path));
     Parent halaman = loader.load();
 
+    BorderPane.setMargin(halaman, new Insets(16));
     layoutPage.setCenter(halaman);
     }
 
