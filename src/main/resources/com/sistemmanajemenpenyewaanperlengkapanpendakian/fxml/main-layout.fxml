@@ -13,129 +13,240 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane prefHeight="1024.0" prefWidth="1440.0" style="-fx-background-color: #F0F0F0;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.MainLayoutController">
-   <left>
-      <VBox fx:id="paneVbox" alignment="CENTER" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefWidth="255.0" style="-fx-background-color: #FFFFFF;" styleClass="sidebar" BorderPane.alignment="CENTER">
-         <children>
-            <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
-               <children>
-                  <ImageView fitHeight="54.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../images/Logo.png" />
-                     </image>
-                  </ImageView>
-                  <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="80.0" text="TAPAK" />
-               </children>
-            </HBox>
-            <VBox fx:id="sidebarContainer" alignment="TOP_CENTER" spacing="15.0">
-               <children>
-                  <Button id="tombolDashboard" fx:id="tombolDashboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#bukaDashboard" prefHeight="36.0" prefWidth="178.0" text="Dashboard Admion" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconDashboard" fx:id="iconDashboard" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Button>
-                  <Button id="tombolDataPerleng" fx:id="tombolDataPerleng" layoutX="48.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#bukaDataPerleng" prefHeight="36.0" prefWidth="178.0" text="Data Perlengkapan" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconDataPerlengkapan" fx:id="iconDataPerlengkapan" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Button>
-                  <Button id="tombolPengembalian" fx:id="tombolPengembalian" layoutX="48.0" layoutY="61.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#bukaPengembalian" prefHeight="36.0" prefWidth="178.0" text="Pengembalian" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconPengembalian" fx:id="iconPengembalian" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Button>
-                  <Button id="tombolTransaksi" fx:id="tombolTransaksi" layoutX="48.0" layoutY="112.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#bukaTransaksi" prefHeight="36.0" prefWidth="178.0" text="Transaksi" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconTransaksi" fx:id="iconTransaksi" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Button>
-                  <Button id="tombolKeluar" fx:id="tombolKeluar" layoutX="48.0" layoutY="164.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#keluar" prefHeight="36.0" prefWidth="178.0" text="Keluar" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconKeluar" fx:id="iconKeluar" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                     </graphic>
-                  </Button>
-               </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </VBox>
-            <Pane maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefHeight="570.0" prefWidth="255.0" VBox.vgrow="ALWAYS" />
-            <Button mnemonicParsing="false" text="Button">
-               <graphic>
-                  <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="175.0" spacing="5.0">
-                     <children>
-                        <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="48.0">
-                           <children>
-                              <ImageView id="fotoProfile" fx:id="fotoProfile" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true" />
-                              <Circle fill="#1f93ff00" radius="24.0" stroke="#2f5b3a" strokeType="INSIDE" strokeWidth="2.0" />
-                           </children>
-                        </StackPane>
-                        <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="2.0">
-                           <children>
-                              <Label text="WELCOME" />
-                              <Label id="labelUsername" fx:id="labelUsername" text="Label" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-               </graphic>
-            </Button>
-         </children>
-         <BorderPane.margin>
-            <Insets right="7.0" />
-         </BorderPane.margin>
-         <padding>
-            <Insets bottom="8.0" />
-         </padding>
-      </VBox>
-   </left>
-   <center>
-      <BorderPane fx:id="layoutPage" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <top>
-            <HBox fx:id="headerContainer" alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="0.0" prefHeight="83.0" prefWidth="1194.0" spacing="30.0" style="-fx-background-color: #FFFFFF;" BorderPane.alignment="CENTER">
-               <children>
-                  <HBox fx:id="searchContainer" alignment="CENTER_LEFT" maxHeight="40.0" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="38.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <ImageView fx:id="searchIcon" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                           <image>
-                              <Image url="@../../../images/IkonSearch.png" />
-                           </image>
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.MainLayoutController"
+            prefWidth="1440.0"
+            prefHeight="900.0"
+            style="-fx-background-color: #F0F0F0;">
+
+    <left>
+        <VBox fx:id="paneVbox"
+              prefWidth="290.0"
+              minWidth="250.0"
+              spacing="12.0"
+              style="-fx-background-color: white;">
+
+            <padding>
+                <Insets top="12" right="16" bottom="12" left="16"/>
+            </padding>
+
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <children>
+                        <ImageView fitWidth="44"
+                                   fitHeight="44"
+                                   preserveRatio="true">
+                            <image>
+                                <Image url="@../../../images/Logo.png"/>
+                            </image>
                         </ImageView>
-                        <TextField fx:id="searchField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="0.0" prefHeight="38.0" prefWidth="834.0" promptText="Masukkan perlengkapan yang ingin dicari..." HBox.hgrow="ALWAYS" />
-                     </children>
-                     <HBox.margin>
-                        <Insets left="30.0" />
-                     </HBox.margin>
-                  </HBox>
-                  <HBox fx:id="headerAction" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" spacing="40.0">
-                     <children>
-                        <Button fx:id="tombolNotifikasi" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false">
-                           <graphic>
-                              <ImageView fx:id="iconNotifikasi" fitHeight="33.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../images/logo-notif.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <ImageView fx:id="elementHeader" fitHeight="45.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
-                     <HBox.margin>
-                        <Insets right="30.0" />
-                     </HBox.margin>
-                  </HBox>
-               </children>
-               <padding>
-                  <Insets bottom="12.0" />
-               </padding>
-            </HBox>
-         </top>
-      </BorderPane>
-   </center>
-   <padding>
-      <Insets left="7.0" right="7.0" top="7.0" />
-   </padding>
+
+                        <Label text="TAPAK"
+                               style="-fx-font-size: 24px;
+                                      -fx-font-weight: bold;
+                                      -fx-text-fill: #005A32;"/>
+                    </children>
+                </HBox>
+
+                <Pane minHeight="20" prefHeight="20"/>
+
+                <Button fx:id="tombolDashboard"
+                        text="Dashboard Admin"
+                        onAction="#bukaDashboard"
+                        maxWidth="Infinity"
+                        minHeight="50"
+                        style="-fx-background-color: #E5F3EB;
+                               -fx-text-fill: #005A32;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-alignment: CENTER_LEFT;
+                               -fx-padding: 0 12;"/>
+
+                <Button fx:id="tombolDataPerleng"
+                        text="Data Perlengkapan"
+                        onAction="#bukaDataPerleng"
+                        maxWidth="Infinity"
+                        minHeight="50"
+                        style="-fx-background-color: transparent;
+                               -fx-text-fill: #005A32;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-alignment: CENTER_LEFT;
+                               -fx-padding: 0 12;"/>
+
+                <Button fx:id="tombolPengembalian"
+                        text="Pengembalian"
+                        onAction="#bukaPengembalian"
+                        maxWidth="Infinity"
+                        minHeight="50"
+                        style="-fx-background-color: transparent;
+                               -fx-text-fill: #005A32;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-alignment: CENTER_LEFT;
+                               -fx-padding: 0 12;"/>
+
+                <Button fx:id="tombolTransaksi"
+                        text="Transaksi"
+                        onAction="#bukaTransaksi"
+                        maxWidth="Infinity"
+                        minHeight="50"
+                        style="-fx-background-color: transparent;
+                               -fx-text-fill: #005A32;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-alignment: CENTER_LEFT;
+                               -fx-padding: 0 12;"/>
+
+                <Pane VBox.vgrow="ALWAYS"/>
+
+                <Button fx:id="tombolProfile"
+                        onAction="#bukaProfile"
+                        accessibleText="Buka Profil Admin"
+                        maxWidth="Infinity"
+                        minHeight="64"
+                        focusTraversable="true"
+                        style="-fx-background-color: #005A32;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-padding: 6 10;">
+
+                    <graphic>
+                        <HBox alignment="CENTER_LEFT"
+                              spacing="10"
+                              mouseTransparent="true">
+                            <children>
+                                <StackPane minWidth="44"
+                                           minHeight="44"
+                                           prefWidth="44"
+                                           prefHeight="44">
+                                    <children>
+                                        <ImageView fx:id="fotoProfile"
+                                                   fitWidth="44"
+                                                   fitHeight="44"
+                                                   preserveRatio="false"
+                                                   smooth="true">
+                                            <clip>
+                                                <Circle centerX="22"
+                                                        centerY="22"
+                                                        radius="22"/>
+                                            </clip>
+                                        </ImageView>
+                                    </children>
+                                </StackPane>
+
+                                <VBox alignment="CENTER_LEFT" spacing="4">
+                                    <children>
+                                        <Label text="WELCOME"
+                                               style="-fx-font-size: 10px;
+                                                      -fx-text-fill: #D7F5E2;"/>
+
+                                        <Label text="ADMIN TOKO"
+                                               style="-fx-font-size: 12px;
+                                                      -fx-font-weight: bold;
+                                                      -fx-text-fill: white;"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="tombolKeluar"
+                        text="Keluar"
+                        onAction="#keluar"
+                        maxWidth="Infinity"
+                        minHeight="46"
+                        style="-fx-background-color: #FCE8E6;
+                               -fx-text-fill: #B3261E;
+                               -fx-background-radius: 9;
+                               -fx-cursor: hand;"/>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <BorderPane fx:id="layoutPage"
+                    style="-fx-background-color: #F0F0F0;">
+
+            <top>
+                <HBox fx:id="headerContainer"
+                      alignment="CENTER_LEFT"
+                      spacing="18"
+                      minHeight="76"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 0 0 14 14;">
+
+                    <padding>
+                        <Insets top="10" right="24" bottom="10" left="24"/>
+                    </padding>
+
+                    <children>
+                        <HBox fx:id="searchContainer"
+                              alignment="CENTER_LEFT"
+                              spacing="10"
+                              HBox.hgrow="ALWAYS">
+
+                            <children>
+                                <TextField fx:id="searchField"
+                                           promptText="Masukkan perlengkapan yang ingin dicari..."
+                                           maxWidth="Infinity"
+                                           HBox.hgrow="ALWAYS"
+                                           style="-fx-background-color: transparent;
+                                                  -fx-border-color: transparent;
+                                                  -fx-focus-color: transparent;
+                                                  -fx-faint-focus-color: transparent;
+                                                  -fx-padding: 8 4;"/>
+                            </children>
+                        </HBox>
+
+                        <HBox fx:id="headerAction"
+                              alignment="CENTER"
+                              minWidth="44"
+                              prefWidth="44">
+
+                            <children>
+                                <Button fx:id="tombolNotifikasi"
+                                        accessibleText="Notifikasi"
+                                        minWidth="44"
+                                        minHeight="44"
+                                        prefWidth="44"
+                                        prefHeight="44"
+                                        style="-fx-background-color: transparent;
+                                               -fx-cursor: hand;
+                                               -fx-padding: 8;">
+
+                                    <graphic>
+                                        <ImageView fx:id="iconNotifikasi"
+                                                   fitWidth="24"
+                                                   fitHeight="24"
+                                                   preserveRatio="true"
+                                                   smooth="true"
+                                                   mouseTransparent="true">
+                                            <image>
+                                                <Image url="@../../../images/logo-notif.png"/>
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+            </top>
+
+            <center>
+                <StackPane fx:id="contentContainer"
+                           style="-fx-background-color: #F0F0F0;">
+                    <padding>
+                        <Insets top="4" right="8" bottom="8" left="8"/>
+                    </padding>
+                </StackPane>
+            </center>
+
+        </BorderPane>
+    </center>
+
 </BorderPane>
