@@ -7,13 +7,12 @@ module com.sistemmanajemenpenyewaanperlengkapanpendakian {
     requires transitive javafx.graphics;
 
     exports com.sistemmanajemenpenyewaanperlengkapanpendakian;
-
     exports com.sistemmanajemenpenyewaanperlengkapanpendakian.controller
-        to javafx.fxml;
-
+    to javafx.fxml;
     opens com.sistemmanajemenpenyewaanperlengkapanpendakian
-        to javafx.fxml;
-
+    to javafx.fxml;
     opens com.sistemmanajemenpenyewaanperlengkapanpendakian.controller
-        to javafx.fxml;
+    to javafx.fxml;
+    opens com.sistemmanajemenpenyewaanperlengkapanpendakian.model
+    to javafx.base, javafx.fxml;
 }

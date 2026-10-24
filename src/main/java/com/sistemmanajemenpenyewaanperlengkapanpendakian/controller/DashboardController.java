@@ -21,19 +21,19 @@ import javafx.scene.shape.Circle;
 
 public class DashboardController {
 //#region
-    @FXML 
+    @FXML
     private VBox containerDashboard;
 
-    @FXML 
+    @FXML
     private VBox cardBarangTersedia;
 
-    @FXML 
+    @FXML
     private VBox cardBarangDisewakan;
 
-    @FXML 
+    @FXML
     private VBox cardSeluruhBarang;
 
-    @FXML 
+    @FXML
     private VBox productSectionContainer;
 //#endregion
     @FXML
@@ -90,6 +90,3 @@ public class DashboardController {
         );
     }
 }
-
-
-

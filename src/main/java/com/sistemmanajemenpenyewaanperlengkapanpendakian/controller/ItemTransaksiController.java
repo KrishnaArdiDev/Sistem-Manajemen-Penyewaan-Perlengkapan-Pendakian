@@ -1,39 +1,39 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
- 
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
- 
+
 public class ItemTransaksiController {
- 
+
     @FXML private ImageView gambarBarang;
     @FXML private Label labelNamaBarang;
     @FXML private Label labelPenyewa;
     @FXML private Label labelTanggal;
     @FXML private Label labelStatus;
     @FXML private Button tombolDetail;
- 
+
     private Runnable aksiDetail;
- 
+
     public void setData(String namaBarang, String penyewa,
                         String tglSewa, String tglKembali,
                         String status, String pathGambar,
                         Runnable aksiDetail) {
- 
+
         labelNamaBarang.setText(namaBarang);
         labelPenyewa.setText(penyewa);
         labelTanggal.setText(tglSewa + " | " + tglKembali);
         this.aksiDetail = aksiDetail;
- 
+
         atur(status);
         setGambar(pathGambar);
     }
- 
+
     private void atur(String status) {
         labelStatus.setText(status);
- 
+
         String warnaBg, warnaBorder, warnaTeks;
         String s = status.toLowerCase();
         if (s.equals("berhasil")) {
@@ -51,7 +51,7 @@ public class ItemTransaksiController {
             "-fx-text-fill: " + warnaTeks + ";" +
             "-fx-font-size: 16px; -fx-padding: 2 0 2 0;");
     }
- 
+
     private void setGambar(String path) {
         try {
             java.io.InputStream stream = getClass().getResourceAsStream(path);
@@ -60,7 +60,7 @@ public class ItemTransaksiController {
             System.err.println("Gambar tidak ditemukan: " + path);
         }
     }
- 
+
     @FXML
     private void bukaDetail() {
         if (aksiDetail != null) aksiDetail.run();
