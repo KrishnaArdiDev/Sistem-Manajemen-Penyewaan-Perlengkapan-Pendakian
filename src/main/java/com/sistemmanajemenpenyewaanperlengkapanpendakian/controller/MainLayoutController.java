@@ -34,6 +34,14 @@ public class MainLayoutController {
     @FXML
     private VBox paneVbox;
 
+    @FXML 
+    private Button tombolProfile;
+    @FXML 
+    private Circle borderProfile;
+    @FXML 
+    private Label labelWelcome;
+    @FXML 
+    private VBox welcomeContainer;
     @FXML
     private VBox sidebarContainer;
     @FXML
@@ -142,7 +150,7 @@ public class MainLayoutController {
 
         List<Button> tombolNavigasi = Arrays.asList(
             tombolDashboard, tombolDataPerleng, tombolKeluar,
-            tombolPengembalian, tombolTransaksi
+            tombolPengembalian, tombolTransaksi, tombolProfile
         );
 
         for (Button tombol: tombolNavigasi){
@@ -153,6 +161,11 @@ public class MainLayoutController {
                     "-fx-background-radius: 10;"+
                     "-fx-border-color:transparent;"
                 );
+            if (tombolAktif == tombolProfile){
+                    labelUsername.setStyle("-fx-text-fill: #FFFFFF");
+                    labelWelcome.setStyle("-fx-text-fill: #FFFFFF");
+                    borderProfile.setStyle( "-fx-stroke: #FFFFFF");
+                }
             } else {
                 tombol.setStyle(
                     "-fx-background-color: transparent;"+
@@ -241,12 +254,19 @@ public class MainLayoutController {
         tampilkanHalaman("transaksi");
         aturTombolAktif(tombolTransaksi);
     }
+
+    @FXML
+    private void bukaProfile() throws IOException {
+        tampilkanHalaman("profile");
+        aturTombolAktif(tombolProfile);
+    }
     
     @FXML
     private void keluar() throws IOException {
         App.setRoot("login");
         aturTombolAktif(tombolKeluar);
     }
+
     @FXML
     private void switchToPrimary() throws IOException {
         App.setRoot("login");
