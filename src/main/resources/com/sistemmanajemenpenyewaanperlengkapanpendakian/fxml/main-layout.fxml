@@ -60,19 +60,19 @@
                </VBox.margin>
             </VBox>
             <Pane maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefHeight="570.0" prefWidth="255.0" VBox.vgrow="ALWAYS" />
-            <Button mnemonicParsing="false" text="Button">
+            <Button fx:id="tombolProfile" mnemonicParsing="false" onAction="#bukaProfile">
                <graphic>
                   <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="175.0" spacing="5.0">
                      <children>
                         <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="48.0">
                            <children>
                               <ImageView id="fotoProfile" fx:id="fotoProfile" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true" />
-                              <Circle fill="#1f93ff00" radius="24.0" stroke="#2f5b3a" strokeType="INSIDE" strokeWidth="2.0" />
+                              <Circle fx:id="borderProfile" fill="#1f93ff00" radius="24.0" stroke="#2f5b3a" strokeType="INSIDE" strokeWidth="2.0" />
                            </children>
                         </StackPane>
-                        <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="2.0">
+                        <VBox fx:id="welcomeContainer" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="2.0">
                            <children>
-                              <Label text="WELCOME" />
+                              <Label fx:id="labelWelcome" text="WELCOME" />
                               <Label id="labelUsername" fx:id="labelUsername" text="Label" />
                            </children>
                         </VBox>
