@@ -1,5 +1,8 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.model;
 
-public class DapatDicetak {
-    
+public interface DapatDicetak {
+
+    void cetakNota();
+
+    void ringkasanCetak();
 }

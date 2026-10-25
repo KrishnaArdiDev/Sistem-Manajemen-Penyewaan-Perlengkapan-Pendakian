@@ -33,9 +33,13 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/"
-                + fxml + ".fxml";
-
+        String basepath = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/";
+        String path;
+        if (fxml.equals("main-layout")){
+            path = basepath + "main-layout.fxml";
+        } else {
+            path = basepath + "pages/" + fxml + ".fxml";
+        }
         URL resource = App.class.getResource(path);
 
         if (resource == null) {

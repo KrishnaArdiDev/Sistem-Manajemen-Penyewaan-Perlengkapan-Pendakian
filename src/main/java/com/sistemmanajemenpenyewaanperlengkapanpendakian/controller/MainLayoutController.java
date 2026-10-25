@@ -23,6 +23,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 
 
@@ -33,6 +34,14 @@ public class MainLayoutController {
     @FXML
     private VBox paneVbox;
 
+    @FXML 
+    private Button tombolProfile;
+    @FXML 
+    private Circle borderProfile;
+    @FXML 
+    private Label labelWelcome;
+    @FXML 
+    private VBox welcomeContainer;
     @FXML
     private VBox sidebarContainer;
     @FXML
@@ -110,6 +119,7 @@ public class MainLayoutController {
         } catch (IOException e){
             throw new RuntimeException(e);
         }
+        
     }
 
 //#region
@@ -126,13 +136,21 @@ public class MainLayoutController {
         );
     }
 
+    private void ikonAktifSide(ImageView ikon, boolean aktif, String ikonNormal, String ikonAktif){
+        String path = aktif ? ikonAktif:ikonNormal;
+
+        ikon.setImage(
+            new Image(App.class.getResource(path).toExternalForm())
+        );
+    }
+
     private void aturTombolAktif(Button dipilih){
         System.out.println("Menu dipilih: " + dipilih.getText());
         tombolAktif = dipilih;
 
         List<Button> tombolNavigasi = Arrays.asList(
             tombolDashboard, tombolDataPerleng, tombolKeluar,
-            tombolPengembalian, tombolTransaksi
+            tombolPengembalian, tombolTransaksi, tombolProfile
         );
 
         for (Button tombol: tombolNavigasi){
@@ -143,6 +161,11 @@ public class MainLayoutController {
                     "-fx-background-radius: 10;"+
                     "-fx-border-color:transparent;"
                 );
+            if (tombolAktif == tombolProfile){
+                    labelUsername.setStyle("-fx-text-fill: #FFFFFF");
+                    labelWelcome.setStyle("-fx-text-fill: #FFFFFF");
+                    borderProfile.setStyle( "-fx-stroke: #FFFFFF");
+                }
             } else {
                 tombol.setStyle(
                     "-fx-background-color: transparent;"+
@@ -152,6 +175,11 @@ public class MainLayoutController {
                 );
             }
         }
+        ikonAktifSide(iconDashboard, tombolAktif == tombolDashboard, "/images/logo-home-hijau.png", "/images/logo-home-putih.png");
+        ikonAktifSide(iconDataPerlengkapan, tombolAktif == tombolDataPerleng, "/images/logo-dataPerlengkapan-hijau.png", "/images/logo-dataPerlengkapan-putih.png");
+        ikonAktifSide(iconPengembalian, tombolAktif == tombolPengembalian, "/images/logo-pengembalian-hijau.png", "/images/logo-pengembalian-putih.png");
+        ikonAktifSide(iconTransaksi, tombolAktif == tombolTransaksi, "/images/logo-transaksi-hijau.png", "/images/logo-transaksi-putih.png");
+        ikonAktifSide(iconKeluar, tombolAktif == tombolKeluar, "/images/logo-keluar-hijau.png", "/images/logo-keluar-hijau.png");
     }
 
     private void styleHeader(){
@@ -194,12 +222,13 @@ public class MainLayoutController {
 
 //#endregion
     private void tampilkanHalaman(String namaFxml) throws IOException {
-    String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/"
+    String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/"
             + namaFxml + ".fxml";
 
     FXMLLoader loader = new FXMLLoader(App.class.getResource(path));
     Parent halaman = loader.load();
 
+    BorderPane.setMargin(halaman, new Insets(16));
     layoutPage.setCenter(halaman);
     }
 
@@ -225,12 +254,19 @@ public class MainLayoutController {
         tampilkanHalaman("transaksi");
         aturTombolAktif(tombolTransaksi);
     }
+
+    @FXML
+    private void bukaProfile() throws IOException {
+        tampilkanHalaman("profile");
+        aturTombolAktif(tombolProfile);
+    }
     
     @FXML
     private void keluar() throws IOException {
         App.setRoot("login");
         aturTombolAktif(tombolKeluar);
     }
+
     @FXML
     private void switchToPrimary() throws IOException {
         App.setRoot("login");
