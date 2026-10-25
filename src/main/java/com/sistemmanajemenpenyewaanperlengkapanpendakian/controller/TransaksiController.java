@@ -14,7 +14,7 @@ public class TransaksiController {
     @FXML private VBox containerTransaksi;
  
     private static final String PATH_ITEM =
-            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/item-transaksi.fxml";
+            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/item-transaksi.fxml";
  
     @FXML
     public void initialize() {

@@ -251,6 +251,8 @@ public class MainLayoutController {
     
     @FXML
     private void bukaTransaksi() throws IOException {
+    System.out.println("Tombol Transaksi diklik");
+
         tampilkanHalaman("transaksi");
         aturTombolAktif(tombolTransaksi);
     }
