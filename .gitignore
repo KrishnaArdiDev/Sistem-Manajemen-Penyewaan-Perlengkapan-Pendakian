@@ -24,3 +24,8 @@ Thumbs.db
 # Kredensial Database / Konfigurasi Rahasia
 .env
 config.properties
+
+.DatabaseConnection.java
+.database/
+.readme2
+.readme2
