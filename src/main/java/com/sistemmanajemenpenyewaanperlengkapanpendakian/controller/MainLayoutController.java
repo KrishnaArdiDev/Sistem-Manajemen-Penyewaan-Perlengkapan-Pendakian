@@ -186,7 +186,7 @@ public class MainLayoutController {
         headerContainer.setStyle(
             "-fx-background-color: #FFFFFF;"+
             "-fx-background-radius: 14;"
-        );  
+        );
 
         searchContainer.setStyle(
             "-fx-background-color: transparent;"+
