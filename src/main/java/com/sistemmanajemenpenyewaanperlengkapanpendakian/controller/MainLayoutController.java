@@ -222,7 +222,7 @@ public class MainLayoutController {
 
 //#endregion
     private void tampilkanHalaman(String namaFxml) throws IOException {
-    String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/"
+    String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/"
             + namaFxml + ".fxml";
 
     FXMLLoader loader = new FXMLLoader(App.class.getResource(path));
