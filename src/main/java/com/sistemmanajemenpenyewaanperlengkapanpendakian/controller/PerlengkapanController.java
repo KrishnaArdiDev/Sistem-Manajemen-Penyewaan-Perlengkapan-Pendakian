@@ -1,4 +1,3 @@
-
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
 import java.io.File;
@@ -69,10 +68,6 @@ public class PerlengkapanController {
         daftarProduk.add(new Produk(
                 "Sepatu Gunung", "Sepatu", 40000, 2, "42", null));
     }
-
-    // =========================================================
-    // HALAMAN DAFTAR PERLENGKAPAN
-    // =========================================================
 
     private void tampilkanDaftar() {
         VBox screen = new VBox(14);
@@ -213,10 +208,6 @@ public class PerlengkapanController {
 
         return kartu;
     }
-
-    // =========================================================
-    // HALAMAN FORM TAMBAH PERLENGKAPAN
-    // =========================================================
 
     private void tampilkanFormTambah() {
         selectedFotoUri = null;
@@ -423,10 +414,6 @@ public class PerlengkapanController {
         }
     }
 
-    // =========================================================
-    // HALAMAN DETAIL PERLENGKAPAN
-    // =========================================================
-
     private void tampilkanDetail(Produk produk) {
         VBox screen = new VBox(14);
         screen.setFillWidth(true);
@@ -491,10 +478,6 @@ public class PerlengkapanController {
         screen.getChildren().add(holder);
         gantiHalaman(screen);
     }
-
-    // =========================================================
-    // KOMPONEN UI BERSAMA
-    // =========================================================
 
     private HBox buatHeader(String teks, Runnable aksiKembali) {
         HBox header = new HBox(8);
@@ -612,7 +595,6 @@ public class PerlengkapanController {
                 return;
 
             } catch (IllegalArgumentException e) {
-                // Gunakan ilustrasi jika gambar tidak bisa dibaca.
             }
         }
 

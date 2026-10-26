@@ -2,7 +2,6 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
 import java.io.File;
-import java.net.URL;
 import java.util.Optional;
 
 import javafx.fxml.FXML;
@@ -60,19 +59,15 @@ public class ProfileController {
     private void initialize() {
         profileImage.setClip(new Circle(56, 56, 56));
 
-        MainLayoutController.initializeSharedProfileImage();
+        Image initialImage = profileImage.getImage();
 
-        currentPhotoUri =
-            MainLayoutController.getSharedProfilePhotoUri();
+        if (initialImage != null) {
+            currentPhotoUri = initialImage.getUrl();
+        } else {
+            currentPhotoUri = null;
+        }
 
         savedPhotoUri = currentPhotoUri;
-
-        Image sharedImage =
-            MainLayoutController.sharedProfileImageProperty().get();
-
-        if (sharedImage != null) {
-            profileImage.setImage(sharedImage);
-        }
 
         savedStoreName = storeNameField.getText();
         savedEmail = emailField.getText();
@@ -81,8 +76,6 @@ public class ProfileController {
         aturModeEdit(false);
         aturGayaField();
     }
-
-    // ==================== EDIT PROFILE ====================
 
     @FXML
     private void handleEdit() {
@@ -103,7 +96,7 @@ public class ProfileController {
             return;
         }
 
-        if (!email.contains("@")) {
+        if (!email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
             tampilkanPeringatan(
                 "Masukkan alamat email yang valid."
             );
@@ -113,10 +106,6 @@ public class ProfileController {
         savedStoreName = nama;
         savedEmail = email;
         savedLocation = lokasi;
-
-        // Memperbarui sumber foto bersama untuk sidebar.
-        MainLayoutController.setSharedProfilePhoto(currentPhotoUri);
-
         savedPhotoUri = currentPhotoUri;
 
         aturModeEdit(false);
@@ -154,7 +143,7 @@ public class ProfileController {
         locationField.setEditable(aktif);
 
         editButton.setDisable(aktif);
-        uploadButton.setDisable(false);
+        uploadButton.setDisable(!aktif);
         deleteButton.setDisable(aktif);
 
         cancelButton.setVisible(aktif);
@@ -168,23 +157,21 @@ public class ProfileController {
 
     private void aturGayaField() {
         String gaya = editing
-            ? "-fx-background-color: white;" +
-              "-fx-border-color: #00643D;" +
-              "-fx-border-radius: 6;" +
-              "-fx-background-radius: 6;" +
-              "-fx-padding: 8 10;"
-            : "-fx-background-color: #EEEEEE;" +
-              "-fx-border-color: #999999;" +
-              "-fx-border-radius: 6;" +
-              "-fx-background-radius: 6;" +
-              "-fx-padding: 8 10;";
+            ? "-fx-background-color: white;"
+                + "-fx-border-color: #00643D;"
+                + "-fx-border-radius: 6;"
+                + "-fx-background-radius: 6;"
+                + "-fx-padding: 8 10;"
+            : "-fx-background-color: #EEEEEE;"
+                + "-fx-border-color: #999999;"
+                + "-fx-border-radius: 6;"
+                + "-fx-background-radius: 6;"
+                + "-fx-padding: 8 10;";
 
         storeNameField.setStyle(gaya);
         emailField.setStyle(gaya);
         locationField.setStyle(gaya);
     }
-
-    // ==================== UPLOAD FOTO ====================
 
     @FXML
     private void handleUploadPhoto() {
@@ -259,12 +246,7 @@ public class ProfileController {
 
     private void muatFoto(String uri) {
         if (uri == null || uri.trim().isEmpty()) {
-            MainLayoutController.initializeSharedProfileImage();
-
-            Image fotoDefault =
-                MainLayoutController.sharedProfileImageProperty().get();
-
-            profileImage.setImage(fotoDefault);
+            profileImage.setImage(null);
             return;
         }
 
@@ -274,8 +256,6 @@ public class ProfileController {
             profileImage.setImage(image);
         }
     }
-
-    // ==================== HAPUS PROFILE ====================
 
     @FXML
     private void handleDelete() {
@@ -308,8 +288,6 @@ public class ProfileController {
             );
         }
     }
-
-    // ==================== DIALOG ====================
 
     private void tampilkanPeringatan(String pesan) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
