@@ -37,6 +37,7 @@ public class App extends Application {
         stage.setMinHeight(700);
 
         stage.show();
+<<<<<<< HEAD
 
         // Pastikan jendela tidak berada dalam mode fullscreen.
         stage.setFullScreen(false);
@@ -45,6 +46,9 @@ public class App extends Application {
 
     public static Stage getPrimaryStage() {
         return primaryStage;
+=======
+        stage.setMaximized(true);
+>>>>>>> staging
     }
 
     public static void setRoot(String fxml) throws IOException {
@@ -58,10 +62,20 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
+<<<<<<< HEAD
         String path =
             "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/"
             + fxml + ".fxml";
 
+=======
+        String basepath = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/";
+        String path;
+        if (fxml.equals("main-layout")){
+            path = basepath + "main-layout.fxml";
+        } else {
+            path = basepath + "pages/" + fxml + ".fxml";
+        }
+>>>>>>> staging
         URL resource = App.class.getResource(path);
 
         if (resource == null) {

@@ -24,6 +24,7 @@ Thumbs.db
 # Kredensial Database / Konfigurasi Rahasia
 .env
 config.properties
+<<<<<<< HEAD
 
 db.properties
 .env
@@ -38,3 +39,5 @@ config.properties
 # IDE
 .vscode/
 .idea/
+=======
+>>>>>>> staging
