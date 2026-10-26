@@ -20,25 +20,20 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 
 public class DashboardController {
-<<<<<<< HEAD
-//#region
-    @FXML
-=======
 //#region manggil komponen
     @FXML 
->>>>>>> staging
     private VBox containerDashboard;
 
-    @FXML
+    @FXML 
     private VBox cardBarangTersedia;
 
-    @FXML
+    @FXML 
     private VBox cardBarangDisewakan;
 
-    @FXML
+    @FXML 
     private VBox cardSeluruhBarang;
 
-    @FXML
+    @FXML 
     private VBox productSectionContainer;
 
     @FXML 
@@ -124,9 +119,6 @@ public class DashboardController {
 
         );
     }
-<<<<<<< HEAD
-}
-=======
 
     private  void styleItemProduk(){
         itemProduk1.setStyle(
@@ -191,4 +183,3 @@ public class DashboardController {
         );
     }
 }
->>>>>>> staging

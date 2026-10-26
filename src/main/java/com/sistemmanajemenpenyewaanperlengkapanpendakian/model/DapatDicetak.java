@@ -2,14 +2,7 @@ package com.sistemmanajemenpenyewaanperlengkapanpendakian.model;
 
 public interface DapatDicetak {
 
-    String cetak();
+    void cetakNota();
 
-    default String getJudulCetak() {
-        return "NOTA";
-    }
-
-    default void tampilkan() {
-        System.out.println(getJudulCetak());
-        System.out.println(cetak());
-    }
+    void ringkasanCetak();
 }

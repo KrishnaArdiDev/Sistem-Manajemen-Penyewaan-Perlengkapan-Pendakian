@@ -6,9 +6,6 @@ import java.util.List;
  
 
 public class TransaksiService {
-<<<<<<< HEAD
-
-=======
  
     public static class DataTransaksi {
         public final String namaBarang;
@@ -43,5 +40,4 @@ public class TransaksiService {
     public static List<DataTransaksi> semua() {
         return Collections.unmodifiableList(daftar);
     }
->>>>>>> staging
 }
