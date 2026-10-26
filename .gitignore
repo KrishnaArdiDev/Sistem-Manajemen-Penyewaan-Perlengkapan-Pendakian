@@ -24,20 +24,5 @@ Thumbs.db
 # Kredensial Database / Konfigurasi Rahasia
 .env
 config.properties
-<<<<<<< HEAD
 
 db.properties
-.env
-# Build output
-target/
-
-# Database credentials
-db.properties
-.env
-config.properties
-
-# IDE
-.vscode/
-.idea/
-=======
->>>>>>> staging
