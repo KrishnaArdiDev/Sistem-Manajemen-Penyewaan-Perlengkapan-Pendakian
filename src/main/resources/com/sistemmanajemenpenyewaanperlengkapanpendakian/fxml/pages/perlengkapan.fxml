@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.PerlengkapanController">
-    <children>
-        <Label text="Secondary View" />
-    </children>
+<VBox fx:id="pageRoot"
+      xmlns="http://javafx.com/javafx/13"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.PerlengkapanController"
+      spacing="14"
+      prefWidth="1000"
+      prefHeight="680"
+      style="-fx-background-color: #F0F0F0;">
+
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets top="8" right="8" bottom="8" left="8"/>
     </padding>
+
 </VBox>
