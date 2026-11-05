@@ -5,4 +5,9 @@ public class Vendor {
     private String pwAdm;
     private String email;
     private String namaVendor;
+
+    public boolean login(){
+        
+        return false;
+    }
 }
