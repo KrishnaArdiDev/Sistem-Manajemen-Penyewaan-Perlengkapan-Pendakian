@@ -25,7 +25,4 @@ Thumbs.db
 .env
 config.properties
 
-.DatabaseConnection.java
-.database/
-.readme2
-.readme2
+db.properties

@@ -173,6 +173,11 @@ public class MainLayoutController {
                     "-fx-background-radius: 10;"+
                     "-fx-border-color:transparent;"
                 );
+                if (tombol == tombolProfile){
+                    labelUsername.setStyle("-fx-text-fill: #005A32");
+                    labelWelcome.setStyle("-fx-text-fill: #005A32");
+                    borderProfile.setStyle( "-fx-stroke: #005A32");
+                }
             }
         }
         ikonAktifSide(iconDashboard, tombolAktif == tombolDashboard, "/images/logo-home-hijau.png", "/images/logo-home-putih.png");
@@ -221,6 +226,7 @@ public class MainLayoutController {
     
 
 //#endregion
+
     private void tampilkanHalaman(String namaFxml) throws IOException {
     String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/"
             + namaFxml + ".fxml";
@@ -230,6 +236,7 @@ public class MainLayoutController {
 
     BorderPane.setMargin(halaman, new Insets(16));
     layoutPage.setCenter(halaman);
+    
     }
 
     @FXML 
@@ -251,6 +258,8 @@ public class MainLayoutController {
     
     @FXML
     private void bukaTransaksi() throws IOException {
+    System.out.println("Tombol Transaksi diklik");
+
         tampilkanHalaman("transaksi");
         aturTombolAktif(tombolTransaksi);
     }
