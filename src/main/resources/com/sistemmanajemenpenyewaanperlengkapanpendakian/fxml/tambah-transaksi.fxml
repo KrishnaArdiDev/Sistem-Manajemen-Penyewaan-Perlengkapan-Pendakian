@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="16.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.TambahTransaksiController">
+    <children>
+
+        <!-- Judul + tombol kembali -->
+        <Button mnemonicParsing="false" onAction="#batal" text="&lt;  Transaksi"
+                style="-fx-background-color: transparent; -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #00572B; -fx-cursor: hand; -fx-padding: 0;" />
+
+        <!-- Panel putih -->
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS"
+                    style="-fx-background: white; -fx-background-color: white; -fx-background-radius: 30;">
+            <content>
+                <VBox spacing="6.0" style="-fx-background-color: white;">
+                    <padding>
+                        <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
+                    </padding>
+                    <children>
+
+                        <Label maxWidth="Infinity" alignment="CENTER" text="FORMULIR TAMBAH TRANSAKSI"
+                               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #00572B;">
+                            <VBox.margin>
+                                <Insets bottom="14.0" />
+                            </VBox.margin>
+                        </Label>
+
+                        <!-- Nama Peminjam -->
+                        <Label text="Nama Peminjam" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
+                        <TextField fx:id="fieldNama" prefHeight="36.0"
+                                   style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;" />
+
+                        <!-- Foto Identitas -->
+                        <Label text="Foto Identitas" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
+                        <HBox spacing="10.0" alignment="CENTER_LEFT" prefHeight="36.0"
+                              style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 0 4 0 10;">
+                            <children>
+                                <Label fx:id="labelFoto" text="Belum ada file dipilih" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                                       style="-fx-text-fill: #7A7A7A;" />
+                                <Button mnemonicParsing="false" onAction="#pilihFoto" text="Pilih File"
+                                        style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand;" />
+                            </children>
+                        </HBox>
+
+                        <!-- Barang Pinjaman -->
+                        <Label text="Barang Pinjaman" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
+                        <HBox spacing="10.0">
+                            <children>
+                                <ComboBox fx:id="comboPerlengkapan" maxWidth="Infinity" prefHeight="36.0" HBox.hgrow="ALWAYS"
+                                          promptText="Pilih barang"
+                                          style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;" />
+                                <Spinner fx:id="spinnerJumlah" editable="true" prefWidth="100.0" prefHeight="36.0" />
+                            </children>
+                        </HBox>
+
+                        <!-- Tanggal Meminjam -->
+                        <Label text="Tanggal Meminjam" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
+                        <DatePicker fx:id="dateSewa" maxWidth="Infinity" prefHeight="36.0"
+                                    style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;" />
+
+                        <!-- Tanggal Kembali -->
+                        <Label text="Tanggal Kembali" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
+                        <DatePicker fx:id="dateKembali" maxWidth="Infinity" prefHeight="36.0"
+                                    style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;" />
+
+                        <!-- Total Harga -->
+                        <Label text="Total Harga" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
+                        <Label fx:id="labelTotal" text="Rp 0" maxWidth="Infinity" prefHeight="36.0"
+                               style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 0 10 0 10; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
+
+                        <!-- Tombol aksi -->
+                        <HBox alignment="CENTER_RIGHT" spacing="16.0">
+                            <VBox.margin>
+                                <Insets top="24.0" />
+                            </VBox.margin>
+                            <children>
+                                <Button fx:id="tombolBatal" mnemonicParsing="false" onAction="#batal" text="Batalkan" prefWidth="160.0"
+                                        style="-fx-background-color: white; -fx-text-fill: #00572B; -fx-border-color: #00572B; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 0 8 0; -fx-cursor: hand;" />
+                                <Button fx:id="tombolSimpan" mnemonicParsing="false" onAction="#simpan" text="Konfirmasi" prefWidth="160.0"
+                                        style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 0 8 0; -fx-cursor: hand;" />
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+    </children>
+    <padding>
+        <Insets left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>
