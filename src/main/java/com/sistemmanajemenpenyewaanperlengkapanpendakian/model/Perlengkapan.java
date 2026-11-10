@@ -30,6 +30,9 @@ public abstract class Perlengkapan {
     }
 
     public void setHargaSewaHarian(long hargaSewaHarian){
+        if (hargaSewaHarian <0){
+            throw new IllegalArgumentException("Harga sewa harian tidak boleh negatif");
+        }
         this.hargaSewaHarian = hargaSewaHarian;
     }
 
@@ -38,6 +41,9 @@ public abstract class Perlengkapan {
     }
 
     public void setHargaPerlengkapan(long hargaPerlengkapan){
+        if (hargaPerlengkapan <0){
+            throw new IllegalArgumentException("Harga perlengkapan tidak boleh negatif");
+        }
         this.hargaPerlengkapan = hargaPerlengkapan;
     }
 
@@ -47,7 +53,7 @@ public abstract class Perlengkapan {
             throw new IllegalArgumentException("Jumlah penambahan stok harus lebih dari 0");
         }
 
-        hitungJumlahStok(this.stok + jumlah);
+        hitungJumlahStok(Math.addExact(this.stok, jumlah));
     }
 
     public void kurangiStok(int jumlah){

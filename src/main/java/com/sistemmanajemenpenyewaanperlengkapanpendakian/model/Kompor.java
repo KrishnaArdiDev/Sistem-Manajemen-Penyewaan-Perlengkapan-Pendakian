@@ -13,6 +13,10 @@ public class Kompor extends Perlengkapan{
 
     @Override 
     public long hitungHargaSewa(int durasiSewa){
-        return getHargaSewaHarian() *durasiSewa;
+        if (durasiSewa <=0){
+            throw new IllegalArgumentException("Durasi sewa harus lebih dari 0");
+        }
+
+        return Math.multiplyExact(getHargaSewaHarian(), durasiSewa);
     }
 }

@@ -226,7 +226,7 @@ public class Transaksi implements DapatDicetak{
             throw new DataTidakLengkapException("Tanggal sewa wajib diisi");
         }
         if (durasiSewa <= 0){
-            throw new DataTidakLengkapException("Derasi sewa minimal 1 hari");
+            throw new DataTidakLengkapException("Durasi sewa minimal 1 hari");
         }
         if (isKosong(metodePembayaran)){
             throw new DataTidakLengkapException("Metode pembayaran wajib diisi");
@@ -265,7 +265,7 @@ public class Transaksi implements DapatDicetak{
             int jumlahDibutuhkan = entry.getValue();
 
             if (perlengkapan.getStok() < jumlahDibutuhkan){
-                throw new StokTidakCukupException("Stok" + perlengkapan.getNamaPerlengkapan() +" Tidak mencukupi. Sot yang tersedia: " + perlengkapan.getStok() + ", Jumlah dibutuhkan: "+jumlahDibutuhkan);
+                throw new StokTidakCukupException("Stok " + perlengkapan.getNamaPerlengkapan() +" Tidak mencukupi. Stok yang tersedia: " + perlengkapan.getStok() + ", Jumlah dibutuhkan: "+jumlahDibutuhkan);
             }
         }
         // Penambahan, mengurangi stok setelah seluruh pemeriksaan berhasil
@@ -279,10 +279,123 @@ public class Transaksi implements DapatDicetak{
     @Override 
     public void cetakNota(){
         StringBuilder nota = new StringBuilder();
-        long totalGantiRugi = hitungTotalGantiRugi();
 
-        // Total sewa dan denda ini dipertahankan sesuai dengan perhitungan sebelumnya
-        // Ganti rugi ditampilkan terpisah karena laporan belum menentukan 
+        // Nota transaksi awal hanya memuat biaya sewa yang dibayar saat pencatatan transaksi
+        long biayaSewa = totalHarga;
+        if (daftarDetail != null && !daftarDetail.isEmpty() && durasiSewa>0){
+            biayaSewa = hitungTotalHarga();
+        }
+
+        nota.append("====================================\n");
+        nota.append("       NOTA TRANSAKSI PENYEWAAN     \n");
+        nota.append("====================================\n\n");
+
+        nota.append("ID transaksi: ").append(idTransaksi).append("\n");
+        nota.append("Tanggal transaksi: ").append(tanggalTransaksi).append("\n");
+        nota.append("Nama Pelanggan: ").append(pelanggan != null ? pelanggan.getNamaPelanggan() : "-").append("\n");
+        nota.append("Tanggal sewa: ").append(tanggalSewa).append("\n");
+        nota.append("Durasi sewa: ").append(durasiSewa).append("\n");
+        nota.append("Tanggal kembali: ").append(tanggalKembali).append("\n");
+
+        nota.append("\nDETAIL PERLENGKAPAN\n");
+        if (daftarDetail != null){
+            for (DetailTransaksi detail : daftarDetail){
+                if (detail == null || detail.getPerlengkapanYangDisewa() == null){
+                    continue;
+                }
+            
+                nota.append("Nama perlengkapan: ").append(detail.getPerlengkapanYangDisewa().getNamaPerlengkapan()).append("\n");
+                nota.append("Kuantitas: ").append(detail.getKuantitasPerAlat()).append("\n");
+                nota.append("Subtotal sewa: ").append(rupiah(detail.getSubTotal(durasiSewa))).append("\n");
+            }
+        }
+        nota.append("--------------------------\n");
+        nota.append("Total Biaya Sewa: ").append(rupiah(biayaSewa)).append("\n");
+        nota.append("Metode pembayaran: ").append(metodePembayaran).append("\n");
+        nota.append("Pembayaran biaya sewa dilakukan saat pencatatan transaksi dan sebelum mengambil barang\n");
+
+
+        // penambahan, show tagihan denda dan ganti rugi ditampilkan terpisah saat pengembalian
+        if (adaPengembalianTercatat()){
+            long totalDenda = hitungDenda();
+            long totalGantiRugi = hitungTotalGantiRugi();
+            long totalTagihanPengembalian = Math.addExact(totalDenda, totalGantiRugi);
+
+            nota.append("\nTAGIHAN SAAT PENGEMBALIAN\n");
+            nota.append("Denda Keterlambatan: ").append(rupiah(totalDenda)).append("\n");
+            nota.append("Biaya ganti rugi: ").append(rupiah(totalGantiRugi)).append("\n");
+            nota.append("---------------------------\n");
+            nota.append("Total Tagihan Pengembalian: ").append(rupiah(totalTagihanPengembalian)).append("\n");
+        }
+        nota.append("\n====================================\n");
+        this.isiNota = nota.toString();
     }
 
+    @Override 
+    public void ringkasanCetak(){
+        StringBuilder ringkasan = new StringBuilder();
+
+        ringkasan.append("RINGKASAN TRANSAKSI\n============\n");
+
+        ringkasan.append("Id transaksi: ").append(idTransaksi).append("\n");
+        ringkasan.append("Nama pelanggan: ").append(pelanggan != null ? pelanggan.getNamaPelanggan(): "-").append("\n");
+        ringkasan.append("Tanggal sewa: ").append(tanggalSewa).append("\n");
+        ringkasan.append("Durasi sewa: ").append(durasiSewa).append("\n");
+        ringkasan.append("Tanggal kembali: ").append(tanggalKembali).append("\n");
+        ringkasan.append("Total biaya sewa: ").append(rupiah(totalHarga)).append("\n");
+        ringkasan.append("Metode pembayaran: ").append(metodePembayaran).append("\n");
+        ringkasan.append("Pembayaran biaya sewa dilakukan saat pencatatan transaksi dan sebelum mengambil barang\n");
+
+        // penambahan, ringkasan biaya yang muncul pada proses pengembalian
+        if (adaPengembalianTercatat()){
+            long totalDenda = hitungDenda();
+            long totalGantiRugi = hitungTotalGantiRugi();
+
+            long totalTagihanPengembalian = Math.addExact(totalDenda, totalGantiRugi);
+
+            ringkasan.append("Denda: ").append(rupiah(totalDenda)).append("\n");
+            ringkasan.append("Ganti rugi: ").append(rupiah(totalGantiRugi)).append("\n");
+            ringkasan.append("Total pengembalian: ").append(rupiah(totalTagihanPengembalian)).append("\n");
+        }
+        this.ringkasanTransaksi = ringkasan.toString();
+    }
+
+    // penambahan, menghitung seluruh biaya ganti rugi dari DetailTransaksi
+    private long hitungTotalGantiRugi(){
+        long total = 0;
+        if (daftarDetail == null){
+            return 0;
+        }
+
+        for (DetailTransaksi detail : daftarDetail){
+            if (detail != null){
+                total = Math.addExact(total, detail.getBiayaGantiRugi());
+            }
+        }
+        return total;
+    }
+
+    // penambahan, memeriksa apakah sudah ada perlengkapan yang dikembalikan
+    private boolean adaPengembalianTercatat(){
+        if (daftarDetail == null){
+            return false;
+        }
+
+        for (DetailTransaksi detail : daftarDetail){
+            if (detail != null && detail.getTanggalPengembalianBarang() != null){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // penambahan, memeriksa string kosong
+    private boolean isKosong(String nilai){
+        return nilai == null || nilai.trim().isEmpty();
+    }
+
+    // penambahan, mengubah angka menjadi format rupiah
+    private String rupiah(long nilai){
+        return String.format(Locale.forLanguageTag("id-ID"), "Rp %,d", nilai);
+    }
 }

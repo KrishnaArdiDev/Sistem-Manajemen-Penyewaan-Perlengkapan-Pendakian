@@ -62,7 +62,7 @@ public class Vendor {
 
             perlengkapanDAO.tambahDataPerlengkapan(perlengkapanYangDikelola, idVendor);
         } catch (SQLException e){
-            System.err.println("Gagal menambahkan perlengkapan " + e.getMessage());
+            throw new IllegalStateException("Gagal menambahkan perlengkapan", e);
         }
     }
 
@@ -74,7 +74,7 @@ public class Vendor {
             perlengkapanYangDikelola.setNamaVendor(namaVendor);
             perlengkapanDAO.updateDataPerlengkapan(perlengkapanYangDikelola, idVendor);
         } catch (SQLException e){
-            System.err.println("Gagal memperbarui data perlengkapan: " + e.getMessage());
+            throw new IllegalStateException("Gagal memperbarui data perlengkapan", e);
         }
     }
 
@@ -85,7 +85,7 @@ public class Vendor {
             }
             perlengkapanDAO.hapusDataPerlengkapan(perlengkapanYangDikelola, idVendor);
         } catch (SQLException e){
-            System.err.println("Gagal menghapus perlengkapan: " + e.getMessage());
+            throw new IllegalStateException("Gagal menghapus perlengkapan", e);
         }
     }
 
@@ -98,7 +98,7 @@ public class Vendor {
         try{
             transaksiDAO.tambahDataTransaksi(transaksiYangDikelola, idVendor);
         } catch (SQLException e){
-            System.err.println("Gagal menambahkan transaksi: " + e.getMessage());
+            throw new IllegalStateException("Gagal menambahkan transaksi", e);
         }
     }
 
@@ -109,7 +109,7 @@ public class Vendor {
             }
             transaksiDAO.updateDataTransaksi(transaksiYangDikelola, idVendor);
         } catch (SQLException e){
-            System.err.println("Gagal memperbarui transaksi: " + e.getMessage());
+            throw new IllegalStateException("Gagal memperbarui transaksi", e);
         }
     }
     //#endregion

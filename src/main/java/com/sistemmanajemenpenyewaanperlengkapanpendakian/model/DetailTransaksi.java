@@ -10,6 +10,9 @@ public class DetailTransaksi {
     private String statusPengembalian;
     private long biayaGantiRugi;
 
+    // penambahan
+    private boolean pengembalianSudahDiproses;
+
     public String getStatusPengembalianBarang(){
         return statusPengembalian;
     }
@@ -30,7 +33,7 @@ public class DetailTransaksi {
         if (kuantitasPerAlat <= 0){
             throw new IllegalStateException("Kuantitas perlengkapan belum ditentukan");
         }
-        return perlengkapanYangDisewa.hitungHargaSewa(1) *kuantitasPerAlat;
+        return Math.multiplyExact(perlengkapanYangDisewa.hitungHargaSewa(1), kuantitasPerAlat);
     }
 
     public LocalDate getTanggalPengembalianBarang(){
@@ -93,6 +96,44 @@ public class DetailTransaksi {
             throw new IllegalArgumentException("Durasi sewa harus lebih dari 0");
         }
 
-        return perlengkapanYangDisewa.hitungHargaSewa(durasiSewa) *kuantitasPerAlat;
+        return Math.multiplyExact(perlengkapanYangDisewa.hitungHargaSewa(durasiSewa), kuantitasPerAlat);
+    }
+
+    // penambahan
+    public long prosesPengembalianBarang(LocalDate tanggalPengembalian, String kondisi){
+        if (pengembalianSudahDiproses || tanggalPengembalianBarang != null){
+            throw new IllegalStateException("Pengembalian barang sudah diproses");
+        }
+        if (perlengkapanYangDisewa == null){
+            throw new IllegalStateException("Perlengkapan yang disewa belum ditentukan");
+        }
+        if (kuantitasPerAlat <= 0){
+            throw new IllegalStateException("Kuantitas perlengkapan belum ditentukan");
+        }
+
+        // argum except
+        if (tanggalPengembalian == null){
+            throw new IllegalArgumentException("Tanggal pengembalian wajib diisi");
+        }
+        if (kondisi == null || kondisi.trim().isEmpty()){
+            throw new IllegalArgumentException("Kondisi perlengkapan wajib diisi");
+        }
+
+        String kondisiNormal = kondisi.trim();
+        long nilaiGantiRugi = 0;
+
+        if (kondisiNormal.equalsIgnoreCase("utuh")){
+            perlengkapanYangDisewa.tambahStok(kuantitasPerAlat);
+        }else if (kondisiNormal.equalsIgnoreCase("rusak") || kondisiNormal.equalsIgnoreCase("hilang")){
+            nilaiGantiRugi = Math.multiplyExact(perlengkapanYangDisewa.hitungGantiRugi(), kuantitasPerAlat);
+        } else {
+            throw new IllegalArgumentException("Kondisi perlengkapan harus utuh, rusak, atau hilang");
+        }
+        this.tanggalPengembalianBarang = tanggalPengembalian;
+        this.statusPengembalian = kondisiNormal;
+        this.biayaGantiRugi = nilaiGantiRugi;
+        this.pengembalianSudahDiproses = true;
+
+        return biayaGantiRugi;
     }
 }
