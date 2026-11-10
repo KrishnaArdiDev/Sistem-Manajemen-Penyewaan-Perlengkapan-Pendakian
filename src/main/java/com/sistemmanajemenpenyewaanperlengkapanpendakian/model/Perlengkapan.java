@@ -1,71 +1,93 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.model;
 
-public abstract class Perlengkapan {
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.StokTidakCukupException;
 
+public abstract class Perlengkapan {
     private String namaPerlengkapan;
-    private int stok;
     private String namaVendor;
+    private int stok;
     private long hargaPerlengkapan;
     private long hargaSewaHarian;
 
-    public Perlengkapan(String namaPerlengkapan, int stok, String namaVendor,
-                        long hargaPerlengkapan, long hargaSewaHarian) {
-        this.namaPerlengkapan = namaPerlengkapan;
-        this.stok = stok;
-        this.namaVendor = namaVendor;
-        this.hargaPerlengkapan = hargaPerlengkapan;
-        this.hargaSewaHarian = hargaSewaHarian;
-    }
-
-    public String getNamaPerlengkapan() {
+    public String getNamaPerlengkapan(){
         return namaPerlengkapan;
     }
 
-    public void setNamaPerlengkapan(String namaPerlengkapan) {
+    public void setNamaPerlengkapan(String namaPerlengkapan){
         this.namaPerlengkapan = namaPerlengkapan;
     }
 
-    public int getStok() {
+    public int getStok(){
         return stok;
     }
 
-    public void setStok(int stok) {
-        this.stok = stok;
+    public void setStok(int stok){
+        hitungJumlahStok(stok);
     }
 
-    public long getHargaSewaHarian() {
+    public long getHargaSewaHarian(){
         return hargaSewaHarian;
     }
 
-    public void setHargaSewaHarian(long hargaSewaHarian) {
+    public void setHargaSewaHarian(long hargaSewaHarian){
+        if (hargaSewaHarian <0){
+            throw new IllegalArgumentException("Harga sewa harian tidak boleh negatif");
+        }
         this.hargaSewaHarian = hargaSewaHarian;
     }
 
-    public int hitungJumlahStok() {
-        return stok;
+    public long getHargaPerlengkapan(){
+        return hargaPerlengkapan;
     }
 
-    public void tambahStok(int jumlah) {
-        if (jumlah > 0) {
-            this.stok += jumlah;
+    public void setHargaPerlengkapan(long hargaPerlengkapan){
+        if (hargaPerlengkapan <0){
+            throw new IllegalArgumentException("Harga perlengkapan tidak boleh negatif");
         }
+        this.hargaPerlengkapan = hargaPerlengkapan;
     }
 
-    public void kurangiStok(int jumlah) {
-        if (jumlah > 0 && jumlah <= this.stok) {
-            this.stok -= jumlah;
+    public void tambahStok(int jumlah){
+        // ini penambahan
+        if (jumlah <=0){
+            throw new IllegalArgumentException("Jumlah penambahan stok harus lebih dari 0");
         }
+
+        hitungJumlahStok(Math.addExact(this.stok, jumlah));
     }
 
-    public String getNamaVendor() {
-    return namaVendor;
+    public void kurangiStok(int jumlah){
+        // ini penambahan
+        if (jumlah <= 0){
+            throw new IllegalArgumentException("Jumlah pengurangan harus lebih dari 0");
+        }
+        if (jumlah > this.stok){
+            throw new StokTidakCukupException("Stok perlengkapan tidak cukup");
+        }
+        hitungJumlahStok(this.stok - jumlah);
     }
 
-    public long getHargaPerlengkapan() {
-    return hargaPerlengkapan;
+    public void hitungJumlahStok(int jumlah){
+        // ini penambahan
+        if (jumlah < 0){
+            throw new IllegalArgumentException("Jumlah stok tidak boleh negatif");
+        }
+        this.stok = jumlah;
     }
 
     public abstract long hitungHargaSewa(int durasiSewa);
 
-    public abstract long hitungGantiRugi();
+    public long hitungGantiRugi(){
+        return hargaPerlengkapan;
+    }
+
+    // ini penambahan
+    // public String getNamaVendor(){
+    //     return namaVendor;
+    // }
+
+    // ini penambahan
+    public void setNamaVendor(String namaVendor){
+        this.namaVendor = namaVendor;
+    }
 }

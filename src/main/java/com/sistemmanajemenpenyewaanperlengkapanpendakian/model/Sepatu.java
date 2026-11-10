@@ -1,30 +1,23 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.model;
 
-public class Sepatu extends Perlengkapan {
+public class Sepatu extends Perlengkapan{
     private int ukuranSepatu;
 
-    public Sepatu(String namaPerlengkapan, int stok, String namaVendor,
-                  long hargaPerlengkapan, long hargaSewaHarian, int ukuranSepatu) {
-        super(namaPerlengkapan, stok, namaVendor, hargaPerlengkapan, hargaSewaHarian);
+    public int getUkuranSepatu(){
+        return this.ukuranSepatu;
+    }
+
+    public void setUkuranSepatu(int ukuranSepatu){
         this.ukuranSepatu = ukuranSepatu;
     }
 
-    public int getUkuranSepatu() {
-        return ukuranSepatu;
-    }
+    @Override 
+    public long hitungHargaSewa(int durasiSewa){
+        if (durasiSewa <= 0){
+            throw new IllegalArgumentException("Durasi sewa harus lebih dari 0");
+        }
 
-    public void setUkuranSepatu(int ukuranSepatu) {
-        this.ukuranSepatu = ukuranSepatu;
-    }
-
-    @Override
-    public long hitungHargaSewa(int durasiSewa) {
-        return getHargaSewaHarian() * durasiSewa;
-    }
-
-    @Override
-    public long hitungGantiRugi() {
-        return getHargaPerlengkapan();
+        return Math.multiplyExact(getHargaSewaHarian(), durasiSewa);
     }
 }
 
