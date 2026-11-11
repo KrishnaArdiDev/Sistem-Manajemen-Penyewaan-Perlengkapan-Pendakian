@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="909.0" prefWidth="1149.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="909.0" prefWidth="1149.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.PengembalianController">
    <center>
       <VBox prefHeight="576.0" prefWidth="600.0" spacing="20.0" BorderPane.alignment="CENTER">
          <padding>
@@ -19,7 +19,7 @@
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="49.0" prefWidth="560.0" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="29.0" prefWidth="38.0" text="&lt;">
+                  <Button fx:id="btnKembali" mnemonicParsing="false" onAction="#handleKembali" prefHeight="29.0" prefWidth="38.0" text="&lt;">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>
@@ -43,7 +43,7 @@
                      <children>
                         <ImageView fitHeight="156.0" fitWidth="144.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../../../../../../../../../Users/willi/Downloads/Group%2024.png" />
+                              <Image url="@/images/tas.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -64,7 +64,7 @@
                                           <Insets left="14.0" />
                                        </padding>
                                        <children>
-                                          <Label text="Tas Carrier Puma">
+                                          <Label fx:id="labelNamaBarang" text="Tas Carrier Puma">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -85,7 +85,7 @@
                                           <Insets left="14.0" />
                                        </padding>
                                        <children>
-                                          <Label text="Terlambat">
+                                          <Label fx:id="labelStatusPeminjaman" text="Sedang Dipinjam">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -106,7 +106,7 @@
                                           <Insets left="14.0" />
                                        </padding>
                                        <children>
-                                          <Label text="Andy Tinggi">
+                                          <Label fx:id="labelNamaPeminjam" text="Andy Tinggi">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -127,7 +127,7 @@
                                           <Insets left="14.0" />
                                        </padding>
                                        <children>
-                                          <Label text="Kartuidentitas.png">
+                                          <Label fx:id="labelKartuIdentitas" text="Kartuidentitas.png">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -148,7 +148,7 @@
                                           <Insets left="14.0" />
                                        </padding>
                                        <children>
-                                          <Label text="19 - 10 - 2026">
+                                          <Label fx:id="labelTanggalMeminjam" text="19 - 10 - 2026">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -169,7 +169,7 @@
                                           <Insets left="14.0" />
                                        </padding>
                                        <children>
-                                          <Label text="20 - 10 - 2026">
+                                          <Label fx:id="labelTanggalKembali" text="20 - 10 - 2026">
                                              <font>
                                                 <Font size="18.0" />
                                              </font>
@@ -180,7 +180,7 @@
                               </VBox>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                    <Button alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="29.0" prefWidth="158.0" text="Konfirmasi" />
+                                    <Button fx:id="btnKonfirmasi" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#handleKonfirmasi" prefHeight="29.0" prefWidth="158.0" style="-fx-background-color: #005A32; -fx-text-fill: white; -fx-cursor: hand;" text="Konfirmasi" />
                                  </children>
                                  <padding>
                                     <Insets right="30.0" />
