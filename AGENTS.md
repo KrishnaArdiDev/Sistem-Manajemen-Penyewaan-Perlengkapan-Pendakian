@@ -1,4 +1,5 @@
 # AGENTS.md
+
 # PEDOMAN AI DAN KONTEKS PENGEMBANGAN PROYEK TAPAK
 
 Dokumen ini merupakan pedoman wajib bagi AI Assistant yang membantu pengembangan proyek TAPAK, baik untuk membaca, menganalisis, memperbaiki, menambahkan, maupun mengubah kode program.
@@ -136,8 +137,8 @@ Artinya:
 - Menghapus atribut yang telah ditentukan.
 - Menghapus method yang telah ditentukan.
 - Menghilangkan constructor yang dibutuhkan.
-- Dilarang mengubah tipe data yang telah ditetapkan dalam rancangan laporan. Tipe data pada implementasi wajib mengikuti rancangan laporan dan tidak boleh berbeda.
-- Dilarang mengubah nama class, atribut, atau method yang telah ditetapkan dalam rancangan laporan. Penamaan pada implementasi wajib sama dengan rancangan laporan.
+- Mengubah tipe data yang telah ditetapkan dalam rancangan laporan. Tipe data pada implementasi wajib mengikuti rancangan laporan dan tidak boleh berbeda.
+- Mengubah nama class, atribut, atau method yang telah ditetapkan dalam rancangan laporan. Penamaan pada implementasi wajib sama dengan rancangan laporan.
 - Mengubah parameter atau return type method yang sudah ditetapkan.
 - Menghilangkan relasi antarkelas.
 - Menghilangkan inheritance atau interface yang telah dirancang.
@@ -147,14 +148,31 @@ Artinya:
 
 **DIPERBOLEHKAN DENGAN SYARAT:**
 
-- Menambahkan method pendukung.
-- Menambahkan atribut pendukung.
-- Menambahkan validasi.
-- Menambahkan exception apabila memang diperlukan.
-- Menambahkan helper atau utilitas.
-- Menambahkan pemisahan tanggung jawab apabila sesuai dengan arsitektur yang ada.
+Penambahan hanya diperbolehkan untuk mendukung implementasi fitur dan rancangan yang sudah ditetapkan, bukan untuk mengembangkan sistem berdasarkan asumsi atau preferensi AI sendiri.
 
-Penambahan tidak boleh merusak kompatibilitas dengan implementasi lain maupun mengubah rancangan yang telah disepakati.
+Penambahan yang diperbolehkan meliputi:
+
+- Menambahkan method pendukung yang tidak menggantikan atau mengubah method yang telah ditetapkan dalam laporan rancangan.
+- Menambahkan atribut pendukung selama seluruh atribut yang diwajibkan laporan rancangan tetap dipertahankan dengan nama dan tipe data yang sama.
+- Menambahkan validasi untuk menjaga integritas data dan mencegah kesalahan input tanpa mengubah aturan bisnis yang telah ditetapkan.
+- Menambahkan exception untuk menangani kondisi kesalahan yang relevan.
+- Menambahkan helper atau utilitas untuk menghindari pengulangan kode.
+- Menambahkan class atau file pendukung apabila benar-benar diperlukan dan tetap mengikuti struktur arsitektur proyek.
+- Menambahkan komponen pendukung pada antarmuka apabila diperlukan untuk menjalankan fitur yang sudah dirancang.
+
+**BATASAN PENAMBAHAN:**
+
+1. Penambahan tidak boleh menghapus, mengganti, mengubah, atau mengurangi bagian yang sudah ditetapkan dalam laporan rancangan.
+2. Penambahan tidak boleh mengubah nama, tipe data, parameter, return type, maupun kontrak elemen yang sudah ditetapkan dalam laporan rancangan.
+3. Penambahan tidak boleh mengubah struktur database, termasuk menambahkan tabel, kolom, relasi, constraint, maupun VIEW.
+4. Penambahan tidak boleh menciptakan fitur baru, proses bisnis baru, aktor baru, atau kebutuhan sistem baru yang belum ditetapkan.
+5. Penambahan tidak boleh mengubah tampilan atau mekanisme styling berdasarkan inisiatif AI sendiri.
+6. Penambahan tidak boleh mengubah cara kerja fitur yang sudah ada sehingga bertentangan dengan rancangan atau perilaku yang telah disepakati.
+7. Penambahan tidak boleh menimbulkan duplikasi fungsi, konflik, atau ketidaksesuaian dengan implementasi lain.
+
+Apabila suatu penambahan berpotensi mengubah rancangan, struktur database, fitur, atau alur bisnis, AI tidak boleh menerapkannya secara otomatis. AI harus menjelaskan kebutuhan dan dampaknya serta menunggu arahan pemilik proyek. Khusus perubahan struktur database, tetap berlaku larangan pada Bagian 6.4.
+
+Setiap penambahan harus memiliki alasan teknis yang jelas, benar-benar diperlukan, dan tetap kompatibel dengan keseluruhan sistem.
 
 ## 3.2 Jangan Melakukan Refactoring Tanpa Alasan
 
@@ -341,8 +359,14 @@ Ketentuan:
 
 Controller menghubungkan interaksi pengguna dengan proses aplikasi.
 
+Selain menangani fungsi dan alur interaksi aplikasi, Controller juga bertanggung jawab terhadap pengaturan tampilan (design) antarmuka melalui JavaFX dan FXML.
+
 Ketentuan:
 
+- Pengaturan tampilan yang berkaitan dengan halaman dan komponen antarmuka dilakukan melalui mekanisme JavaFX yang sudah digunakan dalam proyek.
+- Jangan langsung membuat file CSS baru atau menambahkan stylesheet tanpa memeriksa mekanisme styling yang sudah diterapkan.
+- Jangan memindahkan pengaturan tampilan ke CSS hanya berdasarkan preferensi atau inisiatif AI.
+- Sebelum mengubah mekanisme styling, periksa implementasi yang sudah ada dan pastikan perubahan memang diperlukan serta sesuai arahan pemilik proyek.
 - Pertahankan hubungan Controller dengan FXML.
 - Pertahankan `fx:id` yang digunakan oleh Controller.
 - Pertahankan event handler yang digunakan oleh komponen antarmuka.
@@ -432,28 +456,28 @@ Format prefiks diperoleh melalui fungsi `CONCAT` pada VIEW. Jangan mengubah ID u
 
 ## 6.4 Larangan Perubahan Database
 
-**Database schema merupakan bagian yang harus dipertahankan.**
+**STRUKTUR DATABASE YANG TELAH DITETAPKAN MERUPAKAN BAGIAN YANG TIDAK BOLEH DIUBAH OLEH AI.**
 
-DILARANG tanpa persetujuan pemilik proyek:
+AI DILARANG mengubah struktur database, termasuk:
 
-- Menghapus tabel.
-- Menghapus kolom.
+- Menghapus atau menambahkan tabel.
+- Menghapus atau menambahkan kolom.
 - Mengganti nama tabel.
 - Mengganti nama kolom.
 - Mengubah tipe data.
 - Mengganti primary key.
 - Mengganti foreign key.
-- Menghapus constraint.
+- Menghapus atau mengubah constraint.
 - Mengubah relasi antartabel.
-- Menghapus VIEW.
+- Menghapus, mengganti, atau mengubah VIEW.
 - Mengganti format prefiks ID.
 - Mengubah struktur database agar sesuai dengan kode Java yang keliru.
 
-Apabila ditemukan ketidaksesuaian antara kode Java dan database, periksa dahulu implementasi Java.
+Struktur database wajib mengikuti rancangan yang telah ditetapkan dalam laporan PBO dan diwujudkan dalam `database/schema.sql`.
 
-Jangan langsung mengubah database hanya untuk menghilangkan error.
+Apabila ditemukan ketidaksesuaian antara kode Java dan database, periksa dan perbaiki implementasi Java tanpa mengubah struktur database.
 
-Apabila perubahan database memang diperlukan, jelaskan alasannya, dampaknya, serta bagian yang terpengaruh. Tunggu persetujuan pemilik proyek sebelum mengubah `schema.sql`.
+Apabila AI menemukan masalah yang menurutnya mengharuskan perubahan struktur database, AI hanya boleh menjelaskan masalah, dampak, dan kemungkinan solusinya kepada pemilik proyek. AI tidak boleh melakukan perubahan tersebut secara sepihak.
 
 ## 6.5 Perhatian terhadap Seed Data
 
@@ -562,7 +586,8 @@ Saat melakukan perubahan:
 - Gunakan perubahan yang minimal dan terarah.
 - Pertahankan implementasi yang tidak berkaitan dengan masalah.
 - Jangan menghapus kode hanya karena terlihat tidak digunakan sebelum memeriksa seluruh pemanggilannya.
-- Jangan mengganti nama identifier tanpa alasan dan persetujuan.
+- Nama class, atribut, dan method wajib sama persis dengan yang ditetapkan dalam laporan rancangan. Dilarang mengganti, mengubah, atau menyesuaikan penamaan tersebut berdasarkan preferensi AI sendiri.
+- Tipe data wajib sama persis dengan yang ditetapkan dalam laporan rancangan. Dilarang mengubah tipe data berdasarkan preferensi atau asumsi AI sendiri.
 - Jangan mengganti struktur kode secara massal.
 - Jangan menambahkan dependency tanpa kebutuhan.
 - Jangan membuat file baru apabila kebutuhan dapat diselesaikan dengan aman menggunakan struktur yang ada.
@@ -642,7 +667,7 @@ Folder `.git` merupakan metadata repository. Jangan memodifikasi isi internalnya
 
 # 11. HAL-HAL YANG TIDAK BOLEH DILAKUKAN AI
 
-AI dilarang melakukan tindakan berikut tanpa alasan dan persetujuan yang jelas:
+AI dilarang dan tidak boleh melakukan tindakan berikut secara sepihak:
 
 1. Menulis ulang file secara keseluruhan hanya untuk memperbaiki satu bagian kecil.
 2. Menghapus atribut atau method yang berasal dari rancangan PBO.
