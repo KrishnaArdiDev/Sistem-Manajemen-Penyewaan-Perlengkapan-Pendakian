@@ -22,7 +22,7 @@ public class Vendor {
         return emailAtauUsername;
     }
 
-    public void setEmailAtauUSername(String emailAtauUsername){
+    public void setEmailAtauUsername(String emailAtauUsername){
         this.emailAtauUsername = emailAtauUsername;
     } 
 
