@@ -15,6 +15,17 @@ public class Vendor {
     private String email;
     private String namaVendor;
 
+    // ini atribut tambahan, biar vendor bisa login dengan usn atau email
+    private String emailAtauUsername;
+
+    public String getEmailAtauUsername(){
+        return emailAtauUsername;
+    }
+
+    public void setEmailAtauUSername(String emailAtauUsername){
+        this.emailAtauUsername = emailAtauUsername;
+    } 
+
     // Tambahan buat nyimpan id vendor
     private int idVendor;
 
@@ -38,13 +49,14 @@ public class Vendor {
     //#region
     public boolean login() throws LoginGagalException{
         try{
-            Vendor vendorDitemukan = vendorDAO.login(usernameAdm, pwAdm);
+            Vendor vendorDitemukan = vendorDAO.login(emailAtauUsername, pwAdm);
             if (vendorDitemukan == null){
                 throw new LoginGagalException("Username atau password tidak sesuai");
             }
 
             this.idVendor = vendorDitemukan.getIdVendor();
             this.email = vendorDitemukan.getEmail();
+            this.usernameAdm = vendorDitemukan.getUsernameAdm();
             this.namaVendor = vendorDitemukan.getNamaVendor();
             return true;
         } catch (SQLException e){

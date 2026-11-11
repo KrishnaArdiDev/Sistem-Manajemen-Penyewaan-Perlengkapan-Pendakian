@@ -29,7 +29,7 @@
             </HBox>
             <VBox fx:id="sidebarContainer" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
                <children>
-                  <Button id="tombolDashboard" fx:id="tombolDashboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="36.0" prefWidth="178.0" text="Dashboard Admion" textFill="WHITE">
+                  <Button id="tombolDashboard" fx:id="tombolDashboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="36.0" prefWidth="178.0" text="Dashboard Vendor" textFill="WHITE">
                      <graphic>
                         <ImageView id="iconDashboard" fx:id="iconDashboard" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
