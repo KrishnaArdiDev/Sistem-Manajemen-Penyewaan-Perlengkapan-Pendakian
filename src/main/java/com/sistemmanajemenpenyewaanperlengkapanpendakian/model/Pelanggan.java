@@ -10,10 +10,10 @@ public class Pelanggan {
     public String getNamaPelanggan(){
         return namaPelanggan;
     }
-    public void setNoIdentitas(String noIdentitas){
+    public void setNoIdentitasPelanggan(String noIdentitas){
         this.noIdentitas = noIdentitas;
     }
-    public String getNoIdentitas(){
+    public String getNoIdentitasPelanggan(){
         return noIdentitas;
     }
 
