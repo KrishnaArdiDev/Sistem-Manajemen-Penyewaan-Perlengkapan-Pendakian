@@ -3,24 +3,20 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-
-<!-- Satu kartu transaksi -->
-
+<?import javafx.scene.shape.SVGPath?>
 
 <HBox alignment="CENTER_LEFT" prefHeight="119.0" spacing="45.0" style="-fx-background-color: #F5F5F5; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.ItemTransaksiController">
     <children>
 
-                    <!-- garis hijau di kiri -->
+                    
         <Region maxHeight="Infinity" minWidth="10.0" prefWidth="10.0" style="-fx-background-color: #00572B; -fx-background-radius: 10 0 0 10;" />
-
-                    <!-- foto barang -->
         <ImageView fx:id="gambarBarang" fitHeight="98.0" fitWidth="92.0" pickOnBounds="true" preserveRatio="true" />
 
-                    <!-- nama barang, penyewa, tanggal -->
         <VBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
                 <Label fx:id="labelNamaBarang" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: black;" text="Nama Barang" />
@@ -35,11 +31,23 @@
 
                     <Region HBox.hgrow="ALWAYS" />
 
-                    <!-- status + tombol detail -->
-        <VBox alignment="TOP_RIGHT" maxHeight="100.0" prefWidth="280.0" spacing="40.0">
+                    <!-- status + tombol detail + unduh -->
+         <VBox alignment="TOP_RIGHT" maxHeight="100.0" prefWidth="280.0" spacing="40.0">
             <children>
                 <Label fx:id="labelStatus" alignment="CENTER" maxWidth="180.0" text="Berhasil" />
-                <Button fx:id="tombolDetail" maxHeight="20.0" maxWidth="150.0" mnemonicParsing="false" onAction="#bukaDetail" prefHeight="2.0" prefWidth="50.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Detail" />
+                <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                    <children>
+                        <Button fx:id="tombolUnduh" accessibleText="Unduh Nota" maxHeight="Infinity" minWidth="31.0" mnemonicParsing="false" onAction="#unduh" prefWidth="31.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 4 0 4 0;">
+                            <graphic>
+                                <SVGPath content="M11 3h2v10.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17V3zM5 19h14v2H5z" fill="WHITE" scaleX="0.85" scaleY="0.85" />
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Unduh Nota" />
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="tombolDetail" maxHeight="30.0" maxWidth="150.0" mnemonicParsing="false" onAction="#bukaDetail" prefHeight="30.0" prefWidth="98.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Detail" />
+                    </children>
+                </HBox>
             </children>
             <padding>
                 <Insets bottom="8.0" top="6.0" />

@@ -27,20 +27,28 @@ import javafx.stage.FileChooser;
 
 public class TambahTransaksiController {
 
-    @FXML private TextField fieldNama;
-    @FXML private Label labelFoto;
-    @FXML private ComboBox<Barang> comboPerlengkapan;
-    @FXML private Spinner<Integer> spinnerJumlah;
-    @FXML private DatePicker dateSewa;
-    @FXML private DatePicker dateKembali;
-    @FXML private Label labelTotal;
-    @FXML private Button tombolBatal;
-    @FXML private Button tombolSimpan;
+    @FXML
+    private TextField fieldNama;
+    @FXML
+    private Label labelFoto;
+    @FXML
+    private ComboBox<Barang> comboPerlengkapan;
+    @FXML
+    private Spinner<Integer> spinnerJumlah;
+    @FXML
+    private DatePicker dateSewa;
+    @FXML
+    private DatePicker dateKembali;
+    @FXML
+    private Label labelTotal;
+    @FXML
+    private Button tombolBatal;
+    @FXML
+    private Button tombolSimpan;
 
     private File fotoIdentitas;
 
-    private static final String PATH_TRANSAKSI =
-            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/transaksi.fxml";
+    private static final String PATH_TRANSAKSI = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/transaksi.fxml";
 
     public static class Barang {
         final String nama;
@@ -70,7 +78,6 @@ public class TambahTransaksiController {
         dateSewa.setValue(LocalDate.now());
         dateKembali.setValue(LocalDate.now().plusDays(1));
 
-        // total harga dihitung ulang setiap ada perubahan
         comboPerlengkapan.valueProperty().addListener((o, a, b) -> hitungTotal());
         spinnerJumlah.valueProperty().addListener((o, a, b) -> hitungTotal());
         dateSewa.valueProperty().addListener((o, a, b) -> hitungTotal());
@@ -124,12 +131,13 @@ public class TambahTransaksiController {
         long total = (long) barang.hargaPerHari * jumlah * jumlahHari();
 
         TransaksiService.tambah(new Transaksi(
-                nama.trim(),                    
+                nama.trim(),
                 barang.nama,
                 jumlah,
                 dateSewa.getValue(),
                 dateKembali.getValue(),
-                total));
+                total,
+                fotoIdentitas.getName()));
 
         info(Alert.AlertType.INFORMATION,
                 "Transaksi untuk " + nama.trim() + " tersimpan.\nTotal: " + labelTotal.getText());
@@ -142,7 +150,8 @@ public class TambahTransaksiController {
     }
 
     private long jumlahHari() {
-        if (dateSewa.getValue() == null || dateKembali.getValue() == null) return 1;
+        if (dateSewa.getValue() == null || dateKembali.getValue() == null)
+            return 1;
         long hari = ChronoUnit.DAYS.between(dateSewa.getValue(), dateKembali.getValue());
         return Math.max(hari, 1);
     }
@@ -157,16 +166,42 @@ public class TambahTransaksiController {
         labelTotal.setText(rupiah(total));
     }
 
-    // Ganti isi area tengah main-layout kembali ke halaman Transaksi
     private void kembaliKeTransaksi() {
         try {
-            BorderPane layout = (BorderPane) tombolBatal.getScene().lookup("#layoutPage");
+            javafx.scene.Scene scene = (tombolBatal != null && tombolBatal.getScene() != null)
+                    ? tombolBatal.getScene()
+                    : (tombolSimpan != null ? tombolSimpan.getScene() : null);
+
+            BorderPane layout = null;
+            if (scene != null) {
+                layout = (BorderPane) scene.lookup("#layoutPage");
+            }
+
+            if (layout == null && tombolBatal != null) {
+                javafx.scene.Node node = tombolBatal;
+                while (node != null) {
+                    if (node instanceof BorderPane && ((BorderPane) node).getCenter() != null) {
+                        layout = (BorderPane) node;
+                        break;
+                    }
+                    node = node.getParent();
+                }
+            }
+
+            if (layout == null) {
+                throw new IllegalStateException("Layout utama (#layoutPage) tidak ditemukan di scene.");
+            }
+
             Parent halaman = FXMLLoader.load(App.class.getResource(PATH_TRANSAKSI));
             BorderPane.setMargin(halaman, new Insets(16));
             layout.setCenter(halaman);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            info(Alert.AlertType.ERROR, "Gagal kembali ke halaman Transaksi:\n" + e.getMessage());
+            Throwable root = e;
+            while (root.getCause() != null) {
+                root = root.getCause();
+            }
+            info(Alert.AlertType.ERROR, "Gagal kembali ke halaman Transaksi:\n" + root.getClass().getSimpleName() + ": " + root.getMessage());
         }
     }
 

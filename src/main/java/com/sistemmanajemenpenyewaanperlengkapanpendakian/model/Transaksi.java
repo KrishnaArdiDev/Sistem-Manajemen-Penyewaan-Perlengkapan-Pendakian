@@ -5,6 +5,7 @@ public class Transaksi {
     private int jumlah;
     private LocalDate tglSewa, tglKembali;
     private long totalHarga;
+    private String fotoIdentitas;
 
         public Transaksi(String namaPenyewa, String namaBarang, int jumlah,LocalDate tglSewa, LocalDate tglKembali, long totalHarga) {
         this.namaPenyewa = namaPenyewa;
@@ -14,6 +15,13 @@ public class Transaksi {
         this.tglKembali = tglKembali;
         this.totalHarga = totalHarga;
         this.status = "Berhasil";
+        }
+
+        public Transaksi(String namaPenyewa, String namaBarang, int jumlah,
+                         LocalDate tglSewa, LocalDate tglKembali,
+                         long totalHarga, String fotoIdentitas) {
+            this(namaPenyewa, namaBarang, jumlah, tglSewa, tglKembali, totalHarga);
+            this.fotoIdentitas = fotoIdentitas;
         }
 
     public String getNamaPenyewa(){ 
@@ -30,5 +38,7 @@ public class Transaksi {
         return totalHarga; }
     public String getStatus(){ 
         return status; }
+    public String getFotoIdentitas(){
+        return fotoIdentitas; }
  }
 
