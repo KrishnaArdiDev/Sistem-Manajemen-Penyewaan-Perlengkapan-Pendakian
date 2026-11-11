@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class VendorDAO {
     // Penambahan
     public Vendor login(String emailAtauusername, String password) throws SQLException{
-        String sql = "SELECT id_vendor, username_adm, email, nama_vendor" + "FROM vendor" + "WHERE (username_adm = ? OR email = ?) " + "AND pw_adm = ? " + "LIMIT 1";
+        String sql = "SELECT id_vendor, username_adm, email, nama_vendor " + "FROM vendor " + "WHERE (username_adm = ? OR email = ?) " + "AND pw_adm = ? " + "LIMIT 1";
 
         try (Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql)){
