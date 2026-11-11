@@ -9,6 +9,17 @@ public abstract class Perlengkapan {
     private long hargaPerlengkapan;
     private long hargaSewaHarian;
 
+    // penambahan buat id perlengkapan
+    private int idPerlengkapan;
+
+    public int getIdPerlengkapan(){
+        return idPerlengkapan;
+    }
+
+    public void setIdPerlengkapan(int idPerlengkapan){
+        this.idPerlengkapan = idPerlengkapan;
+    }
+
     public String getNamaPerlengkapan(){
         return namaPerlengkapan;
     }
