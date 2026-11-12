@@ -3,137 +3,130 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" style="-fx-background-color: #F0F0F0;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <VBox fx:id="sidebarContainer" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="255.0" style="-fx-background-color: #FFFFFF;" styleClass="sidebar" BorderPane.alignment="CENTER">
-         <children>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
-               <children>
-                  <ImageView fitHeight="54.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../../images/Logo.png" />
-                     </image>
-                  </ImageView>
-                  <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="80.0" text="TAPAK" />
-               </children>
-            </HBox>
-            <VBox fx:id="sidebarContainer" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
-               <children>
-                  <Button id="tombolDashboard" fx:id="tombolDashboard" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="36.0" prefWidth="178.0" text="Dashboard Vendor" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconDashboard" fx:id="iconDashboard" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../images/logo-home.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button id="tombolDataPerleng" fx:id="tombolDataPerleng" layoutX="48.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="36.0" prefWidth="178.0" text="Data Perlengkapan" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconDataPerlengkapan" fx:id="iconDataPerlengkapan" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../images/logo-home.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button id="tombolPengembalian" fx:id="tombolPengembalian" layoutX="48.0" layoutY="61.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="36.0" prefWidth="178.0" text="Pengembalian" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconPengembalian" fx:id="iconPengembalian" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../images/logo-home.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button id="tombolTransaksi" fx:id="tombolTransaksi" layoutX="48.0" layoutY="112.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="36.0" prefWidth="178.0" text="Transaksi" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconTransaksi" fx:id="iconTransaksi" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../images/logo-home.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Button id="tombolKeluar" fx:id="tombolKeluar" layoutX="48.0" layoutY="164.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="36.0" prefWidth="178.0" text="Keluar" textFill="WHITE">
-                     <graphic>
-                        <ImageView id="iconKeluar" fx:id="iconKeluar" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../images/logo-home.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-               </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </VBox>
-            <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="570.0" prefWidth="255.0" VBox.vgrow="ALWAYS" />
-            <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="175.0">
-               <children>
-                  <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="48.0">
-                     <children>
-                        <ImageView id="fotoProfile" fx:id="fotoProfile" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true" />
-                        <Circle fill="#1f93ff00" radius="24.0" stroke="#2f5b3a" strokeType="INSIDE" strokeWidth="2.0" />
-                     </children>
-                  </StackPane>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="2.0">
-                     <children>
-                        <Label text="WELCOME" />
-                        <Label id="labelUsername" fx:id="labelUsername" text="Label" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </left>
-   <center>
-      <BorderPane fx:id="layoutPage" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <top>
-            <HBox fx:id="headerContainer" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="83.0" prefWidth="1194.0" spacing="80.0" BorderPane.alignment="CENTER">
-               <children>
-                  <HBox fx:id="searchContainer" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <ImageView fx:id="searchIcon" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                           <image>
-                              <Image url="@../../../images/IkonSearch.png" />
-                           </image>
-                        </ImageView>
-                        <TextField fx:id="searchField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="834.0" promptText="Masukkan perlengkapan yang ingin dicari..." />
-                     </children>
-                  </HBox>
-                  <HBox fx:id="headerAction" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="100.0" spacing="40.0">
-                     <children>
-                        <Button fx:id="tombolNotifikasi" alignment="CENTER" mnemonicParsing="false">
-                           <graphic>
-                              <ImageView fx:id="iconNotifikasi" fitHeight="33.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../../images/logo-home.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <ImageView fx:id="elementHeader" fitHeight="45.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true" />
-                     </children>
-                  </HBox>
-               </children>
-            </HBox>
-         </top>
-      </BorderPane>
-   </center>
-</BorderPane>
+<VBox spacing="16.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.NotaController">
+    <children>
+
+        <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <children>
+                <Label fx:id="tombolKembaliAtas" onMouseClicked="#kembali" text="‹"
+                       style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #00572B; -fx-cursor: hand;" />
+                <Label text="Nota Transaksi"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
+            </children>
+        </HBox>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS"
+                    style="-fx-background: white; -fx-background-color: white; -fx-background-radius: 30; -fx-border-radius: 30;">
+            <content>
+                <VBox fx:id="kertasNota" spacing="18.0" style="-fx-background-color: white;">
+                    <padding>
+                        <Insets bottom="30.0" left="40.0" right="40.0" top="25.0" />
+                    </padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <ImageView fitHeight="54.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../../../images/Logo.png" />
+                                    </image>
+                                </ImageView>
+                                <VBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <children>
+                                        <Label text="TAPAK" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
+                                        <Label text="Penyewaan Perlengkapan Pendakian" style="-fx-font-size: 13px; -fx-text-fill: #7A7A7A;" />
+                                    </children>
+                                </VBox>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <VBox alignment="CENTER_RIGHT" spacing="2.0">
+                                    <children>
+                                        <Label text="NOTA PENYEWAAN" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: black;" />
+                                        <Label fx:id="labelTanggalCetak" text="Dicetak: 00-00-0000" style="-fx-font-size: 13px; -fx-text-fill: #7A7A7A;" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <Separator />
+                        <GridPane hgap="24.0" vgap="8.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="150.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            <children>
+                                <Label text="Nama Penyewa" style="-fx-font-size: 14px; -fx-text-fill: #7A7A7A;" GridPane.rowIndex="0" />
+                                <Label fx:id="labelPenyewa" text="-" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: black;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <Label text="Tanggal Sewa" style="-fx-font-size: 14px; -fx-text-fill: #7A7A7A;" GridPane.rowIndex="1" />
+                                <Label fx:id="labelTglSewa" text="-" style="-fx-font-size: 14px; -fx-text-fill: black;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <Label text="Tanggal Kembali" style="-fx-font-size: 14px; -fx-text-fill: #7A7A7A;" GridPane.rowIndex="2" />
+                                <Label fx:id="labelTglKembali" text="-" style="-fx-font-size: 14px; -fx-text-fill: black;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <Label text="Status" style="-fx-font-size: 14px; -fx-text-fill: #7A7A7A;" GridPane.rowIndex="3" />
+                                <Label fx:id="labelStatus" text="-" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #00572B;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                            </children>
+                        </GridPane>
+                        <GridPane hgap="12.0" vgap="0.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS" percentWidth="36.0" />
+                                <ColumnConstraints percentWidth="12.0" />
+                                <ColumnConstraints percentWidth="14.0" />
+                                <ColumnConstraints percentWidth="18.0" />
+                                <ColumnConstraints percentWidth="20.0" />
+                            </columnConstraints>
+                            <children>
+                                <Label maxWidth="Infinity" text="Barang" style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 10 8 10; -fx-background-radius: 8 0 0 0;" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Label maxWidth="Infinity" text="Jumlah" style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 10 8 10;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <Label maxWidth="Infinity" text="Lama Sewa" style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 10 8 10;" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                <Label maxWidth="Infinity" text="Harga / Hari" style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 10 8 10;" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                <Label maxWidth="Infinity" text="Subtotal" style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 10 8 10; -fx-background-radius: 0 8 0 0;" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+
+                                <Label fx:id="labelBarang" maxWidth="Infinity" text="-" style="-fx-background-color: #F5F5F5; -fx-font-size: 14px; -fx-text-fill: black; -fx-padding: 10;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label fx:id="labelJumlah" maxWidth="Infinity" text="-" style="-fx-background-color: #F5F5F5; -fx-font-size: 14px; -fx-text-fill: black; -fx-padding: 10;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <Label fx:id="labelLamaSewa" maxWidth="Infinity" text="-" style="-fx-background-color: #F5F5F5; -fx-font-size: 14px; -fx-text-fill: black; -fx-padding: 10;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                <Label fx:id="labelHargaHari" maxWidth="Infinity" text="-" style="-fx-background-color: #F5F5F5; -fx-font-size: 14px; -fx-text-fill: black; -fx-padding: 10;" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                <Label fx:id="labelSubtotal" maxWidth="Infinity" text="-" style="-fx-background-color: #F5F5F5; -fx-font-size: 14px; -fx-text-fill: black; -fx-padding: 10;" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                            </children>
+                        </GridPane>
+                        <HBox alignment="CENTER_RIGHT" spacing="16.0">
+                            <children>
+                                <Label text="Total Bayar" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;" />
+                                <Label fx:id="labelTotal" text="Rp 0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
+                            </children>
+                        </HBox>
+
+                        <Separator />
+
+                        <Label text="Terima kasih telah menyewa di TAPAK. Harap kembalikan perlengkapan sesuai tanggal kembali."
+                               wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #7A7A7A;" />
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                            <children>
+                                <Button fx:id="tombolKembali" mnemonicParsing="false" onAction="#kembali" text="Kembali"
+                                        style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;" />
+                            </children>
+                        </HBox>
+                        <VBox alignment="TOP_CENTER" spacing="6.0">
+                             <children>
+                        <Label text="Foto Identitas" style="-fx-font-size: 13px; -fx-text-fill: #7A7A7A;" />
+                        <ImageView fx:id="imageFotoIdentitas" fitHeight="120.0" fitWidth="190.0" pickOnBounds="true" preserveRatio="true" />
+                           <Label fx:id="labelFotoKosong" text="Tidak ada foto" alignment="CENTER" prefHeight="120.0" prefWidth="190.0"
+                       style="-fx-background-color: #E8E8E8; -fx-background-radius: 8; -fx-text-fill: #7A7A7A;" />
+                        </children>
+                      </VBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+    </children>
+    <padding>
+        <Insets bottom="0.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</VBox>
