@@ -1,18 +1,44 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.model;
+
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.DataTidakLengkapException;
+
 import java.time.LocalDate;
-public class Transaksi {
-    private String namaPenyewa, namaBarang, status;
-    private int jumlah;
-    private LocalDate tglSewa, tglKembali;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public class Transaksi implements DapatDicetak {
+
+    private int idTransaksi;
+    private LocalDate tanggalSewa;
+    private int durasiSewa;
+    private LocalDate tanggalKembali;
+    private LocalDate tanggalTransaksi;
     private long totalHarga;
     private String fotoIdentitas;
 
-        public Transaksi(String namaPenyewa, String namaBarang, int jumlah,LocalDate tglSewa, LocalDate tglKembali, long totalHarga) {
-        this.namaPenyewa = namaPenyewa;
-        this.namaBarang = namaBarang;
-        this.jumlah = jumlah;
-        this.tglSewa = tglSewa;
-        this.tglKembali = tglKembali;
+    private boolean isKosong(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    private String rupiah(long nilai) {
+        return String.format(Locale.forLanguageTag("id-ID"), "Rp%,d", nilai);
+    }
+
+    private String namaBarangTemp;
+    private String namaPenyewaTemp;
+
+    public Transaksi(String namaPenyewa, String namaBarang, int kuantitas, LocalDate tglSewa, LocalDate tglKembali, long totalHarga) {
+        this.pelanggan = new Pelanggan();
+        this.pelanggan.setNamaPelanggan(namaPenyewa);
+        this.pelanggan.setNoIdentitasPelanggan("-");
+
+        this.tanggalTransaksi = LocalDate.now();
+        this.tanggalSewa = tglSewa;
+        this.tanggalKembali = tglKembali;
+        this.durasiSewa = (int) Math.max(1, java.time.temporal.ChronoUnit.DAYS.between(tglSewa, tglKembali));
+        this.metodePembayaran = "Tunai";
         this.totalHarga = totalHarga;
         this.status = "Berhasil";
         }
@@ -41,4 +67,36 @@ public class Transaksi {
     public String getFotoIdentitas(){
         return fotoIdentitas; }
  }
+        this.denda = 0;
 
+        this.namaBarangTemp = namaBarang;
+        this.namaPenyewaTemp = namaPenyewa;
+        this.stokSudahDikurangi = false;
+    }
+
+    public String getNamaBarang() {
+        if (daftarDetail != null && !daftarDetail.isEmpty() && daftarDetail.get(0).getPerlengkapanYangDisewa() != null) {
+            return daftarDetail.get(0).getPerlengkapanYangDisewa().getNamaPerlengkapan();
+        }
+        return namaBarangTemp != null ? namaBarangTemp : "-";
+    }
+
+    public String getNamaPenyewa() {
+        if (pelanggan != null && pelanggan.getNamaPelanggan() != null) {
+            return pelanggan.getNamaPelanggan();
+        }
+        return namaPenyewaTemp != null ? namaPenyewaTemp : "-";
+    }
+
+    public LocalDate getTglSewa() {
+        return tanggalSewa;
+    }
+
+    public LocalDate getTglKembali() {
+        return tanggalKembali;
+    }
+
+    public String getStatus() {
+        return "Aktif";
+    }
+}
