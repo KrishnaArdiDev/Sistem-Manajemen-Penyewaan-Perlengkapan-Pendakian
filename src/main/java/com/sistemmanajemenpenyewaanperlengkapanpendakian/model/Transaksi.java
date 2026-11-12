@@ -22,7 +22,7 @@ public class Transaksi implements DapatDicetak{
     private long totalHarga;
     private long denda;
     private String metodePembayaran;
-  
+
     // ini buat asosiasi diagram
     private Pelanggan pelanggan;
     private List<DetailTransaksi> daftarDetail;
