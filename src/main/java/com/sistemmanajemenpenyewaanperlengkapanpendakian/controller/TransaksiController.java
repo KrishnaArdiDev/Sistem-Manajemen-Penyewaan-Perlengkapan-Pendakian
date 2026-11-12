@@ -27,12 +27,12 @@ import javafx.scene.layout.VBox;
 
 public class TransaksiController {
 
-    @FXML private VBox containerTransaksi;
+    @FXML
+    private VBox containerTransaksi;
 
-    private static final String PATH_ITEM =
-            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/item-transaksi.fxml";
-    private static final String PATH_TAMBAH =
-            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/tambah-transaksi.fxml";
+    private static final String PATH_ITEM = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/item-transaksi.fxml";
+    private static final String PATH_NOTA = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/nota.fxml";
+    private static final String PATH_TAMBAH = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/tambah-transaksi.fxml";
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     private BorderPane layoutUtama;
@@ -59,7 +59,7 @@ public class TransaksiController {
     }
 
     private void tambahKartu(String barang, String penyewa, String tglSewa,
-                             String tglKembali, String status, String gambar) {
+            String tglKembali, String status, String gambar) {
         try {
             FXMLLoader loader = new FXMLLoader(App.class.getResource(PATH_ITEM));
             Node kartu = loader.load();
@@ -85,9 +85,49 @@ public class TransaksiController {
         }
     }
 
+    private boolean siapkanLayoutUtama() {
+        if (containerTransaksi.getScene() == null)
+            return false;
+        if (layoutUtama == null) {
+            Node node = containerTransaksi;
+            while (node.getParent() != null) {
+                Parent parent = node.getParent();
+                if (parent instanceof BorderPane && ((BorderPane) parent).getCenter() == node) {
+                    layoutUtama = (BorderPane) parent;
+                    break;
+                }
+                node = parent;
+            }
+        }
+        if (layoutUtama == null) {
+            System.err.println("Layout konten utama tidak ditemukan.");
+            return false;
+        }
+        return true;
+    }
+
+    private void tampilkanNota(Transaksi t) {
+        if (!siapkanLayoutUtama())
+            return;
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource(PATH_NOTA));
+            Parent nota = loader.load();
+            NotaController controller = loader.getController();
+            controller.setTransaksi(t);
+            controller.setAksiKembali(this::kembaliKeTransaksi);
+            halamanTransaksi = layoutUtama.getCenter();
+            BorderPane.setMargin(nota, new Insets(16));
+            layoutUtama.setCenter(nota);
+        } catch (IOException e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Gagal membuka nota:\n" + e).showAndWait();
+        }
+    }
+
     private void tampilkanDetail(String barang, String penyewa, String tglSewa,
-                                 String tglKembali, String status, String gambar) {
-        if (containerTransaksi.getScene() == null) return;
+            String tglKembali, String status, String gambar) {
+        if (containerTransaksi.getScene() == null)
+            return;
 
         if (layoutUtama == null) {
             Node node = containerTransaksi;
@@ -115,7 +155,7 @@ public class TransaksiController {
         judul.setAlignment(Pos.CENTER_LEFT);
         judul.setPadding(new Insets(0, 0, 0, 8));
 
-        Label tombolKembali = new Label("‹");
+        Label tombolKembali = new Label("<");
         tombolKembali.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #00572B; -fx-cursor: hand;");
         tombolKembali.setOnMouseClicked(e -> kembaliKeTransaksi());
 
@@ -135,7 +175,8 @@ public class TransaksiController {
         foto.setPreserveRatio(true);
         foto.setSmooth(true);
         var url = App.class.getResource(gambar);
-        if (url != null) foto.setImage(new Image(url.toExternalForm()));
+        if (url != null)
+            foto.setImage(new Image(url.toExternalForm()));
 
         HBox wadahFoto = new HBox(foto);
         wadahFoto.setAlignment(Pos.CENTER);
@@ -157,7 +198,8 @@ public class TransaksiController {
         konfirmasi.setMinWidth(95);
         konfirmasi.setPrefHeight(30);
         konfirmasi.setFocusTraversable(false);
-        konfirmasi.setStyle("-fx-background-color: #00572B; -fx-text-fill: white; -fx-background-radius: 7; -fx-padding: 7 18; -fx-font-size: 11px; -fx-cursor: hand;");
+        konfirmasi.setStyle(
+                "-fx-background-color: #00572B; -fx-text-fill: white; -fx-background-radius: 7; -fx-padding: 7 18; -fx-font-size: 11px; -fx-cursor: hand;");
         konfirmasi.setOnAction(e -> kembaliKeTransaksi());
 
         HBox areaTombol = new HBox(konfirmasi);
@@ -178,7 +220,8 @@ public class TransaksiController {
         field.setFocusTraversable(false);
         field.setPrefHeight(30);
         field.setMaxWidth(Double.MAX_VALUE);
-        field.setStyle("-fx-background-color: #E8E8E8; -fx-background-radius: 6; -fx-border-color: #555555; -fx-border-radius: 6; -fx-font-size: 13px;");
+        field.setStyle(
+                "-fx-background-color: #E8E8E8; -fx-background-radius: 6; -fx-border-color: #555555; -fx-border-radius: 6; -fx-font-size: 13px;");
 
         VBox grup = new VBox(5, label, field);
         grup.setMaxWidth(Double.MAX_VALUE);

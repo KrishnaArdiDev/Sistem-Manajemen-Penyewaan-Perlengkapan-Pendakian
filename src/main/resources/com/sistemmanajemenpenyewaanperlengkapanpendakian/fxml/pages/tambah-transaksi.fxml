@@ -29,12 +29,8 @@
                     </padding>
                     <children>
 
-                        <Label maxWidth="Infinity" alignment="CENTER" text="FORMULIR TAMBAH TRANSAKSI"
-                               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #00572B;">
-                            <VBox.margin>
-                                <Insets bottom="14.0" />
-                            </VBox.margin>
-                        </Label>
+                <Label text="Data Penyewa"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
 
                         <!-- Nama Peminjam -->
                         <Label text="Nama Peminjam" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
@@ -64,10 +60,8 @@
                             </children>
                         </HBox>
 
-                        <!-- Tanggal Meminjam -->
-                        <Label text="Tanggal Meminjam" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
-                        <DatePicker fx:id="dateSewa" maxWidth="Infinity" prefHeight="36.0"
-                                    style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;" />
+                <Label text="Perlengkapan yang Disewa"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
 
                         <!-- Tanggal Kembali -->
                         <Label text="Tanggal Kembali" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
