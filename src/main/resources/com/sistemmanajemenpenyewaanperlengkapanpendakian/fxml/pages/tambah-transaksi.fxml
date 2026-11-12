@@ -70,10 +70,8 @@
                             </children>
                         </HBox>
 
-                        <!-- Tanggal Meminjam -->
-                        <Label text="Tanggal Meminjam" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />
-                        <DatePicker fx:id="dateSewa" maxWidth="Infinity" prefHeight="36.0"
-                                    style="-fx-background-color: #E8E8E8; -fx-border-color: #3A3A3A; -fx-border-width: 1.5; -fx-border-radius: 8; -fx-background-radius: 8;" />
+                <Label text="Perlengkapan yang Disewa"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
 
                         <!-- Tanggal Kembali -->
                         <Label text="Tanggal Kembali" style="-fx-font-size: 14px; -fx-padding: 10 0 0 0;" />

@@ -49,9 +49,7 @@ public class Transaksi {
     public String getFotoIdentitas(){
         return fotoIdentitas; }
 
-    // PENAMBAHAN
     public void konfirmasiTransaksi() {
         this.status = "Berhasil";
     }
  }
-

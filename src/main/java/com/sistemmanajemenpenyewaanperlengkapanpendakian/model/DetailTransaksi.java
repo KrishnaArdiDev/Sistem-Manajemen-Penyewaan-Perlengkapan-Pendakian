@@ -20,6 +20,9 @@ public class DetailTransaksi {
     public void setStatusPengembalianBarang(String statusPengembalian){
         this.statusPengembalian = statusPengembalian;
     }
+    public void setPengembalianSudahDiproses(boolean status) {
+    this.pengembalianSudahDiproses = status;
+}
 
     public long getBiayaGantiRugi(){
         return biayaGantiRugi;
