@@ -6,6 +6,7 @@ public class Transaksi {
     private LocalDate tglSewa, tglKembali;
     private long totalHarga;
     private String fotoIdentitas;
+    private int idTransaksi;
 
         public Transaksi(String namaPenyewa, String namaBarang, int jumlah,LocalDate tglSewa, LocalDate tglKembali, long totalHarga) {
         this.namaPenyewa = namaPenyewa;
@@ -24,6 +25,13 @@ public class Transaksi {
             this.fotoIdentitas = fotoIdentitas;
         }
 
+        public int getIdTransaksi() { 
+            return idTransaksi; 
+        }
+        public void setIdTransaksi(int idTransaksi) { 
+            this.idTransaksi = idTransaksi; 
+        }
+
     public String getNamaPenyewa(){ 
     return namaPenyewa; }
     public String getNamaBarang(){
@@ -40,5 +48,10 @@ public class Transaksi {
         return status; }
     public String getFotoIdentitas(){
         return fotoIdentitas; }
+
+    // PENAMBAHAN
+    public void konfirmasiTransaksi() {
+        this.status = "Berhasil";
+    }
  }
 
