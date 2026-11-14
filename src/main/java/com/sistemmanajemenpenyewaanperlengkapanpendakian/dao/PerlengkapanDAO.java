@@ -1,9 +1,11 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.dao;
 
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.DatabaseConnection;
-import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.*;
-import java.sql.*;
-import java.util.*;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class PerlengkapanDAO {
 

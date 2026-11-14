@@ -124,10 +124,7 @@ public class Vendor {
             throw new IllegalStateException("Gagal memperbarui transaksi", e);
         }
     }
-    //#endregion
 
-    //#region
-    // penambahan getter dan setter ID vendor
     public int getIdVendor(){
         return idVendor;
     }

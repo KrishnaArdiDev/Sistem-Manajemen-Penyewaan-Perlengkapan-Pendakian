@@ -24,7 +24,7 @@ public class TransaksiService {
         } catch (DataTidakLengkapException e) {
             throw new IllegalArgumentException("Data transaksi belum lengkap: " + e.getMessage(), e);
         } catch (StokTidakCukupException e) {
-            throw e; //
+            throw e; 
         }
 
         daftar.add(0, t);
