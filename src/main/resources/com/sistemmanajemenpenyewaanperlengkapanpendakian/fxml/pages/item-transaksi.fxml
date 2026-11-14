@@ -39,7 +39,7 @@
                     <children>
                         <Button fx:id="tombolUnduh" accessibleText="Unduh Nota" maxHeight="Infinity" minWidth="31.0" mnemonicParsing="false" onAction="#unduh" prefWidth="31.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 4 0 4 0;">
                             <graphic>
-                                <SVGPath content="M11 3h2v10.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17V3zM5 19h14v2H5z" fill="WHITE" scaleX="0.85" scaleY="0.85" />
+                                <SVGPath content="M11 3h2v10.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17V3zM5 19h14v2H5z" fill="WHITE" mouseTransparent="true" scaleX="0.85" scaleY="0.85" />
                             </graphic>
                             <tooltip>
                                 <Tooltip text="Unduh Nota" />

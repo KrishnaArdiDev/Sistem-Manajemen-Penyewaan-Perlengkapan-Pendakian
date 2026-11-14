@@ -52,22 +52,33 @@ public class TransaksiController {
             return;
         }
         for (Transaksi t : TransaksiService.semua()) {
-            tambahKartu(t.getNamaBarang(), t.getNamaPenyewa(),
-                    t.getTglSewa().format(FMT), t.getTglKembali().format(FMT),
-                    t.getStatus(), "/images/tas.png");
+            tambahKartu(t, "/images/tas.png");
         }
     }
 
-    private void tambahKartu(String barang, String penyewa, String tglSewa,
-            String tglKembali, String status, String gambar) {
+    private void tambahKartu(Transaksi t, String gambar) {
         try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource(PATH_ITEM));
+            var res = App.class.getResource(PATH_ITEM);
+            if (res == null) {
+                System.err.println("Gagal menemukan FXML item transaksi di: " + PATH_ITEM);
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(res);
             Node kartu = loader.load();
             ItemTransaksiController item = loader.getController();
+
+            String barang = t.getNamaBarang();
+            String penyewa = t.getNamaPenyewa();
+            String tglSewa = t.getTglSewa().format(FMT);
+            String tglKembali = t.getTglKembali().format(FMT);
+            String status = t.getStatus();
+
             item.setData(barang, penyewa, tglSewa, tglKembali, status, gambar,
                     () -> tampilkanDetail(barang, penyewa, tglSewa, tglKembali, status, gambar));
+            item.setAksiUnduh(() -> tampilkanNota(t));
             containerTransaksi.getChildren().add(kartu);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            System.err.println("Gagal memuat kartu transaksi:");
             e.printStackTrace();
         }
     }
