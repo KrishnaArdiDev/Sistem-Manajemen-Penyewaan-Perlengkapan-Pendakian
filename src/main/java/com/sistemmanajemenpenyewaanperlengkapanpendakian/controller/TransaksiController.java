@@ -3,6 +3,8 @@ package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Transaksi;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.DetailTransaksi;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +28,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.util.Locale;
 
 public class TransaksiController {
 
