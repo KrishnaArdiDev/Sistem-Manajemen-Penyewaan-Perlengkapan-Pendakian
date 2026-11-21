@@ -168,10 +168,19 @@ public class MainLayoutController {
 
         List<Button> tombolNavigasi = Arrays.asList(
             tombolDashboard, tombolDataPerleng, tombolKeluar,
-            tombolPengembalian, tombolTransaksi, tombolProfile
+            tombolPengembalian, tombolTransaksi, tombolProfile, tombolNotifikasi
         );
 
         for (Button tombol: tombolNavigasi){
+            if (tombol == tombolNotifikasi){
+             tombol.setStyle(
+                (tombolAktif == tombolNotifikasi ? "-fx-background-color: #005A32;" : "-fx-background-color: transparent;") +
+                "-fx-background-radius: 10;" +
+                "-fx-border-color: transparent;" +
+                "-fx-border-width: 0;"
+            );
+            continue;   
+            }
             if (tombol == tombolAktif){
                 tombol.setStyle(
                     "-fx-background-color: #005A32;"+
@@ -203,6 +212,7 @@ public class MainLayoutController {
         ikonAktifSide(iconPengembalian, tombolAktif == tombolPengembalian, "/images/logo-pengembalian-hijau.png", "/images/logo-pengembalian-putih.png");
         ikonAktifSide(iconTransaksi, tombolAktif == tombolTransaksi, "/images/logo-transaksi-hijau.png", "/images/logo-transaksi-putih.png");
         ikonAktifSide(iconKeluar, tombolAktif == tombolKeluar, "/images/logo-keluar-hijau.png", "/images/logo-keluar-hijau.png");
+        ikonAktifSide(iconNotifikasi, tombolAktif == tombolNotifikasi, "/images/logo-notif.png", "/images/iconNotifikasi-Aktif.png");
     }
 
     private void styleHeader(){
@@ -328,6 +338,11 @@ public class MainLayoutController {
     private void bukaProfile() throws IOException {
         tampilkanHalaman("profile");
         aturTombolAktif(tombolProfile);
+    }
+    @FXML
+    private void bukaNotifikasi() throws IOException {
+        tampilkanHalaman("notifikasi");
+        aturTombolAktif(tombolNotifikasi);
     }
     
     @FXML
