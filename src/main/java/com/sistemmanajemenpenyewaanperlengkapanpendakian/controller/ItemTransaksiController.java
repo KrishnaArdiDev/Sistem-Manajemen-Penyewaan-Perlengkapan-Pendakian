@@ -41,9 +41,13 @@ public class ItemTransaksiController {
     }
 
     private void atur(String status) {
-        labelStatus.setText(status);
+    labelStatus.setText(status);
 
-        labelStatus.setWrapText(true);
+    labelStatus.setWrapText(true);
+    if (labelStatus.getParent() instanceof javafx.scene.layout.VBox){
+        javafx.scene.layout.VBox wadahStatus = (javafx.scene.layout.VBox) labelStatus.getParent();
+        wadahStatus.setMaxHeight(Double.MAX_VALUE);
+    }
     labelStatus.setMinHeight(32);
     labelStatus.setMaxHeight(Double.MAX_VALUE);
 
