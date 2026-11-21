@@ -112,7 +112,7 @@
                   </HBox>
                   <HBox fx:id="headerAction" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" spacing="40.0">
                      <children>
-                        <Button fx:id="tombolNotifikasi" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#pencetNotifikasi">
+                        <Button fx:id="tombolNotifikasi" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#bukaNotifikasi">
                            <graphic>
                               <ImageView fx:id="iconNotifikasi" fitHeight="33.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
