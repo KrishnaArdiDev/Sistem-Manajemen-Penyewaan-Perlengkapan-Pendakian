@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+import javafx.scene.control.ScrollPane;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -106,20 +107,11 @@ public class TransaksiController {
             String penyewa = t.getPelanggan() == null || t.getPelanggan().getNamaPelanggan() == null ? "-" : t.getPelanggan().getNamaPelanggan();
             String tglSewa = t.getTanggalSewa() == null ? "-" : t.getTanggalSewa().format(FMT);
             String tglKembali = t.getTanggalKembali() == null ? "-" : t.getTanggalKembali().format(FMT);
-            String status = "Transaksi Berhasil\n" + buatRingkasanStatusPengembalian(t);
+            String status = buatRingkasanStatusPengembalian(t);
 
             item.setData(barang, penyewa, tglSewa, tglKembali, status, gambar, () -> tampilkanDetail(t, gambar));
             item.setAksiUnduh(() -> tampilkanNota(t));
 
-            int jumlahBarisStatus = status.split("\n").length -1;
-            double tinggiKartu = 199;
-
-            if (jumlahBarisStatus >0){
-                tinggiKartu = Math.max(119, 75 + (jumlahBarisStatus +1) *22);
-            }
-
-            kartu.setMinHeight(tinggiKartu);
-            kartu.setPrefHeight(tinggiKartu);
             kartu.setMaxWidth(Double.MAX_VALUE);
             containerTransaksi.getChildren().add(kartu);
         } catch (Exception e) {
@@ -131,25 +123,21 @@ public class TransaksiController {
     }
 
     private String buatRingkasanStatusPengembalian(Transaksi transaksi){
-        if (transaksi.getDaftarDetail() == null || transaksi.getDaftarDetail().isEmpty()){
-            return "Belum ada detail perlengkapan.";
+        if (transaksi == null || transaksi.getDaftarDetail() == null || transaksi.getDaftarDetail().isEmpty()){
+            return "Berhasil";
         }
 
         StringBuilder hasil = new StringBuilder();
         for (DetailTransaksi detail : transaksi.getDaftarDetail()){
-            if (detail == null || detail.getPerlengkapanYangDisewa() == null){
-                continue;
-            }
-            if (detail.getTanggalPengembalianBarang() == null){
+            if (detail == null || detail.getPerlengkapanYangDisewa() == null || detail.getTanggalPengembalianBarang() == null){
                 continue;
             }
             if (hasil.length() > 0){
                 hasil.append("\n");
             }
-            Perlengkapan barang = detail.getPerlengkapanYangDisewa();
-            hasil.append(barang.getNamaPerlengkapan()).append(": ").append(statusPengembalian(transaksi, detail));
+            hasil.append(statusPengembalian(transaksi, detail));
         }
-        return hasil.length() == 0 ? "Belum ada detail perlengkapan." : hasil.toString();
+        return hasil.length() == 0 ? "Berhasil" : hasil.toString();
     }
 
     private String statusPengembalian(Transaksi transaksi, DetailTransaksi detail){
@@ -170,7 +158,7 @@ public class TransaksiController {
 
         boolean terlambat = tanggalJatuhTempo != null && tanggalAktual.isAfter(tanggalJatuhTempo);
 
-        return "Sudah Dikembalikan • " + (terlambat ? "Terlambat" : "Tepat Waktu") + " • " + kondisi.toUpperCase(Locale.ROOT);
+        return "Sudah Dikembalikan | " + (terlambat ? "Terlambat" : "Tepat Waktu") + " " + kondisi.toUpperCase(Locale.ROOT);
     }
 
     @FXML
@@ -270,8 +258,6 @@ public class TransaksiController {
                 "-fx-background-radius: 16;"
         );
 
-        VBox.setVgrow(panel, Priority.ALWAYS);
-
         ImageView foto = new ImageView();
 
         foto.setFitWidth(100);
@@ -353,7 +339,17 @@ public class TransaksiController {
     HBox areaTombol = new HBox(konfirmasi);
     areaTombol.setAlignment(Pos.CENTER_RIGHT);
     panel.getChildren().add(areaTombol);
-    detail.getChildren().addAll(judul, panel);
+
+    ScrollPane scrollPanel = new ScrollPane(panel);
+    scrollPanel.setFitToWidth(true);
+    scrollPanel.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollPanel.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    scrollPanel.setPannable(true);
+    scrollPanel.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+
+    VBox.setVgrow(scrollPanel, Priority.ALWAYS);
+
+    detail.getChildren().addAll(judul, scrollPanel);
     BorderPane.setMargin(detail, new Insets(16));
     layoutUtama.setCenter(detail);
     }

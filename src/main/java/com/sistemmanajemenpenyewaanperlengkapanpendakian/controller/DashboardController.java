@@ -267,10 +267,6 @@ private HBox buatKartuDashboard(ItemDashboard item) throws Exception{
 
 
     status.setText(item.labelStatus());
-    status.setWrapText(true);
-    status.setMinHeight(42);
-    status.setPrefHeight(42);
-    status.setMaxHeight(42);
 
     boolean bermasalah = item.terlambat || item.terlambatDikembalikan || item.kondisiBermasalah();
 
@@ -305,6 +301,22 @@ private HBox buatKartuDashboard(ItemDashboard item) throws Exception{
     kartu.setStyle(
         "-fx-background-color: #F5F5F5;" +
         "-fx-background-radius: 12;"
+    );
+
+    detail.setStyle(
+         "-fx-background-color: #FFFFFF;" +
+        "-fx-border-color: #005A32;" +
+        "-fx-border-radius: 14;" +
+        "-fx-background-radius: 14;" +
+        "-fx-text-fill: #005A32;"
+    );
+
+    konfirmasi.setStyle(
+        "-fx-background-color: #005A32;" +
+        "-fx-border-color: #005A32;" +
+        "-fx-border-radius: 14;" +
+        "-fx-background-radius: 14;" +
+        "-fx-text-fill: #FFFFFF;"
     );
 
     detail.setCursor(Cursor.HAND);
@@ -393,16 +405,13 @@ private void isiTemplateProduk(ItemDashboard item) {
             formatTanggal(item.transaksi.getTanggalKembali())
     );
 
-    labelStatusProduk.setText(
-            item.terlambat ? "Terlambat" : "Akan Terlambat"
-    );
-
     aturGambar(gambarProduk, barang.getFotoBarang());
     aturStatusProduk(
             labelStatusProduk,
             indikatorStatusProduk,
             item.terlambat
     );
+    labelStatusProduk.setText(item.labelStatus());
 
     // Menyimpan data item untuk integrasi tombol berikutnya.
     itemProduk1.setUserData(item);
@@ -823,7 +832,7 @@ private static class ItemDashboard {
 
     private String labelStatus(){
         if (sudahDikembalikan){
-            return "Sudah Dikembalikan • " + (terlambatDikembalikan ? "Terlambat" : "Tepat Waktu") + " • " + ambilKondisi().toUpperCase(Locale.ROOT);
+            return "Sudah Dikembalikan • " + (terlambatDikembalikan ? "Terlambat" : "Tepat Waktu") + " " + ambilKondisi().toUpperCase(Locale.ROOT);
         }
         return terlambat ? "Terlambat" : "Sedang disewa";
     }

@@ -43,7 +43,7 @@ public class ItemTransaksiController {
     private void atur(String status) {
     labelStatus.setText(status);
 
-    labelStatus.setWrapText(true);
+    labelStatus.setWrapText(false);
     if (labelStatus.getParent() instanceof javafx.scene.layout.VBox){
         javafx.scene.layout.VBox wadahStatus = (javafx.scene.layout.VBox) labelStatus.getParent();
         wadahStatus.setMaxHeight(Double.MAX_VALUE);
@@ -67,7 +67,7 @@ public class ItemTransaksiController {
         warnaBg = "#FFD6D6";
         warnaBorder = "#B00020";
         warnaTeks = "#B00020";
-    } else if (sudahDikembalikan && !masihDisewa) {
+    } else if (s.equals("berhasil") || (sudahDikembalikan && !masihDisewa)) {
         warnaBg = "#C8FFB8";
         warnaBorder = "#00572B";
         warnaTeks = "#00572B";
