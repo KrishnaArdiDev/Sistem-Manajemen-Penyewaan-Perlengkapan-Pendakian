@@ -15,7 +15,7 @@
 
 <BorderPane prefHeight="1024.0" prefWidth="1440.0" style="-fx-background-color: #F0F0F0;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.MainLayoutController">
    <left>
-      <VBox fx:id="paneVbox" alignment="CENTER" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefWidth="255.0" style="-fx-background-color: #FFFFFF;" styleClass="sidebar" BorderPane.alignment="CENTER">
+      <VBox fx:id="paneVbox" alignment="CENTER" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefWidth="255.0" style="-fx-background-color: #FFFFFF;" styleClass="sidebar" BorderPane.alignment="TOP_CENTER">
          <children>
             <HBox alignment="CENTER" maxHeight="-Infinity" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                <children>
@@ -59,18 +59,18 @@
                   <Insets />
                </VBox.margin>
             </VBox>
-            <Pane maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefHeight="570.0" prefWidth="255.0" VBox.vgrow="ALWAYS" />
+            <Pane maxHeight="500.0" maxWidth="-Infinity" minHeight="0.0" minWidth="-Infinity" prefHeight="0.0" prefWidth="255.0" VBox.vgrow="ALWAYS" />
             <Button fx:id="tombolProfile" mnemonicParsing="false" onAction="#bukaProfile">
                <graphic>
                   <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="175.0" spacing="5.0">
                      <children>
-                        <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="48.0">
+                        <StackPane fx:id="wadahFotoProfile" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="48.0">
                            <children>
                               <ImageView id="fotoProfile" fx:id="fotoProfile" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true" />
-                              <Circle fx:id="borderProfile" fill="#1f93ff00" radius="24.0" stroke="#2f5b3a" strokeType="INSIDE" strokeWidth="2.0" />
+                              <Circle fx:id="borderProfile" centerX="24.0" centerY="24.0" fill="#1f93ff00" radius="23.0" stroke="#2f5b3a" strokeType="INSIDE" strokeWidth="2.0" />
                            </children>
                         </StackPane>
-                        <VBox fx:id="welcomeContainer" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="2.0">
+                        <VBox fx:id="welcomeContainer" alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="100.0" spacing="2.0">
                            <children>
                               <Label fx:id="labelWelcome" text="WELCOME" />
                               <Label id="labelUsername" fx:id="labelUsername" text="Label" />
@@ -112,7 +112,7 @@
                   </HBox>
                   <HBox fx:id="headerAction" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" spacing="40.0">
                      <children>
-                        <Button fx:id="tombolNotifikasi" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false">
+                        <Button fx:id="tombolNotifikasi" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#pencetNotifikasi">
                            <graphic>
                               <ImageView fx:id="iconNotifikasi" fitHeight="33.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                                  <image>

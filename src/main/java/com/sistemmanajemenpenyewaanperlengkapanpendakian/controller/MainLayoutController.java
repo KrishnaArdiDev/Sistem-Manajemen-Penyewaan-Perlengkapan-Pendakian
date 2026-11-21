@@ -26,14 +26,23 @@ import javafx.scene.shape.Circle;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.geometry.Rectangle2D;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.shape.Circle;
 
+
+import javafx.application.Platform;
 
 public class MainLayoutController {
+
+    
 //#region ini adalah section fxml untuk manggil field
     private Button tombolAktif;
 
     @FXML
     private VBox paneVbox;
+    @FXML
+    private StackPane wadahFotoProfile;
 
     @FXML 
     private Button tombolProfile;
@@ -115,9 +124,7 @@ public class MainLayoutController {
         
         styleHeader();
 
-        muatInformasiVendor();
-
-        fotoProfile.setClip(new Circle(24, 24, 24));
+        fotoProfile.setClip(new Circle(24, 24, 22));
         muatInformasiVendor();
 
         try{
@@ -125,8 +132,13 @@ public class MainLayoutController {
         } catch (IOException e){
             throw new RuntimeException(e);
         }
-        
+
+        tombolProfile.setMinHeight(48);
+        tombolProfile.setPrefHeight(48);
+        tombolProfile.setMaxHeight(48);
+        tombolProfile.setPadding(Insets.EMPTY);
     }
+    
 
 //#region
 
@@ -244,20 +256,35 @@ public class MainLayoutController {
 
         labelUsername.setText(vendor.getUsernameAdm());
 
-        fotoProfile.setClip(new Circle(24, 24, 24));
-        String uriFoto = vendor.getFotoProfile();
+        aturFotoProfileSidebar(vendor.getFotoProfile());
+    }
 
+    private void aturFotoProfileSidebar(String uriFoto){
+        fotoProfile.setImage(null);
+        fotoProfile.setViewport(null);
+        
+        fotoProfile.setFitWidth(48);
+        fotoProfile.setFitHeight(48);
+        fotoProfile.setPreserveRatio(false);
+        fotoProfile.setSmooth(true);
+        fotoProfile.setClip(new Circle(24, 24, 24));
+        
         if (uriFoto == null || uriFoto.trim().isEmpty()){
-            fotoProfile.setImage(null);
             return;
         }
+        
+        Image foto = new Image(uriFoto, false);
+        fotoProfile.setImage(foto);
+        
+        if (!foto.isError() && foto.getWidth() > 0 && foto.getHeight() > 0){
+            double sisi = Math.min(foto.getWidth(), foto.getHeight());
 
-        Image foto = new Image(uriFoto, 48, 48, true, true);
-        if (!foto.isError()){
             fotoProfile.setImage(foto);
-        } else {
-            fotoProfile.setImage(null);
+            fotoProfile.setViewport(new Rectangle2D((foto.getWidth() - sisi) / 2, (foto.getHeight() - sisi) / 2, sisi, sisi));
         }
+
+        
+
     }
 
     private void tampilkanHalaman(String namaFxml) throws IOException {
