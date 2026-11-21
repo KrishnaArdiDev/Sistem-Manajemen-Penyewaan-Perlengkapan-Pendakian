@@ -64,7 +64,7 @@
                                            preserveRatio="true">
                                     <image>
                                         <!-- PERUBAHAN: PATH LOGO -->
-                                        <Image url="@../../../images/Logo.png"/>
+                                        <Image url="@../../../../images/Logo.png"/>
                                     </image>
                                 </ImageView>
 

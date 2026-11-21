@@ -66,6 +66,8 @@
 
                     <Button fx:id="uploadButton"
                             text="Ganti Foto"
+                            visible ="false"
+                            managed ="false"
                             onAction="#handleUploadPhoto"
                             style="-fx-background-color: white;
                                    -fx-text-fill: #00643D;
@@ -81,6 +83,8 @@
 
             <Button fx:id="deleteButton"
                     text="Hapus Profile"
+                    visible="false"
+                    managed="false"
                     onAction="#handleDelete"
                     style="-fx-background-color: white;
                            -fx-text-fill: #B3261E;
@@ -102,7 +106,6 @@
                               -fx-text-fill: #333333;"/>
 
                 <TextField fx:id="storeNameField"
-                           text="Toko Penyewaan Pendakian Abadi"
                            editable="false"/>
             </VBox>
 
@@ -112,7 +115,6 @@
                               -fx-text-fill: #333333;"/>
 
                 <TextField fx:id="emailField"
-                           text="tokopenyewaanpendakianabadi@gmail.com"
                            editable="false"/>
             </VBox>
 
@@ -122,7 +124,6 @@
                               -fx-text-fill: #333333;"/>
 
                 <TextField fx:id="locationField"
-                           text="Jl. Raya Kampus UNUD, Jimbaran, Bali"
                            editable="false"/>
             </VBox>
 
