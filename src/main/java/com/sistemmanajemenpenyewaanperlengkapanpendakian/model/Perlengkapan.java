@@ -12,6 +12,17 @@ public abstract class Perlengkapan {
     // penambahan buat id perlengkapan
     private int idPerlengkapan;
 
+    // Penambahan, ini buat foto barangnya
+    private String fotoBarang;
+
+    public  String getFotoBarang(){
+        return fotoBarang;
+    }
+
+    public  void setFotoBarang(String fotoBarang){
+        this.fotoBarang = fotoBarang;
+    }
+
     public int getIdPerlengkapan(){
         return idPerlengkapan;
     }
@@ -93,9 +104,9 @@ public abstract class Perlengkapan {
     }
 
     // ini penambahan
-    // public String getNamaVendor(){
-    //     return namaVendor;
-    // }
+    public String getNamaVendor(){
+        return namaVendor;
+    }
 
     // ini penambahan
     public void setNamaVendor(String namaVendor){

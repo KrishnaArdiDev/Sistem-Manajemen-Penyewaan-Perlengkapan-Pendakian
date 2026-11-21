@@ -34,6 +34,16 @@ public class Transaksi implements DapatDicetak{
     // ini penambahan, ini buat pencegahan stok dikurangi berulang
     private boolean stokSudahDikurangi;
 
+    // Penambahan, ini buat foto kartu identitas
+    private String fotoIdentitas;
+    public String getFotoIdentitas(){
+        return fotoIdentitas;
+    }
+
+    public void setFotoIdentitas(String fotoIdentitas){
+        this.fotoIdentitas = fotoIdentitas;
+    }
+
     // Ini konstruktor buat transaksi baru
     public Transaksi(Pelanggan pelanggan, List <DetailTransaksi> daftarDetail, LocalDate tanggalTransaksi, LocalDate tanggalSewa, int durasiSewa, String metodePembayaran){
         this.pelanggan = pelanggan;
@@ -66,12 +76,17 @@ public class Transaksi implements DapatDicetak{
         return idTransaksi;
     }
 
+    public void setIdTransaksi(int idTransaksi){
+        this.idTransaksi = idTransaksi;
+    }
+
     public LocalDate getTanggalSewa(){
         return tanggalSewa;
     }
 
     public void setTanggalSewa(LocalDate tanggalSewa){
         this.tanggalSewa = tanggalSewa;
+        this.tanggalKembali = null;
     }
 
     public int getDurasiSewa(){
@@ -80,10 +95,23 @@ public class Transaksi implements DapatDicetak{
 
     public void setDurasiSewa(int durasiSewa){
         this.durasiSewa = durasiSewa;
+        this.tanggalKembali = null;
     }
 
     public LocalDate getTanggalKembali(){
         return tanggalKembali;
+    }
+
+
+    // Penambahan
+    // Menyinkronkan status objek setelah transaksi berhasil disimpan ke database
+    public void tandaiTransaksiTersimpan(LocalDate tanggalKembali){
+        if (tanggalKembali == null){
+            throw new IllegalArgumentException("Tanggal kembali tidak boleh null");
+        }
+
+        this.tanggalKembali = tanggalKembali;
+        this.stokSudahDikurangi = true;
     }
 
     public long getTotalHarga(){
@@ -202,7 +230,9 @@ public class Transaksi implements DapatDicetak{
             continue;
         }
         long hariTerlambat = Math.max(0, ChronoUnit.DAYS.between(tanggalKembali, tanggalAktual));
-        long dendaDetail = Math.multiplyExact(Math.multiplyExact(hariTerlambat, perlengkapan.getHargaSewaHarian()), kuantitas);
+        Long hargaHistoris = detail.getHargaSewaHarianSaatTransaksi();
+        long tarifSewaHarian = hargaHistoris != null? hargaHistoris: perlengkapan.getHargaSewaHarian();
+        long dendaDetail = Math.multiplyExact(Math.multiplyExact(hariTerlambat, tarifSewaHarian),kuantitas);
         totalDenda = Math.addExact(totalDenda, dendaDetail);
     }
     this.denda = totalDenda;

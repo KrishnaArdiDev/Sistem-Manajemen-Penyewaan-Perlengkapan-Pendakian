@@ -4,21 +4,30 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.*;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import java.time.*;
 import java.util.*;
-import javafx.fxml.FXML;
 import javafx.collections.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 
+
 public class LoginController {
+// ini penambahan atribut untuk Auth
+private final AuthService authService = new AuthService();
 
 //#region
 @FXML 
@@ -58,6 +67,9 @@ public class LoginController {
     private void initialize(){
         styleSideWelkam();
         styleSideLogin();
+
+        // penambahan ini untuk connect tombol masuk dengan proses login
+        buttonMasuk.setOnAction(event -> prosesLogin());
     }
 //#endregion
 //#region
@@ -103,6 +115,31 @@ public class LoginController {
     }
 //#endregion
 
+
+//#region Proses login
+    private void prosesLogin(){
+        try{
+            authService.login(inputEmail.getText(), inputPassword.getText());
+            App.setRoot("main-layout");
+
+        } catch (LoginGagalException e){
+            tampilkanPesan(Alert.AlertType.WARNING, "Login Gagal", e.getMessage());
+        } catch (IllegalStateException e){
+            tampilkanPesan(Alert.AlertType.ERROR, "Kesalahan database", e.getMessage());
+        } catch (IOException e){
+            tampilkanPesan(Alert.AlertType.ERROR, "Kesalahan aplikasi", "Login berhasil, tapi halaman utama gagal dibuka\n" + e.getMessage());
+        }
+    }
+
+// penambahan buat show notif ke user
+private void tampilkanPesan(Alert.AlertType tipe, String judul, String pesan){
+    Alert alert = new Alert(tipe);
+    alert.setTitle(judul);
+    alert.setHeaderText(null);
+    alert.setContentText(pesan);
+    alert.showAndWait();
+}
+//#endregion
     @FXML
     private void switchToSecondary() throws IOException {
         App.setRoot("login");
