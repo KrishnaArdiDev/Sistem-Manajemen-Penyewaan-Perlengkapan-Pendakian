@@ -7,6 +7,7 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.TransaksiDAO;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.VendorDAO;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.DataTidakLengkapException;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.LoginGagalException;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
 
 
 public class Vendor {
@@ -34,6 +35,27 @@ public class Vendor {
     private final PerlengkapanDAO perlengkapanDAO;
     private final TransaksiDAO transaksiDAO;
 
+    // Tambahan, ini untuk lokasi toko dan foto profile vendor
+    private String lokasiToko;
+
+    public String getLokasiToko(){
+        return lokasiToko;
+    }
+
+    public void setLokasiToko(String lokasiToko){
+        this.lokasiToko = lokasiToko;
+    }
+
+    private String fotoProfile;
+
+    public String getFotoProfile(){
+        return fotoProfile;
+    }
+
+    public void setFotoProfile(String fotoProfile){
+        this.fotoProfile = fotoProfile;
+    }
+
     // Penambahan, ini untuk data yang akan dikelola oleh vendor
     private Perlengkapan perlengkapanYangDikelola;
     private Transaksi transaksiYangDikelola;
@@ -58,6 +80,8 @@ public class Vendor {
             this.email = vendorDitemukan.getEmail();
             this.usernameAdm = vendorDitemukan.getUsernameAdm();
             this.namaVendor = vendorDitemukan.getNamaVendor();
+            this.lokasiToko = vendorDitemukan.getLokasiToko();
+            this.fotoProfile = vendorDitemukan.getFotoProfile();
             return true;
         } catch (SQLException e){
             System.err.println("Gagal melakukan login: " + e.getMessage());
@@ -105,10 +129,9 @@ public class Vendor {
         if (transaksiYangDikelola == null){
             throw new DataTidakLengkapException("Data transaksi belum ditentukan");
         }
-        transaksiYangDikelola.konfirmasiTransaksi();
 
         try{
-            transaksiDAO.tambahDataTransaksi(transaksiYangDikelola, idVendor);
+            TransaksiService.tambah(transaksiYangDikelola, idVendor);;
         } catch (SQLException e){
             throw new IllegalStateException("Gagal menambahkan transaksi", e);
         }

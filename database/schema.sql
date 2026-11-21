@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS vendor(
     pw_adm VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     nama_vendor VARCHAR(150) NOT NULL,
+    lokasi_toko VARCHAR(500) DEFAULT NULL,
+    foto_profile VARCHAR(500) DEFAULT NULL,
     
     PRIMARY KEY (id_vendor),
    --  ini penambahan, bahwa usn harus unik, biar ga sama kek vendor yg lain
@@ -40,6 +42,7 @@ CREATE TABLE IF NOT EXISTS perlengkapan(
    tipe_kompor VARCHAR(100) DEFAULT NULL,
    tipe_tas VARCHAR(100) DEFAULT NULL,
    ukuran_sepatu INT DEFAULT NULL,
+   foto_barang VARCHAR(500) DEFAULT NULL,
 
    PRIMARY KEY(id_perlengkapan),
 
@@ -71,6 +74,7 @@ CREATE TABLE IF NOT EXISTS transaksi(
    total_harga BIGINT NOT NULL,
    denda BIGINT NOT NULL DEFAULT 0,
    metode_pembayaran VARCHAR(100) NOT NULL,
+   foto_identitas VARCHAR(500) DEFAULT NULL,
 
    PRIMARY KEY(id_transaksi),
 
@@ -104,6 +108,7 @@ CREATE TABLE IF NOT EXISTS detail_transaksi(
    tanggal_pengembalian_barang DATE DEFAULT NULL,
    status_pengembalian ENUM('utuh', 'rusak', 'hilang') DEFAULT NULL,
    biaya_ganti_rugi BIGINT NOT NULL DEFAULT 0,
+   harga_sewa_harian_saat_transaksi BIGINT DEFAULT NULL,
 
    PRIMARY KEY(id_detail_transaksi),
 
@@ -124,7 +129,13 @@ CREATE TABLE IF NOT EXISTS detail_transaksi(
       CHECK(kuantitas_per_alat >0),
 
    CONSTRAINT chk_detail_ganti_rugi
-      CHECK(biaya_ganti_rugi >=0)
+      CHECK(biaya_ganti_rugi >=0),
+
+   CONSTRAINT chk_detail_harga_sewa_historis
+      CHECK(
+         harga_sewa_harian_saat_transaksi IS NULL
+         OR harga_sewa_harian_saat_transaksi >= 0
+      )
 )ENGINE = InnoDB;
 
 -- SQL VIEW 
@@ -137,7 +148,9 @@ SELECT
    username_adm,
    pw_adm,
    email,
-   nama_vendor
+   nama_vendor,
+   lokasi_toko,
+   foto_profile
 FROM vendor;
 
 -- Pelanggan | Format ID: 1P, 2P, 3P, dan seterusnya......
@@ -160,7 +173,8 @@ SELECT
    harga_sewa_harian,
    tipe_kompor,
    tipe_tas,
-   ukuran_sepatu
+   ukuran_sepatu,
+   foto_barang
 FROM perlengkapan;
 
 -- Transaksi | Format ID: 1T, 2T, 3T, dan seterusnya......
@@ -175,7 +189,8 @@ SELECT
    tanggal_kembali,
    total_harga,
    denda,
-   metode_pembayaran
+   metode_pembayaran,
+   foto_identitas
 FROM transaksi;
 
 -- Detail transaksi | Format ID: 1Dt, 2Dt, 3Dt, dan seterusnya......
@@ -187,8 +202,9 @@ SELECT
    kuantitas_per_alat,
    tanggal_pengembalian_barang,
    status_pengembalian,
-   biaya_ganti_rugi
-FROM detail_transaksi
+   biaya_ganti_rugi,
+   harga_sewa_harian_saat_transaksi
+FROM detail_transaksi;
 
 
 

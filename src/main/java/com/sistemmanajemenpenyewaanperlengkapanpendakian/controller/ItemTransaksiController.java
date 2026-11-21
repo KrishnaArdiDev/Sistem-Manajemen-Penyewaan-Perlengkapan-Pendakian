@@ -53,7 +53,7 @@ public class ItemTransaksiController {
             warnaBg = "#FFD6D6";
             warnaBorder = "#B00020";
             warnaTeks = "#B00020";
-        } else { // dipinjam / proses
+        } else { // disewa / proses
             warnaBg = "#FFF3C4";
             warnaBorder = "#B38600";
             warnaTeks = "#B38600";

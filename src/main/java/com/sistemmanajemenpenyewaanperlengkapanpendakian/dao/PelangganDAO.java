@@ -24,7 +24,7 @@ public class PelangganDAO {
         try(Connection connection = DatabaseConnection.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
                 statement.setString(1, pelanggan.getNamaPelanggan());
-                statement.setString(1, pelanggan.getNoIdentitasPelanggan());
+                statement.setString(2, pelanggan.getNoIdentitasPelanggan());
 
                 statement.executeUpdate();
 
@@ -57,5 +57,35 @@ public class PelangganDAO {
                 }
             }
             return daftarPelanggan;
+    }
+
+    // Mengambil pelanggan berdasarkan nomor identitas
+    public List<Pelanggan> ambilBerdasarkanNoIdentitas(String noIdentitas) throws SQLException {
+        String sql = "SELECT id_pelanggan, nama_pelanggan, no_identitas "
+                + "FROM pelanggan "
+                + "WHERE no_identitas = ? "
+                + "ORDER BY id_pelanggan";
+
+        List<Pelanggan> daftarPelanggan = new ArrayList<>();
+
+        try (Connection connection = DatabaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, noIdentitas.trim());
+
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    Pelanggan pelanggan = new Pelanggan();
+
+                    pelanggan.setIdPelanggan(result.getInt("id_pelanggan"));
+                    pelanggan.setNamaPelanggan(result.getString("nama_pelanggan"));
+                    pelanggan.setNoIdentitasPelanggan(result.getString("no_identitas"));
+
+                    daftarPelanggan.add(pelanggan);
+                }
+            }
+        }
+
+        return daftarPelanggan;
     }
 }

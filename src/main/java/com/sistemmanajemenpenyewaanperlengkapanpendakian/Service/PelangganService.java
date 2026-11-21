@@ -1,37 +1,25 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.Service;
 
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.PelangganDAO;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.DataTidakLengkapException;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Pelanggan;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
 public class PelangganService {
 
-    // PENAMBAHAN: cache list pelanggan untuk keperluan transaksi
-    private static final List<Pelanggan> daftarPelanggan = new ArrayList<>();
+    private static final PelangganDAO pelangganDAO = new PelangganDAO();
 
-    static {
-        // Data awal pelanggan untuk demo transaksi
-        Pelanggan p1 = new Pelanggan();
-        p1.setIdPelanggan(1);
-        p1.setNamaPelanggan("Budi");
-        p1.setNoIdentitasPelanggan("5100000001");
-        daftarPelanggan.add(p1);
-
-        Pelanggan p2 = new Pelanggan();
-        p2.setIdPelanggan(2);
-        p2.setNamaPelanggan("Ica");
-        p2.setNoIdentitasPelanggan("5100000002");
-        daftarPelanggan.add(p2);
-    }
-
-    // PENAMBAHAN: Memvalidasi data pelanggan dan memproses untuk transaksi (Issue #86)
-    public static Pelanggan prosesDataPelanggan(String nama, String noIdentitas) throws DataTidakLengkapException {
+    // Memvalidasi dan memproses data pelanggan untuk transaksi
+    public static Pelanggan prosesDataPelanggan(String nama, String noIdentitas) throws DataTidakLengkapException, SQLException{
+        // Validasi nama pelanggan
         if (nama == null || nama.trim().isEmpty()) {
             throw new DataTidakLengkapException("Nama pelanggan wajib diisi.");
         }
+
+        // Validasi nomor identitas
         if (noIdentitas == null || noIdentitas.trim().isEmpty()) {
             throw new DataTidakLengkapException("Nomor identitas pelanggan wajib diisi.");
         }
@@ -39,38 +27,84 @@ public class PelangganService {
         String namaBersih = nama.trim();
         String noIdBersih = noIdentitas.trim();
 
-        // Cari apakah pelanggan sudah pernah terdaftar
-        for (Pelanggan p : daftarPelanggan) {
-            if (p.getNoIdentitasPelanggan() != null && p.getNoIdentitasPelanggan().equalsIgnoreCase(noIdBersih)) {
-                return p;
-            }
+        // Validasi panjang data berdasarkan struktur database
+        if (namaBersih.length() >150){
+            throw new DataTidakLengkapException("Nama pelanggan maksimal 150 karakter");
         }
 
-        // Jika belum ada, buat objek Pelanggan baru dan tambahkan
+        if (noIdBersih.length() >50){
+            throw new DataTidakLengkapException("Nomor identitas pelanggan maksimal 50 karakter");
+        }
+
+        // Mengambil data pelanggan dari DB
+        List<Pelanggan> daftarPelanggan = pelangganDAO.ambilBerdasarkanNoIdentitas(noIdBersih);
+        // Jika hanya ditemukan satu pelanggan, gunakan pelanggan tersebut
+        if (daftarPelanggan.size() == 1) {
+            return daftarPelanggan.get(0);
+        }
+        // Jika terdapat beberapa pelanggan dengan identitas sama,
+        // cocokkan kembali berdasarkan nama
+        if (daftarPelanggan.size() > 1) {
+            Pelanggan pelangganYangCocok = null;
+            int jumlahNamaCocok = 0;
+
+            for (Pelanggan pelanggan : daftarPelanggan) {
+                String namaTersimpan = pelanggan.getNamaPelanggan();
+
+                if (namaTersimpan != null
+                        && namaTersimpan.trim().equalsIgnoreCase(namaBersih)) {
+                    pelangganYangCocok = pelanggan;
+                    jumlahNamaCocok++;
+                }
+            }
+
+            if (jumlahNamaCocok == 1) {
+                return pelangganYangCocok;
+            }
+
+            throw new DataTidakLengkapException(
+                    "Nomor identitas ditemukan pada beberapa pelanggan. "
+                    + "Nama pelanggan tidak dapat menentukan data yang benar."
+            );
+        }
+
+        // Membuat objek pelanggan baru jika belum terdaftar
         Pelanggan pelangganBaru = new Pelanggan();
-        pelangganBaru.setIdPelanggan(daftarPelanggan.size() + 1);
+        
         pelangganBaru.setNamaPelanggan(namaBersih);
         pelangganBaru.setNoIdentitasPelanggan(noIdBersih);
-        daftarPelanggan.add(pelangganBaru);
+
+        // Menyimpan pelanggan ke database
+        // ID pelanggan akan diisi otomatis melalui generated keys
+        pelangganDAO.tambahDataPelanggan(pelangganBaru);
 
         return pelangganBaru;
     }
 
-    // PENAMBAHAN: Mendapatkan seluruh daftar pelanggan
-    public static List<Pelanggan> semua() {
+    // Mengambil seluruh data pelanggan dari database
+    public static List<Pelanggan> semua() throws SQLException{
+        List<Pelanggan> daftarPelanggan = pelangganDAO.ambilSemuaPelanggan();
+
         return Collections.unmodifiableList(daftarPelanggan);
     }
-
-    // PENAMBAHAN: Mencari pelanggan berdasarkan nomor identitas
-    public static Pelanggan cariByNoIdentitas(String noIdentitas) {
-        if (noIdentitas == null || noIdentitas.trim().isEmpty()) {
+    
+    // Mencari pelanggan berdasarkan nomor identitas
+    public static Pelanggan cariByNoIdentitas(String noIdentitas) throws SQLException {
+        if (noIdentitas == null){
             return null;
         }
-        for (Pelanggan p : daftarPelanggan) {
-            if (noIdentitas.trim().equalsIgnoreCase(p.getNoIdentitasPelanggan())) {
-                return p;
-            }
+        String identitasDicari = noIdentitas.trim();
+        if (identitasDicari.isEmpty()){
+            return null;
         }
-        return null;
+        List<Pelanggan> daftarPelanggan = pelangganDAO.ambilBerdasarkanNoIdentitas(identitasDicari);
+
+        if (daftarPelanggan.isEmpty()){
+            return null;
+        }
+        if (daftarPelanggan.size() > 1){
+            throw new SQLException("Nomor identitas dimiliki oleh beberapa pelanggan. " + "Data tidak dapat ditentukan secara otomatis.");
+        }
+        return daftarPelanggan.get(0);
     }
 }
