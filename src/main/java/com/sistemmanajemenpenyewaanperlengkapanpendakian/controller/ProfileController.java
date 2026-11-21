@@ -54,10 +54,8 @@ public class ProfileController {
     @FXML
     private Button saveButton;
 
-    // DAO untuk menyimpan perubahan profile.
     private final VendorDAO vendorDAO = new VendorDAO();
 
-    // Vendor yang sedang login.
     private Vendor vendorAktif;
 
     private String savedStoreName;
@@ -74,7 +72,6 @@ public class ProfileController {
 
         profileImage.setClip(new Circle(56, 56, 56));
 
-        // Mengambil vendor dari sesi login.
         vendorAktif = AuthService.getVendorAktif();
 
         if (vendorAktif == null) {
@@ -90,13 +87,11 @@ public class ProfileController {
             return;
         }
 
-        // Mengisi halaman berdasarkan data vendor dari database.
         muatDataVendor();
 
         aturModeEdit(false);
     }
 
-    // Memuat seluruh informasi vendor.
     private void muatDataVendor() {
 
         storeNameField.setText(
@@ -133,7 +128,6 @@ public class ProfileController {
         aturModeEdit(true);
     }
 
-    // Membentuk username berdasarkan kata pertama dan terakhir.
     private String buatUsername(String namaVendor) {
 
         String[] kata = namaVendor.trim()
@@ -175,7 +169,6 @@ public class ProfileController {
             ? ""
             : locationField.getText().trim();
 
-        // Nama toko wajib mempunyai minimal dua kata.
         String usernameBaru = buatUsername(nama);
 
         if (usernameBaru == null) {
@@ -198,12 +191,10 @@ public class ProfileController {
             return;
         }
 
-        // Lokasi boleh kosong dan akan disimpan sebagai SQL NULL.
         if (lokasi.isEmpty()) {
             lokasi = null;
         }
 
-        // Menyiapkan data yang akan dikirim ke DAO.
         Vendor vendorPerbarui = new Vendor();
 
         vendorPerbarui.setIdVendor(vendorAktif.getIdVendor());
@@ -215,10 +206,7 @@ public class ProfileController {
 
         try {
 
-            // Menyimpan seluruh perubahan profile ke MySQL.
             vendorDAO.updateProfileVendor(vendorPerbarui);
-
-            // Memperbarui objek vendor yang sedang aktif.
             vendorAktif.setNamaVendor(nama);
             vendorAktif.setUsernameAdm(usernameBaru);
             vendorAktif.setEmail(email);
@@ -230,7 +218,6 @@ public class ProfileController {
             simpanSnapshot();
             aturModeEdit(false);
 
-            // Memperbarui informasi pada sidebar.
             perbaruiTampilanSidebar();
 
             tampilkanInformasi(
@@ -270,7 +257,6 @@ public class ProfileController {
         savedPhotoUri = currentPhotoUri;
     }
 
-    // Mengatur tampilan mode baca dan mode edit.
     private void aturModeEdit(boolean aktif) {
 
         editing = aktif;
@@ -279,12 +265,10 @@ public class ProfileController {
         emailField.setEditable(aktif && vendorAktif != null);
         locationField.setEditable(aktif && vendorAktif != null);
 
-        // Mode tampilan.
         editButton.setVisible(!aktif);
         editButton.setManaged(!aktif);
         editButton.setDisable(vendorAktif == null);
 
-        // Mode edit.
         uploadButton.setVisible(aktif);
         uploadButton.setManaged(aktif);
 
@@ -391,7 +375,6 @@ public class ProfileController {
 
             try {
 
-                // Foto langsung disimpan ke database.
                 vendorDAO.updateFotoProfile(
                     vendorAktif.getIdVendor(), uri
                 );
@@ -474,7 +457,6 @@ public class ProfileController {
 
             try {
 
-                // Menghapus foto saja, bukan akun vendor.
                 vendorDAO.updateFotoProfile(
                     vendorAktif.getIdVendor(), null
                 );
@@ -504,7 +486,6 @@ public class ProfileController {
         }
     }
 
-    // Memperbarui username dan foto pada sidebar tanpa reload halaman.
     private void perbaruiTampilanSidebar() {
 
         if (profileImage.getScene() == null || vendorAktif == null) {

@@ -13,7 +13,6 @@ import java.util.List;
 
 
 public class PelangganDAO {
-    // Penambahan CREATE, nambahin data pelanggan
     public void tambahDataPelanggan(Pelanggan pelanggan) throws SQLException{
         if (pelanggan == null){
             throw new IllegalArgumentException("Data pelanggan tidak boleh null");
@@ -28,7 +27,6 @@ public class PelangganDAO {
 
                 statement.executeUpdate();
 
-                // Penambahan mengambil ID yang dibuat otomatis oleh MySQL
                 try(ResultSet generatedKeys = statement.getGeneratedKeys()){
                     if (generatedKeys.next()){
                         pelanggan.setIdPelanggan(generatedKeys.getInt(1));
@@ -38,7 +36,6 @@ public class PelangganDAO {
                 }
             }
     }
-    // Penambahan read, ngambil seluruh data pelanggan
     public List<Pelanggan> ambilSemuaPelanggan() throws SQLException{
         String sql = "SELECT id_pelanggan, nama_pelanggan, no_identitas " + "FROM pelanggan " + "ORDER BY id_pelanggan";
 
@@ -59,7 +56,6 @@ public class PelangganDAO {
             return daftarPelanggan;
     }
 
-    // Mengambil pelanggan berdasarkan nomor identitas
     public List<Pelanggan> ambilBerdasarkanNoIdentitas(String noIdentitas) throws SQLException {
         String sql = "SELECT id_pelanggan, nama_pelanggan, no_identitas "
                 + "FROM pelanggan "

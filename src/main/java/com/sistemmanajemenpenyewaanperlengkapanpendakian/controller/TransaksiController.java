@@ -32,6 +32,9 @@ import javafx.scene.layout.VBox;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.Arrays;
+import java.util.Optional;
+import javafx.scene.control.ChoiceDialog;
 
 public class TransaksiController {
 
@@ -40,6 +43,7 @@ public class TransaksiController {
 
     private static final String PATH_ITEM = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/item-transaksi.fxml";
     private static final String PATH_NOTA = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/nota.fxml";
+    private static final String PATH_RINGKASAN = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/ringkasan-transaksi.fxml";
     private static final String PATH_TAMBAH = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/tambah-transaksi.fxml";
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -54,7 +58,6 @@ public class TransaksiController {
     private void muatTransaksi() {
     containerTransaksi.getChildren().clear();
 
-    // >>> PERUBAHAN: MENANGANI KONDISI TANPA SESI VENDOR
     List<Transaksi> daftarTransaksi;
 
     try {
@@ -69,7 +72,6 @@ public class TransaksiController {
         containerTransaksi.getChildren().add(kosong);
         return;
     }
-    // <<< AKHIR PERUBAHAN
 
     if (daftarTransaksi.isEmpty()) {
         Label kosong = new Label(
@@ -110,7 +112,7 @@ public class TransaksiController {
             String status = buatRingkasanStatusPengembalian(t);
 
             item.setData(barang, penyewa, tglSewa, tglKembali, status, gambar, () -> tampilkanDetail(t, gambar));
-            item.setAksiUnduh(() -> tampilkanNota(t));
+            item.setAksiCetak(() -> tampilkanNota(t));
 
             kartu.setMaxWidth(Double.MAX_VALUE);
             containerTransaksi.getChildren().add(kartu);
@@ -195,23 +197,80 @@ public class TransaksiController {
         return true;
     }
 
-    private void tampilkanNota(Transaksi t) {
-        if (!siapkanLayoutUtama())
-            return;
-        try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource(PATH_NOTA));
-            Parent nota = loader.load();
-            NotaController controller = loader.getController();
-            controller.setTransaksi(t);
-            controller.setAksiKembali(this::kembaliKeTransaksi);
-            halamanTransaksi = layoutUtama.getCenter();
-            BorderPane.setMargin(nota, new Insets(16));
-            layoutUtama.setCenter(nota);
-        } catch (IOException e) {
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Gagal membuka nota:\n" + e).showAndWait();
-        }
+    
+private void tampilkanNota(Transaksi t) {
+
+    if (!siapkanLayoutUtama()) {
+        return;
     }
+
+    ChoiceDialog<String> dialog = new ChoiceDialog<>(
+            "Nota",
+            Arrays.asList("Nota", "Ringkasan")
+    );
+
+    dialog.setTitle("Cetak Transaksi");
+    dialog.setHeaderText("Pilih jenis dokumen yang akan dicetak");
+    dialog.setContentText("Jenis dokumen:");
+
+    Optional<String> pilihan = dialog.showAndWait();
+
+    if (!pilihan.isPresent()) {
+        return;
+    }
+
+    try {
+
+        // Simpan halaman transaksi sebelumnya
+        halamanTransaksi = layoutUtama.getCenter();
+
+        // Jika pengguna memilih Ringkasan
+        if ("Ringkasan".equals(pilihan.get())) {
+
+            FXMLLoader loader = new FXMLLoader(
+                    App.class.getResource(PATH_RINGKASAN)
+            );
+
+            Parent ringkasan = loader.load();
+
+            RingkasanTransaksiController controller =
+                    loader.getController();
+
+            // Masukkan data transaksi yang dipilih
+            controller.setDataTransaksi(t);
+
+            BorderPane.setMargin(ringkasan, new Insets(16));
+            layoutUtama.setCenter(ringkasan);
+
+            return;
+        }
+
+        // Jika pengguna memilih Nota
+        FXMLLoader loader = new FXMLLoader(
+                App.class.getResource(PATH_NOTA)
+        );
+
+        Parent nota = loader.load();
+
+        NotaController controller = loader.getController();
+
+        controller.setTransaksi(t, pilihan.get());
+        controller.setAksiKembali(this::kembaliKeTransaksi);
+
+        BorderPane.setMargin(nota, new Insets(16));
+        layoutUtama.setCenter(nota);
+
+    } catch (IOException e) {
+
+        e.printStackTrace();
+
+        new Alert(
+                Alert.AlertType.ERROR,
+                "Gagal membuka preview dokumen:\n" + e.getMessage()
+        ).showAndWait();
+    }
+}
+
 
     private void tampilkanDetail(Transaksi transaksi, String gambar) {
         if (containerTransaksi.getScene() == null || transaksi == null)

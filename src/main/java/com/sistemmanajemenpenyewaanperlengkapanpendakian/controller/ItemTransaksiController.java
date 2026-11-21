@@ -21,10 +21,10 @@ public class ItemTransaksiController {
     @FXML
     private Button tombolDetail;
     @FXML
-    private Button tombolUnduh;
+    private Button tombolCetak;
 
     private Runnable aksiDetail;
-    private Runnable aksiUnduh;
+    private Runnable aksiCetak;
 
     public void setData(String namaBarang, String penyewa,
             String tglSewa, String tglKembali,
@@ -105,13 +105,13 @@ public class ItemTransaksiController {
             aksiDetail.run();
     }
 
-    public void setAksiUnduh(Runnable aksiUnduh) {
-        this.aksiUnduh = aksiUnduh;
+    public void setAksiCetak(Runnable aksiCetak) {
+        this.aksiCetak = aksiCetak;
     }
 
     @FXML
-    private void unduh() {
-        if (aksiUnduh != null)
-            aksiUnduh.run();
+    private void Cetak() {
+        if (aksiCetak != null)
+            aksiCetak.run();
     }
 }
