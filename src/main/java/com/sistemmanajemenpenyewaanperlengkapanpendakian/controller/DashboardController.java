@@ -1,4 +1,3 @@
-
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
@@ -12,15 +11,22 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
+import java.net.URL;
+import javafx.scene.Node;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.scene.layout.*;
+
+
+
 
 public class DashboardController {
 //#region manggil komponen
@@ -77,6 +83,8 @@ public class DashboardController {
     private static final int ITEM_PER_HALAMAN = 4;
     private static final DateTimeFormatter FORMAT_TANGGAL =DateTimeFormatter.ofPattern("dd - MM - yyyy");
     private int halamanAktif = 0;
+    private static final String PATH_KARTU =  "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/components/card-produk-disewa.fxml";
+    private static final String PATH_DETAIL_PENGEMBALIAN = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/detail-pengembalian.fxml";
     @FXML
     private void switchToPrimary() throws IOException {
         App.setRoot("login");
@@ -210,6 +218,7 @@ private void tampilkanHalamanProduk(int halaman) {
     containerDaftarProdukSewa.getChildren().clear();
 
     int awal = halamanAktif * ITEM_PER_HALAMAN;
+
     int akhir = Math.min(
             awal + ITEM_PER_HALAMAN,
             daftarProdukDipinjam.size()
@@ -218,18 +227,173 @@ private void tampilkanHalamanProduk(int halaman) {
     for (int i = awal; i < akhir; i++) {
         ItemDashboard item = daftarProdukDipinjam.get(i);
 
-        if (i == awal) {
-            isiTemplateProduk(item);
-            containerDaftarProdukSewa.getChildren().add(itemProduk1);
-        } else {
-            containerDaftarProdukSewa.getChildren().add(
-                    buatBarisProduk(item)
-            );
+        try{
+            containerDaftarProdukSewa.getChildren().add(buatKartuDashboard(item));
+        } catch (Exception e){
+            tampilkanPesan(Alert.AlertType.ERROR, "Gagal memuat card", "Card penyewaan gagal untuk dimuat" + e.getMessage());
         }
     }
 
     aturPagination();
 }
+
+private HBox buatKartuDashboard(ItemDashboard item) throws Exception{
+    URL lokasiKartu = App.class.getResource(PATH_KARTU);
+
+    if (lokasiKartu == null){
+        throw new IllegalArgumentException("card-produk-disewa.fxml tidak ditemukan.");
+    }
+
+    FXMLLoader loader = new FXMLLoader(lokasiKartu);
+
+    HBox kartu = loader.load();
+
+    Label namaBarang = komponenKartu(loader, "labelNamaPerlengkapan", Label.class);
+    Label namaPenyewa = komponenKartu(loader, "labelNamaPenyewa", Label.class);
+    Label tanggalSewa = komponenKartu(loader, "labelTanggalSewa", Label.class);
+    Label tanggalKembali  = komponenKartu(loader, "labelTanggalSelesaiSewa", Label.class);
+    Label status = komponenKartu(loader, "labelStatusProduk", Label.class);
+    ImageView foto = komponenKartu(loader, "gambarProduk", ImageView.class);
+    Region indikator = komponenKartu(loader, "indikatorStatusProduk", Region.class);
+    Button detail = komponenKartu(loader, "btnDetail", Button.class);
+    Button konfirmasi = komponenKartu(loader, "btnKonfirmasi", Button.class);
+    Perlengkapan barang = item.detail.getPerlengkapanYangDisewa();
+    aturGambar(foto, barang.getFotoBarang());
+
+    namaBarang.setText(barang.getNamaPerlengkapan());
+    namaPenyewa.setText(namaPelanggan(item.transaksi));
+    tanggalSewa.setText(formatTanggal(item.transaksi.getTanggalSewa()));
+    tanggalKembali.setText(formatTanggal(item.transaksi.getTanggalKembali()));
+
+
+    status.setText(item.labelStatus());
+
+    boolean bermasalah = item.terlambat || item.terlambatDikembalikan || item.kondisiBermasalah();
+
+    String warna;
+    String latar;
+
+    if (bermasalah){
+        warna = "#A3212B";
+        latar = "#FFD6D6";
+    } else if (item.sudahDikembalikan){
+        warna = "#005A32";
+        latar = "#DDF5E3";
+    } else {
+        warna = "#B38600";;
+        latar = "#FFF3C4";
+    }
+
+    status.setStyle(
+         "-fx-background-color: " + latar + ";" +
+            "-fx-border-color: " + warna + ";" +
+            "-fx-border-radius: 14;" +
+            "-fx-background-radius: 14;" +
+            "-fx-text-fill: " + warna + ";" +
+            "-fx-font-size: 12px;"
+    );
+    
+    indikator.setStyle(
+        "-fx-background-color: " + warna + ";" +
+        "-fx-background-radius: 8 0 0 8;"
+    );
+
+    kartu.setStyle(
+        "-fx-background-color: #F5F5F5;" +
+        "-fx-background-radius: 12;"
+    );
+
+    detail.setStyle(
+         "-fx-background-color: #FFFFFF;" +
+        "-fx-border-color: #005A32;" +
+        "-fx-border-radius: 14;" +
+        "-fx-background-radius: 14;" +
+        "-fx-text-fill: #005A32;"
+    );
+
+    konfirmasi.setStyle(
+        "-fx-background-color: #005A32;" +
+        "-fx-border-color: #005A32;" +
+        "-fx-border-radius: 14;" +
+        "-fx-background-radius: 14;" +
+        "-fx-text-fill: #FFFFFF;"
+    );
+
+    detail.setCursor(Cursor.HAND);
+    detail.setOnAction(event -> bukaDetailPengembalian(item, false));
+
+    konfirmasi.setCursor(Cursor.HAND);
+    konfirmasi.setOnAction(event -> bukaDetailPengembalian(item, true));
+
+    konfirmasi.setVisible(!item.sudahDikembalikan);
+    konfirmasi.setManaged(!item.sudahDikembalikan);
+
+    kartu.setUserData(item);
+    kartu.setMaxWidth(Double.MAX_VALUE);
+
+    return kartu;
+}
+
+private <T> T komponenKartu (FXMLLoader loader, String fxId, Class<T> tipe){
+    Object komponen = loader.getNamespace().get(fxId);
+
+    if (!tipe.isInstance(komponen)){
+        throw new IllegalStateException("Komponen " + fxId + " tidak ditemukan atau memilih tipe yang salah");
+    }
+    return tipe.cast(komponen);
+}
+
+private void bukaDetailPengembalian(ItemDashboard item, boolean langsungKonfirmasi){
+    try{
+        if (containerDashboard.getScene() == null){
+            throw new IllegalStateException( "Scene Dashboard tidak ditemukan.");
+        }
+        
+        Node nodeLayout = containerDashboard.getScene().lookup("#layoutPage");
+        if (!(nodeLayout instanceof BorderPane)){
+            throw new IllegalStateException("BorderPane #layoutPage tidak ditemukan.");
+        }
+
+        BorderPane layoutPage = (BorderPane) nodeLayout;
+        Node halamanDashboard = layoutPage.getCenter();
+
+        if (halamanDashboard == null){
+            throw new IllegalStateException("Halaman Dashboard tidak ditemukan.");
+        }
+
+        Insets marginSebelumnya = BorderPane.getMargin(halamanDashboard);
+        URL lokasiDetail = App.class.getResource(PATH_DETAIL_PENGEMBALIAN);
+        
+        if (lokasiDetail == null){
+            throw new IllegalStateException("detail-pengembalian.fxml tidak ditemukan.");
+        }
+
+        FXMLLoader loader = new FXMLLoader(lokasiDetail);
+        Parent halamanDetail = loader.load();
+
+        DetailPengembalianController controller = loader.getController();
+
+        controller.setData(item.transaksi, item.detail, () ->{
+            if (marginSebelumnya != null){
+                BorderPane.setMargin(halamanDashboard, marginSebelumnya);
+            }
+
+            layoutPage.setCenter(halamanDashboard);
+            muatDataDashboard();
+        });
+        BorderPane.setMargin(halamanDetail, new Insets(16));
+        layoutPage.setCenter(halamanDetail);
+
+        if (langsungKonfirmasi && !item.sudahDikembalikan){
+            controller.mintaKonfirmasi();
+        }
+    } catch(Exception e){
+        tampilkanPesan(Alert.AlertType.ERROR, "Gagal Membuka Detail", e.getMessage() == null ? e.toString() : e.getMessage());
+    }
+}
+
+
+
 
 private void isiTemplateProduk(ItemDashboard item) {
     Perlengkapan barang = item.detail.getPerlengkapanYangDisewa();
@@ -241,16 +405,13 @@ private void isiTemplateProduk(ItemDashboard item) {
             formatTanggal(item.transaksi.getTanggalKembali())
     );
 
-    labelStatusProduk.setText(
-            item.terlambat ? "Terlambat" : "Akan Terlambat"
-    );
-
     aturGambar(gambarProduk, barang.getFotoBarang());
     aturStatusProduk(
             labelStatusProduk,
             indikatorStatusProduk,
             item.terlambat
     );
+    labelStatusProduk.setText(item.labelStatus());
 
     // Menyimpan data item untuk integrasi tombol berikutnya.
     itemProduk1.setUserData(item);
@@ -437,9 +598,7 @@ private String formatTanggal(LocalDate tanggal) {
 private void tampilkanProdukKosong() {
     containerDaftarProdukSewa.getChildren().clear();
 
-    Label kosong = new Label(
-            "Belum ada barang yang sedang dipinjam."
-    );
+    Label kosong = new Label("Belum ada riwayat penyewaan.");
     kosong.setMaxWidth(Double.MAX_VALUE);
     kosong.setAlignment(Pos.CENTER);
     kosong.setStyle(
@@ -578,46 +737,58 @@ private void tampilkanPesan(
     }
 
     private long kumpulkanProdukDipinjam(List<Transaksi> transaksi){
-        daftarProdukDipinjam.clear();
-        long jumlah = 0;
+    daftarProdukDipinjam.clear();
+    long jumlahSedangDisewa = 0;
+    
+    if (transaksi == null){
+        return jumlahSedangDisewa;
+    }
 
-        if (transaksi == null){
-            return  jumlah;
+    for (Transaksi t : transaksi){
+        if (t == null || t.getDaftarDetail() == null){
+            continue;
         }
 
-        for (Transaksi t : transaksi){
-            if (t == null || t.getDaftarDetail() == null){
+        for (DetailTransaksi detail : t.getDaftarDetail()){
+            if (detail == null || detail.getPerlengkapanYangDisewa() == null){
                 continue;
             }
 
-            for (DetailTransaksi detail : t.getDaftarDetail()){
-                if (detail == null || detail.getTanggalPengembalianBarang() != null || detail.getPerlengkapanYangDisewa() == null){
-                    continue;
-                }
-                jumlah = Math.addExact(jumlah, detail.getKuantitasPerAlat());
-
-                daftarProdukDipinjam.add(new ItemDashboard(t, detail));
+            if (detail.getTanggalPengembalianBarang() == null){
+                jumlahSedangDisewa = Math.addExact(jumlahSedangDisewa, detail.getKuantitasPerAlat());
             }
+
+            daftarProdukDipinjam.add(new ItemDashboard(t, detail));
         }
-
-    // Barang terlambat ditempatkan lebih dahulu.
-    daftarProdukDipinjam.sort((a, b) -> {
-        if (a.terlambat != b.terlambat){
-            return a.terlambat ? -1 : 1;
-        }
-
-        LocalDate tglA = a.transaksi.getTanggalKembali();
-        LocalDate tglB = b.transaksi.getTanggalKembali();
-
-        if (tglA == null &&tglB == null) return 0;
-        if (tglA == null) return 1;
-        if (tglB == null) return -1;
-
-        return tglA.compareTo(tglB);
-    });
-
-        return jumlah;
     }
+
+    daftarProdukDipinjam.sort((a, b) -> {
+        if (a.prioritas() != b.prioritas()){
+            return Integer.compare(a.prioritas(), b.prioritas());
+        }
+        LocalDate tanggalA = a.sudahDikembalikan ? a.detail.getTanggalPengembalianBarang() : a.transaksi.getTanggalKembali();
+        LocalDate tanggalB = b.sudahDikembalikan ? b.detail.getTanggalPengembalianBarang() : b.transaksi.getTanggalKembali();
+
+        if (tanggalA == null && tanggalB == null){
+            return 0;
+        }
+
+        if (tanggalA == null){
+            return 1;
+        }
+
+        if (tanggalB == null){
+            return -1;
+        }
+
+        if (a.sudahDikembalikan){
+            return tanggalB.compareTo(tanggalA);
+        }
+
+        return tanggalA.compareTo(tanggalB);
+    });
+    return jumlahSedangDisewa;
+}
 
     private String formatJumlah(long jumlah){
         return NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(jumlah) + " Barang";
@@ -628,16 +799,49 @@ private void tampilkanPesan(
 private static class ItemDashboard {
     private final Transaksi transaksi;
     private final DetailTransaksi detail;
+
+    private final boolean sudahDikembalikan;
     private final boolean terlambat;
+    private final boolean terlambatDikembalikan;
 
     private ItemDashboard(Transaksi transaksi, DetailTransaksi detail) {
         this.transaksi = transaksi;
         this.detail = detail;
 
-        LocalDate kembali = transaksi.getTanggalKembali();
+        LocalDate tanggalJatuhTempo = transaksi.getTanggalKembali();
+        LocalDate tanggalAktual = detail.getTanggalPengembalianBarang();
+        this.sudahDikembalikan = tanggalAktual != null;
 
-        this.terlambat = kembali != null
-                && LocalDate.now().isAfter(kembali);
+        this.terlambat = !sudahDikembalikan && tanggalJatuhTempo != null && LocalDate.now().isAfter(tanggalJatuhTempo);
+        this.terlambatDikembalikan = sudahDikembalikan && tanggalJatuhTempo != null && tanggalAktual.isAfter(tanggalJatuhTempo);
+    }
+    private String ambilKondisi(){
+        String kondisi = detail.getStatusPengembalianBarang();
+
+        if (kondisi == null || kondisi.trim().isEmpty()){
+            return "Tidak Diketahui";
+        }
+        return kondisi.trim();
+    }
+
+    private boolean kondisiBermasalah(){
+        String kondisi = ambilKondisi();
+
+        return kondisi.equalsIgnoreCase("rusak") || kondisi.equalsIgnoreCase("hilang");
+    }
+
+    private String labelStatus(){
+        if (sudahDikembalikan){
+            return "Sudah Dikembalikan • " + (terlambatDikembalikan ? "Terlambat" : "Tepat Waktu") + " " + ambilKondisi().toUpperCase(Locale.ROOT);
+        }
+        return terlambat ? "Terlambat" : "Sedang disewa";
+    }
+
+    private int prioritas(){
+        if (!sudahDikembalikan){
+            return terlambat ? 0 : 1;
+        }
+        return 2;
     }
 }
 // <<< AKHIR TAMBAHAN: DATA ITEM DASHBOARD

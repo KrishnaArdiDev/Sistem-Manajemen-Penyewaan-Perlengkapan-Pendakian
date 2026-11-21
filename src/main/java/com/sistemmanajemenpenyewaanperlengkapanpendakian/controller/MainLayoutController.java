@@ -2,6 +2,7 @@
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.AuthService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.*;
@@ -113,6 +114,11 @@ public class MainLayoutController {
         aturTombolAktif(tombolDashboard);
         
         styleHeader();
+
+        muatInformasiVendor();
+
+        fotoProfile.setClip(new Circle(24, 24, 24));
+        muatInformasiVendor();
 
         try{
             tampilkanHalaman("dashboard");
@@ -227,6 +233,33 @@ public class MainLayoutController {
 
 //#endregion
 
+    private void muatInformasiVendor(){
+        Vendor vendor = AuthService.getVendorAktif();
+        
+        if (vendor == null){
+            return ;
+        }
+
+        labelWelcome.setText("WELCOME");
+
+        labelUsername.setText(vendor.getUsernameAdm());
+
+        fotoProfile.setClip(new Circle(24, 24, 24));
+        String uriFoto = vendor.getFotoProfile();
+
+        if (uriFoto == null || uriFoto.trim().isEmpty()){
+            fotoProfile.setImage(null);
+            return;
+        }
+
+        Image foto = new Image(uriFoto, 48, 48, true, true);
+        if (!foto.isError()){
+            fotoProfile.setImage(foto);
+        } else {
+            fotoProfile.setImage(null);
+        }
+    }
+
     private void tampilkanHalaman(String namaFxml) throws IOException {
     String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/"
             + namaFxml + ".fxml";
@@ -272,6 +305,7 @@ public class MainLayoutController {
     
     @FXML
     private void keluar() throws IOException {
+        AuthService.logout();
         App.setRoot("login");
         aturTombolAktif(tombolKeluar);
     }

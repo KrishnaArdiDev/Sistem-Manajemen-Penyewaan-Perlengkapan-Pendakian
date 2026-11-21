@@ -3,11 +3,14 @@ package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Transaksi;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.DetailTransaksi;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+import javafx.scene.control.ScrollPane;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +29,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.util.Locale;
 
 public class TransaksiController {
 
@@ -85,33 +91,74 @@ public class TransaksiController {
         try {
             var res = App.class.getResource(PATH_ITEM);
             if (res == null) {
-                System.err.println("Gagal menemukan FXML item transaksi di: " + PATH_ITEM);
-                return;
+                throw new IllegalStateException( "FXML item transaksi tidak ditemukan.");
             }
+
             FXMLLoader loader = new FXMLLoader(res);
-            Node kartu = loader.load();
+            Region kartu = loader.load();
             ItemTransaksiController item = loader.getController();
 
             String barang = t.getDaftarDetail() == null ? "" : t.getDaftarDetail().stream().filter(detail -> detail != null && detail.getPerlengkapanYangDisewa() != null).map(detail -> detail.getPerlengkapanYangDisewa().getNamaPerlengkapan()).filter(nama -> nama != null && !nama.isBlank()).distinct().collect(Collectors.joining(", "));
+
             if (barang.isBlank()){
                 barang = "Perlengkapan tidak diketahui";
             }
-            final String namaBarang = barang;
+
             String penyewa = t.getPelanggan() == null || t.getPelanggan().getNamaPelanggan() == null ? "-" : t.getPelanggan().getNamaPelanggan();
             String tglSewa = t.getTanggalSewa() == null ? "-" : t.getTanggalSewa().format(FMT);
             String tglKembali = t.getTanggalKembali() == null ? "-" : t.getTanggalKembali().format(FMT);
-            String status = "Berhasil";
+            String status = buatRingkasanStatusPengembalian(t);
 
-            
-            String fotoIdentitas = t.getFotoIdentitas();
-            item.setData(namaBarang, penyewa, tglSewa, tglKembali, status, gambar,() -> tampilkanDetail(namaBarang, penyewa, tglSewa, tglKembali, status, fotoIdentitas, gambar));
-
+            item.setData(barang, penyewa, tglSewa, tglKembali, status, gambar, () -> tampilkanDetail(t, gambar));
             item.setAksiUnduh(() -> tampilkanNota(t));
+
+            kartu.setMaxWidth(Double.MAX_VALUE);
             containerTransaksi.getChildren().add(kartu);
         } catch (Exception e) {
             System.err.println("Gagal memuat kartu transaksi:");
             e.printStackTrace();
+
+            new Alert(Alert.AlertType.ERROR, "Kartu transaksi gagal dimuat:\n" + e.getMessage()).showAndWait();
         }
+    }
+
+    private String buatRingkasanStatusPengembalian(Transaksi transaksi){
+        if (transaksi == null || transaksi.getDaftarDetail() == null || transaksi.getDaftarDetail().isEmpty()){
+            return "Berhasil";
+        }
+
+        StringBuilder hasil = new StringBuilder();
+        for (DetailTransaksi detail : transaksi.getDaftarDetail()){
+            if (detail == null || detail.getPerlengkapanYangDisewa() == null || detail.getTanggalPengembalianBarang() == null){
+                continue;
+            }
+            if (hasil.length() > 0){
+                hasil.append("\n");
+            }
+            hasil.append(statusPengembalian(transaksi, detail));
+        }
+        return hasil.length() == 0 ? "Berhasil" : hasil.toString();
+    }
+
+    private String statusPengembalian(Transaksi transaksi, DetailTransaksi detail){
+        LocalDate tanggalJatuhTempo = transaksi.getTanggalKembali();
+        LocalDate tanggalAktual = detail.getTanggalPengembalianBarang();
+
+        if (tanggalAktual == null){
+            boolean terlambat = tanggalJatuhTempo != null && LocalDate.now().isAfter(tanggalJatuhTempo);
+
+            return terlambat ? "Masih Disewa • Terlambat" : "Sedang Disewa";
+        }
+
+        String kondisi = detail.getStatusPengembalianBarang();
+
+        if (kondisi == null || kondisi.trim().isEmpty()){
+            kondisi = "Tidak diketahui";    
+        }
+
+        boolean terlambat = tanggalJatuhTempo != null && tanggalAktual.isAfter(tanggalJatuhTempo);
+
+        return "Sudah Dikembalikan | " + (terlambat ? "Terlambat" : "Tepat Waktu") + " " + kondisi.toUpperCase(Locale.ROOT);
     }
 
     @FXML
@@ -166,23 +213,11 @@ public class TransaksiController {
         }
     }
 
-    private void tampilkanDetail(String barang, String penyewa, String tglSewa, String tglKembali, String status, String fotoIdentitas, String gambar) {
-        if (containerTransaksi.getScene() == null)
+    private void tampilkanDetail(Transaksi transaksi, String gambar) {
+        if (containerTransaksi.getScene() == null || transaksi == null)
             return;
 
-        if (layoutUtama == null) {
-            Node node = containerTransaksi;
-            while (node.getParent() != null) {
-                Parent parent = node.getParent();
-                if (parent instanceof BorderPane && ((BorderPane) parent).getCenter() == node) {
-                    layoutUtama = (BorderPane) parent;
-                    break;
-                }
-                node = parent;
-            }
-        }
-        if (layoutUtama == null) {
-            System.err.println("Layout konten utama tidak ditemukan.");
+        if (!siapkanLayoutUtama()){
             return;
         }
 
@@ -197,61 +232,133 @@ public class TransaksiController {
         judul.setPadding(new Insets(0, 0, 0, 8));
 
         Label tombolKembali = new Label("<");
-        tombolKembali.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #00572B; -fx-cursor: hand;");
-        tombolKembali.setOnMouseClicked(e -> kembaliKeTransaksi());
+        tombolKembali.setStyle(
+                "-fx-font-size: 26px;" + 
+                "-fx-font-weight: bold;" + 
+                "-fx-text-fill: #00572B;" + 
+                "-fx-cursor: hand;"
+        );
+
+        tombolKembali.setOnMouseClicked(event -> kembaliKeTransaksi());
 
         Label labelJudul = new Label("Detail Transaksi");
-        labelJudul.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #00572B;");
+        labelJudul.setStyle(
+                "-fx-font-size: 22px;"+ 
+                "-fx-font-weight: bold;"+ 
+                "-fx-text-fill: #00572B;"
+        );
         judul.getChildren().addAll(tombolKembali, labelJudul);
 
         VBox panel = new VBox(12);
+
         panel.setPadding(new Insets(18, 44, 18, 44));
         panel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        panel.setStyle("-fx-background-color: white; -fx-background-radius: 16;");
-        VBox.setVgrow(panel, Priority.ALWAYS);
+        panel.setStyle(
+                "-fx-background-color: white;"+ 
+                "-fx-background-radius: 16;"
+        );
 
         ImageView foto = new ImageView();
+
         foto.setFitWidth(100);
         foto.setFitHeight(100);
         foto.setPreserveRatio(true);
         foto.setSmooth(true);
-        var url = App.class.getResource(gambar);
-        if (url != null)
+        
+        java.net.URL url = App.class.getResource(gambar);
+        if (url != null){
             foto.setImage(new Image(url.toExternalForm()));
+        }
 
         HBox wadahFoto = new HBox(foto);
         wadahFoto.setAlignment(Pos.CENTER);
+
         panel.getChildren().add(wadahFoto);
-
+        String namaBarang = transaksi.getDaftarDetail() == null ? "Perlengkapan tidak diketahui" : transaksi.getDaftarDetail().stream().filter(d -> d != null && d.getPerlengkapanYangDisewa() != null).map(d -> d.getPerlengkapanYangDisewa().getNamaPerlengkapan()).distinct().collect(Collectors.joining(", "));
+        String penyewa = transaksi.getPelanggan() == null || transaksi.getPelanggan().getNamaPelanggan() == null ? "-" : transaksi.getPelanggan().getNamaPelanggan();
+        String fotoIdentitas = transaksi.getFotoIdentitas() == null ? "-": transaksi.getFotoIdentitas();
+        String tanggalSewa = transaksi.getTanggalSewa() == null ? "-" : transaksi.getTanggalSewa().format(FMT);
+        String tanggalKembali = transaksi.getTanggalKembali() == null ? "-" : transaksi.getTanggalKembali().format(FMT);
+        
         panel.getChildren().addAll(
-                buatFieldDetail("Nama Barang", barang),
-                buatFieldDetail("Status Transaksi", status),
-                buatFieldDetail("Nama Peminjam", penyewa),
-                buatFieldDetail("Kartu Identitas Peminjam", fotoIdentitas == null || fotoIdentitas.isBlank() ? "-" : fotoIdentitas),
-                buatFieldDetail("Tanggal Meminjam", tglSewa),
-                buatFieldDetail("Tanggal Kembali", tglKembali));
+            buatFieldDetail("Nama Barang", namaBarang),
+            buatFieldDetail("Status Transaksi", "Berhasil"),
+            buatFieldDetail("Nama Peminjam", penyewa),
+            buatFieldDetail("Kartu Identitas Peminjam", fotoIdentitas),
+            buatFieldDetail("Tanggal Meminjam", tanggalSewa),
+            buatFieldDetail("Tanggal Kembali", tanggalKembali),
+            buatFieldDetail("Total Harga",formatRupiah(transaksi.getTotalHarga())), buatFieldDetail("Total Denda", formatRupiah(transaksi.getDenda())));
 
-        Region ruang = new Region();
-        VBox.setVgrow(ruang, Priority.ALWAYS);
-        panel.getChildren().add(ruang);
+    if (transaksi.getDaftarDetail() != null) {
 
-        Button konfirmasi = new Button("Konfirmasi");
-        konfirmasi.setMinWidth(95);
-        konfirmasi.setPrefHeight(30);
-        konfirmasi.setFocusTraversable(false);
-        konfirmasi.setStyle(
-                "-fx-background-color: #00572B; -fx-text-fill: white; -fx-background-radius: 7; -fx-padding: 7 18; -fx-font-size: 11px; -fx-cursor: hand;");
-        konfirmasi.setOnAction(e -> kembaliKeTransaksi());
+        for (DetailTransaksi item : transaksi.getDaftarDetail()) {
 
-        HBox areaTombol = new HBox(konfirmasi);
-        areaTombol.setAlignment(Pos.CENTER_RIGHT);
-        panel.getChildren().add(areaTombol);
+            if (item == null|| item.getPerlengkapanYangDisewa() == null) {
+                continue;
+            }
 
-        detail.getChildren().addAll(judul, panel);
-        BorderPane.setMargin(detail, new Insets(16));
-        layoutUtama.setCenter(detail);
+            String nama = item.getPerlengkapanYangDisewa().getNamaPerlengkapan();
+
+            panel.getChildren().add(buatFieldDetail("Pengembalian - " + nama, statusPengembalian(transaksi, item)));
+
+            if (item.getTanggalPengembalianBarang() != null) {
+
+                panel.getChildren().add(
+                        buatFieldDetail("Tanggal Pengembalian Aktual - " + nama, item.getTanggalPengembalianBarang().format(FMT)));
+            }
+
+            if (item.getBiayaGantiRugi() > 0) {
+
+                panel.getChildren().add(buatFieldDetail("Biaya Ganti Rugi - " + nama, formatRupiah(item.getBiayaGantiRugi())));
+            }
+        }
     }
 
+        Region ruang = new Region();
+    VBox.setVgrow(ruang, Priority.ALWAYS);
+
+    panel.getChildren().add(ruang);
+
+    Button konfirmasi = new Button("Konfirmasi");
+
+    konfirmasi.setMinWidth(95);
+    konfirmasi.setPrefHeight(30);
+    konfirmasi.setFocusTraversable(false);
+
+    konfirmasi.setStyle(
+            "-fx-background-color: #00572B;" +
+            "-fx-text-fill: white;" +
+            "-fx-background-radius: 7;" +
+            "-fx-padding: 7 18;" +
+            "-fx-font-size: 11px;" +
+            "-fx-cursor: hand;"
+    );
+
+    konfirmasi.setOnAction(event -> kembaliKeTransaksi());
+
+    HBox areaTombol = new HBox(konfirmasi);
+    areaTombol.setAlignment(Pos.CENTER_RIGHT);
+    panel.getChildren().add(areaTombol);
+
+    ScrollPane scrollPanel = new ScrollPane(panel);
+    scrollPanel.setFitToWidth(true);
+    scrollPanel.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollPanel.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    scrollPanel.setPannable(true);
+    scrollPanel.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+
+    VBox.setVgrow(scrollPanel, Priority.ALWAYS);
+
+    detail.getChildren().addAll(judul, scrollPanel);
+    BorderPane.setMargin(detail, new Insets(16));
+    layoutUtama.setCenter(detail);
+    }
+
+    private String formatRupiah(long nilai){
+        NumberFormat format = NumberFormat.getNumberInstance(Locale.forLanguageTag("id-ID"));
+
+        return "Rp " + format.format(nilai);
+    }
     private VBox buatFieldDetail(String nama, String nilai) {
         Label label = new Label(nama);
         label.setStyle("-fx-font-size: 12px; -fx-text-fill: black;");

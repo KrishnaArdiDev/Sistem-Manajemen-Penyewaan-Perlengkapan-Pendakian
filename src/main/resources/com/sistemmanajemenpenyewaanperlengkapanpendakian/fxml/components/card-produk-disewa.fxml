@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-
 <HBox fx:id="itemProduk1" alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="200.0" spacing="12.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Region fx:id="indikatorStatusProduk" maxHeight="1.7976931348623157E308" maxWidth="10.0" minWidth="10.0" prefHeight="200.0" prefWidth="10.0" />
@@ -29,7 +28,10 @@
       <Region fx:id="spacerProduk" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
       <VBox fx:id="containerAksiProduk" alignment="TOP_RIGHT" maxHeight="100.0" maxWidth="328.0" minHeight="100.0" minWidth="328.0" prefHeight="100.0" prefWidth="328.0" spacing="12.0">
          <children>
-            <Label fx:id="labelStatusProduk" alignment="CENTER" maxHeight="28.0" maxWidth="240.0" minHeight="28.0" minWidth="240.0" prefHeight="28.0" prefWidth="240.0" text="Status" wrapText="true" VBox.vgrow="ALWAYS" />
+            <Label fx:id="labelStatusProduk" alignment="CENTER" maxHeight="28.0" maxWidth="240.0" minHeight="28.0" minWidth="240.0" prefHeight="28.0" prefWidth="240.0" text="Status" wrapText="true" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="3.0" right="3.0" />
+               </VBox.margin></Label>
             <Region maxHeight="1.7976931348623157E308" minHeight="0.0" prefHeight="0.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
             <HBox fx:id="containerTombolProduk" alignment="CENTER_RIGHT" maxWidth="328.0" minWidth="328.0" prefWidth="328.0" spacing="12.0">
                <children>

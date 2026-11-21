@@ -32,9 +32,9 @@
                     <Region HBox.hgrow="ALWAYS" />
 
                     <!-- status + tombol detail + unduh -->
-         <VBox alignment="TOP_RIGHT" maxHeight="100.0" prefWidth="280.0" spacing="40.0">
+         <VBox alignment="TOP_RIGHT" maxHeight="100.0" spacing="40.0" HBox.hgrow="ALWAYS">
             <children>
-                <Label fx:id="labelStatus" alignment="CENTER" maxWidth="180.0" text="Berhasil" />
+                <Label fx:id="labelStatus" alignment="CENTER" text="Berhasil" VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_RIGHT" spacing="8.0">
                     <children>
                         <Button fx:id="tombolUnduh" accessibleText="Unduh Nota" maxHeight="Infinity" minWidth="31.0" mnemonicParsing="false" onAction="#unduh" prefWidth="31.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 4 0 4 0;">

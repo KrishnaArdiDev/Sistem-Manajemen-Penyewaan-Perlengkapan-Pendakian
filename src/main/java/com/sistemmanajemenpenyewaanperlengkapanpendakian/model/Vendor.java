@@ -84,8 +84,7 @@ public class Vendor {
             this.fotoProfile = vendorDitemukan.getFotoProfile();
             return true;
         } catch (SQLException e){
-            System.err.println("Gagal melakukan login: " + e.getMessage());
-            return false;
+            throw new IllegalStateException("Gagal melakukan login: " + e.getMessage(), e);
         }
     }
 
