@@ -54,7 +54,6 @@ public class TransaksiController {
     private void muatTransaksi() {
     containerTransaksi.getChildren().clear();
 
-    // >>> PERUBAHAN: MENANGANI KONDISI TANPA SESI VENDOR
     List<Transaksi> daftarTransaksi;
 
     try {
@@ -69,7 +68,6 @@ public class TransaksiController {
         containerTransaksi.getChildren().add(kosong);
         return;
     }
-    // <<< AKHIR PERUBAHAN
 
     if (daftarTransaksi.isEmpty()) {
         Label kosong = new Label(

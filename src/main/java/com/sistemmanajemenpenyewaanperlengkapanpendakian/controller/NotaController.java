@@ -32,8 +32,6 @@ public class NotaController {
     private static final DateTimeFormatter FORMAT_TANGGAL =
             DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-    // >>> KOMPONEN FXML NOTA
-
     @FXML private VBox kertasNota;
 
     @FXML private Label labelTanggalCetak;
@@ -62,14 +60,9 @@ public class NotaController {
     @FXML private Button btnUnduhNota;
     @FXML private Button btnUnduhRingkasan;
 
-    // <<< AKHIR KOMPONEN FXML NOTA
 
     private Runnable aksiKembali;
     private Transaksi transaksiAktif;
-
-    // =========================
-    // INITIALIZE
-    // =========================
 
     @FXML
     public void initialize() {
@@ -85,10 +78,6 @@ public class NotaController {
         btnUnduhNota.setCursor(Cursor.HAND);
         btnUnduhRingkasan.setCursor(Cursor.HAND);
     }
-
-    // =========================
-    // MENERIMA DAN MENAMPILKAN TRANSAKSI
-    // =========================
 
     public void setTransaksi(Transaksi transaksi) {
 
@@ -134,28 +123,18 @@ public class NotaController {
 
         labelStatus.setText("Berhasil");
 
-        // >>> TAMBAHAN: MENAMPILKAN SETIAP DETAIL PERLENGKAPAN
         tampilkanDetailBarang(transaksi, lamaSewa);
-        // <<< AKHIR TAMBAHAN
 
         labelTotal.setText(
                 NotaService.formatRupiah(transaksi.getTotalHarga())
         );
 
-        // >>> TAMBAHAN: TAGIHAN PENGEMBALIAN
         tampilkanTagihanPengembalian(transaksi);
-        // <<< AKHIR TAMBAHAN
 
         tampilkanFoto(
                 transaksi.getFotoIdentitas()
         );
     }
-
-    // =========================
-    // TABEL DETAIL PERLENGKAPAN
-    // =========================
-
-    // >>> TAMBAHAN: MEMBUAT BARIS DETAIL SECARA DINAMIS
 
     private void tampilkanDetailBarang(
             Transaksi transaksi,
@@ -277,14 +256,6 @@ public class NotaController {
         }
     }
 
-    // <<< AKHIR TAMBAHAN: TABEL DETAIL DINAMIS
-
-    // =========================
-    // TAGIHAN PENGEMBALIAN
-    // =========================
-
-    // >>> TAMBAHAN: MENAMPILKAN DENDA DAN GANTI RUGI
-
     private void tampilkanTagihanPengembalian(
             Transaksi transaksi) {
 
@@ -339,14 +310,6 @@ public class NotaController {
         containerTagihanPengembalian.setManaged(true);
     }
 
-    // <<< AKHIR TAMBAHAN: TAGIHAN PENGEMBALIAN
-
-    // =========================
-    // EKSPOR NOTA
-    // =========================
-
-    // >>> TAMBAHAN: MENGGUNAKAN DapatDicetak.cetakNota()
-
     @FXML
     private void unduhNota() {
 
@@ -367,14 +330,6 @@ public class NotaController {
         );
     }
 
-    // <<< AKHIR TAMBAHAN: EKSPOR NOTA
-
-    // =========================
-    // EKSPOR RINGKASAN
-    // =========================
-
-    // >>> TAMBAHAN: MENGGUNAKAN DapatDicetak.ringkasanCetak()
-
     @FXML
     private void unduhRingkasan() {
 
@@ -394,14 +349,6 @@ public class NotaController {
                 "Unduh Ringkasan Transaksi"
         );
     }
-
-    // <<< AKHIR TAMBAHAN: EKSPOR RINGKASAN
-
-    // =========================
-    // MENYIMPAN DOKUMEN
-    // =========================
-
-    // >>> TAMBAHAN: FILECHOOSER DAN PENYIMPANAN TXT
 
     private void simpanTeks(
             String isi,
@@ -458,12 +405,6 @@ public class NotaController {
         }
     }
 
-    // <<< AKHIR TAMBAHAN: PENYIMPANAN DOKUMEN
-
-    // =========================
-    // CALLBACK KEMBALI
-    // =========================
-
     public void setAksiKembali(Runnable aksiKembali) {
         this.aksiKembali = aksiKembali;
     }
@@ -475,10 +416,6 @@ public class NotaController {
             aksiKembali.run();
         }
     }
-
-    // =========================
-    // INFORMASI TRANSAKSI
-    // =========================
 
     private String ambilNamaPenyewa(Transaksi transaksi) {
 
@@ -542,10 +479,6 @@ public class NotaController {
                 : nilai.trim();
     }
 
-    // =========================
-    // FOTO IDENTITAS
-    // =========================
-
     private void tampilkanFoto(String lokasiFoto) {
 
         Image foto = null;
@@ -608,10 +541,6 @@ public class NotaController {
         labelFotoKosong.setVisible(!tersedia);
         labelFotoKosong.setManaged(!tersedia);
     }
-
-    // =========================
-    // ALERT
-    // =========================
 
     private void tampilkanPesan(
             Alert.AlertType tipe,

@@ -20,9 +20,6 @@ import java.util.List;
 
 public class DetailTransaksiDAO {
 
-
-// CREATE
-// CREATE dengan koneksi sendiri
 public void tambahDetailTransaksi(
         DetailTransaksi detail, int idTransaksi) throws SQLException {
 
@@ -31,7 +28,6 @@ public void tambahDetailTransaksi(
     }
 }
 
-// CREATE dengan koneksi dari luar
 public void tambahDetailTransaksi(Connection connection, DetailTransaksi detail,int idTransaksi) throws SQLException {
     if (connection == null) {
         throw new IllegalArgumentException("Koneksi database tidak boleh null");
@@ -48,9 +44,7 @@ public void tambahDetailTransaksi(Connection connection, DetailTransaksi detail,
     try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
         statement.setInt(1, idTransaksi);
-
         statement.setInt(2,detail.getPerlengkapanYangDisewa().getIdPerlengkapan());
-
         statement.setInt(3, detail.getKuantitasPerAlat());
 
         if (detail.getTanggalPengembalianBarang() != null) {statement.setDate(4, Date.valueOf(detail.getTanggalPengembalianBarang()));
@@ -76,17 +70,12 @@ public void tambahDetailTransaksi(Connection connection, DetailTransaksi detail,
         }
     }
 }
-// READ
 
-// Membaca detail transaksi dengan koneksi sendiri
 public List<DetailTransaksi> ambilDetailBerdasarkanTransaksi(int idTransaksi) throws SQLException{
     try (Connection connection = DatabaseConnection.getConnection()){
         return ambilDetailBerdasarkanTransaksi(connection, idTransaksi, false);
     }
 }
-
-// Membaca detail transaksi menggunakan koneksi dari luar.
-// kunciBaris = true digunakan saat proses pengembalian dalam transaksi database.
 
     public List<DetailTransaksi> ambilDetailBerdasarkanTransaksi(Connection connection, int idTransaksi, boolean kunciBaris) throws SQLException {
 
@@ -154,7 +143,6 @@ public List<DetailTransaksi> ambilDetailBerdasarkanTransaksi(int idTransaksi) th
                         throw new SQLException("Jenis perlengkapan tidak dikenal: " + jenis);
                     }
 
-                // Mengisi atribut dasar dari perlengkapanr
                     perlengkapan.setIdPerlengkapan(result.getInt("id_perlengkapan"));
                     perlengkapan.setNamaPerlengkapan(result.getString("nama_perlengkapan"));
                     perlengkapan.setStok(result.getInt("stok"));
@@ -162,7 +150,6 @@ public List<DetailTransaksi> ambilDetailBerdasarkanTransaksi(int idTransaksi) th
                     perlengkapan.setHargaSewaHarian(result.getLong("harga_sewa_harian"));
                     perlengkapan.setFotoBarang(result.getString("foto_barang"));
                         
-                // Membentuk objek detail transaksis
                     DetailTransaksi detail = new DetailTransaksi();
 
                     detail.setIdDetailTransaksi(result.getInt("id_detail_transaksi"));
@@ -192,14 +179,11 @@ public List<DetailTransaksi> ambilDetailBerdasarkanTransaksi(int idTransaksi) th
         return daftarDetail;
     }
 
-// UPDATE
-// Memperbarui detail dengan koneksi sendiri
 public void updateDetailTransaksi(DetailTransaksi detail) throws SQLException{
     try(Connection connection = DatabaseConnection.getConnection()){
         updateDetailTransaksi(connection, detail);
     }
 }
-// Memperbarui detail menggunakan koneksi dari luar
     public void updateDetailTransaksi(Connection connection, DetailTransaksi detail) throws SQLException {
 
         if (connection == null){
@@ -222,30 +206,20 @@ public void updateDetailTransaksi(DetailTransaksi detail) throws SQLException{
                 + "WHERE id_detail_transaksi = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        // Tanggal pengembalian
                 if (detail.getTanggalPengembalianBarang() != null){
                         statement.setDate(1, Date.valueOf(detail.getTanggalPengembalianBarang()));
         } else {
                 statement.setNull(1, Types.DATE);
         }
-        // Status pengembalian
         if (detail.getStatusPengembalianBarang() != null){
                 statement.setString(2, detail.getStatusPengembalianBarang());
         } else {
                 statement.setNull(2, Types.VARCHAR);
         }
-        // Biaya ganti rugi
         statement.setLong(3, detail.getBiayaGantiRugi());
-
-        // ID detail transaksi
         statement.setInt(4, detail.getIdDetailTransaksi());
 
         int affectedRows = statement.executeUpdate();
-        /*
-        * affectedRows bisa bernilai 0 apabila data sebenarnya ada,
-        * tetapi nilainya tidak mengalami perubahan.
-        * Karena itu, periksa keberadaan ID terlebih dahulu.
-        */
 
         if (affectedRows == 0){
                 String sqlPeriksa = "SELECT 1 FROM detail_transaksi " + "WHERE id_detail_transaksi = ?";
@@ -261,8 +235,6 @@ public void updateDetailTransaksi(DetailTransaksi detail) throws SQLException{
 }
 }
 }
-
-// DELETE
     public void hapusDetailTransaksi(int idDetailTransaksi) throws SQLException {
 
         if (idDetailTransaksi <= 0) {
@@ -272,7 +244,6 @@ public void updateDetailTransaksi(DetailTransaksi detail) throws SQLException{
         throw new SQLException("Penghapusan detail transaksi langsung tidak diizinkan " + "karena dapat merusak stok dan riwayat pengembalian.");
     }
 
-// VALIDASI
     private void validasiDetail(DetailTransaksi detail, int idTransaksi) {
 
         if (detail == null) {

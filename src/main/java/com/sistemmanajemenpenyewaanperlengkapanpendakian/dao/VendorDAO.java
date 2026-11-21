@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class VendorDAO {
-    // Penambahan
     public Vendor login(String emailAtauusername, String password) throws SQLException{
         String sql = "SELECT id_vendor, username_adm, email, nama_vendor, " + "lokasi_toko, foto_profile " +"FROM vendor " + "WHERE (username_adm = ? OR email = ?) " + "AND pw_adm = ? " + "LIMIT 1";
 
@@ -37,7 +36,6 @@ public class VendorDAO {
             }
     }
 
-    // Penambahan memperbarui profile vendor
     public void updateProfileVendor(Vendor vendor) throws SQLException{
         if (vendor == null){
             throw new IllegalArgumentException("Data vendor tidak boleh null");
@@ -84,7 +82,6 @@ public class VendorDAO {
             }
         }
     }
-    // Memperbarui atau menghapus foto profile vendor.
     public void updateFotoProfile(int idVendor, String fotoProfile)
             throws SQLException{
 
