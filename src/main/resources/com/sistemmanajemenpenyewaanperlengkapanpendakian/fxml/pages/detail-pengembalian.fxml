@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- HALAMAN DETAIL PENGEMBALIAN -->
+<BorderPane prefHeight="909.0"
+            prefWidth="1149.0"
+            style="-fx-background-color: transparent;"
+            xmlns="http://javafx.com/javafx/13"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.DetailPengembalianController">
+
+    <center>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    style="-fx-background-color: transparent; -fx-background: transparent;">
+
+            <content>
+                <VBox spacing="16.0" BorderPane.alignment="CENTER">
+
+                    <padding>
+                        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                    </padding>
+
+                    <!-- HEADER DETAIL -->
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+
+                        <Button fx:id="btnKembali"
+                                mnemonicParsing="false"
+                                onAction="#handleKembali"
+                                text="&lt;"
+                                prefHeight="36.0"
+                                prefWidth="42.0"
+                                style="-fx-background-color: transparent; -fx-text-fill: #00572B; -fx-font-size: 24px; -fx-font-weight: bold; -fx-cursor: hand;"/>
+
+                        <Label text="Pengembalian"
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #00572B;"/>
+
+                    </HBox>
+
+                    <!-- KARTU DETAIL -->
+                    <VBox spacing="14.0"
+                          maxWidth="Infinity"
+                          style="-fx-background-color: #FFFFFF; -fx-background-radius: 14.0;">
+
+                        <padding>
+                            <Insets top="20.0" right="28.0" bottom="20.0" left="28.0"/>
+                        </padding>
+
+                        <!-- FOTO PERLENGKAPAN -->
+                        <HBox alignment="CENTER" prefHeight="150.0">
+
+                            <ImageView fx:id="gambarPerlengkapan"
+                                       fitHeight="140.0"
+                                       fitWidth="140.0"
+                                       preserveRatio="true"
+                                       smooth="true"/>
+
+                        </HBox>
+
+                        <!-- NAMA BARANG -->
+                        <VBox spacing="5.0">
+
+                            <Label text="Nama Barang"
+                                   style="-fx-font-size: 16px;"/>
+
+                            <HBox alignment="CENTER_LEFT"
+                                  minHeight="42.0"
+                                  style="-fx-background-color: #E8E8E8; -fx-background-radius: 6.0; -fx-border-color: #555555; -fx-border-radius: 6.0;">
+
+                                <padding>
+                                    <Insets left="14.0" right="14.0"/>
+                                </padding>
+
+                                <Label fx:id="labelNamaBarang"
+                                       text="-"
+                                       style="-fx-font-size: 18px;"/>
+
+                            </HBox>
+                        </VBox>
+
+                        <!-- STATUS PEMINJAMAN -->
+                        <VBox spacing="5.0">
+
+                            <Label text="Status Peminjaman"
+                                   style="-fx-font-size: 16px;"/>
+
+                            <HBox alignment="CENTER_LEFT"
+                                  minHeight="42.0"
+                                  style="-fx-background-color: #E8E8E8; -fx-background-radius: 6.0; -fx-border-color: #555555; -fx-border-radius: 6.0;">
+
+                                <padding>
+                                    <Insets left="14.0" right="14.0"/>
+                                </padding>
+
+                                <Label fx:id="labelStatusPeminjaman"
+                                       text="-"
+                                       style="-fx-font-size: 18px;"/>
+
+                            </HBox>
+                        </VBox>
+
+                        <!-- NAMA PEMINJAM -->
+                        <VBox spacing="5.0">
+
+                            <Label text="Nama Peminjam"
+                                   style="-fx-font-size: 16px;"/>
+
+                            <HBox alignment="CENTER_LEFT"
+                                  minHeight="42.0"
+                                  style="-fx-background-color: #E8E8E8; -fx-background-radius: 6.0; -fx-border-color: #555555; -fx-border-radius: 6.0;">
+
+                                <padding>
+                                    <Insets left="14.0" right="14.0"/>
+                                </padding>
+
+                                <Label fx:id="labelNamaPeminjam"
+                                       text="-"
+                                       style="-fx-font-size: 18px;"/>
+
+                            </HBox>
+                        </VBox>
+
+                        <!-- KARTU IDENTITAS -->
+                        <VBox spacing="5.0">
+
+                            <Label text="Kartu Identitas Peminjam"
+                                   style="-fx-font-size: 16px;"/>
+
+                            <HBox alignment="CENTER_LEFT"
+                                  minHeight="42.0"
+                                  style="-fx-background-color: #E8E8E8; -fx-background-radius: 6.0; -fx-border-color: #555555; -fx-border-radius: 6.0;">
+
+                                <padding>
+                                    <Insets left="14.0" right="14.0"/>
+                                </padding>
+
+                                <Label fx:id="labelKartuIdentitas"
+                                       text="-"
+                                       style="-fx-font-size: 18px;"/>
+
+                            </HBox>
+                        </VBox>
+
+                        <!-- TANGGAL MEMINJAM -->
+                        <VBox spacing="5.0">
+
+                            <Label text="Tanggal Meminjam"
+                                   style="-fx-font-size: 16px;"/>
+
+                            <HBox alignment="CENTER_LEFT"
+                                  minHeight="42.0"
+                                  style="-fx-background-color: #E8E8E8; -fx-background-radius: 6.0; -fx-border-color: #555555; -fx-border-radius: 6.0;">
+
+                                <padding>
+                                    <Insets left="14.0" right="14.0"/>
+                                </padding>
+
+                                <Label fx:id="labelTanggalMeminjam"
+                                       text="-"
+                                       style="-fx-font-size: 18px;"/>
+
+                            </HBox>
+                        </VBox>
+
+                        <!-- TANGGAL KEMBALI -->
+                        <VBox spacing="5.0">
+
+                            <Label text="Tanggal Kembali"
+                                   style="-fx-font-size: 16px;"/>
+
+                            <HBox alignment="CENTER_LEFT"
+                                  minHeight="42.0"
+                                  style="-fx-background-color: #E8E8E8; -fx-background-radius: 6.0; -fx-border-color: #555555; -fx-border-radius: 6.0;">
+
+                                <padding>
+                                    <Insets left="14.0" right="14.0"/>
+                                </padding>
+
+                                <Label fx:id="labelTanggalKembali"
+                                       text="-"
+                                       style="-fx-font-size: 18px;"/>
+
+                            </HBox>
+                        </VBox>
+
+                        <!-- TOMBOL KONFIRMASI -->
+                        <HBox alignment="CENTER_RIGHT"
+                              minHeight="48.0">
+
+                            <Button fx:id="btnKonfirmasi"
+                                    mnemonicParsing="false"
+                                    onAction="#handleKonfirmasi"
+                                    text="Konfirmasi"
+                                    prefHeight="36.0"
+                                    prefWidth="158.0"
+                                    style="-fx-background-color: #005A32; -fx-text-fill: white; -fx-background-radius: 8.0; -fx-cursor: hand;"/>
+
+                        </HBox>
+
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

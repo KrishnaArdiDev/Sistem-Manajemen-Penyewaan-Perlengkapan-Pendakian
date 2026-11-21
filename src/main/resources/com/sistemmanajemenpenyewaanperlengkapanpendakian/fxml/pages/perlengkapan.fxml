@@ -14,15 +14,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="16" styleClass="halaman-perlengkapan" stylesheets="@perlengkapan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DataPerlengkapanController">
+<VBox spacing="16" styleClass="halaman-perlengkapan" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.PerlengkapanController">
 
     <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="636.0">
         <Label styleClass="judul-halaman" text="Data Perlengkapan" textFill="#00572b">
          <font>
             <Font name="System Bold" size="24.0" />
          </font></Label>
-        <Region prefHeight="35.0" prefWidth="322.0" />
-        <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#tambahProduk" style="-fx-background-color: #00572B;" styleClass="btn-tambah">
+        <Region maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="322.0" HBox.hgrow="ALWAYS" />
+        <Button fx:id="tambahProduk" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#tambahProduk" style="-fx-background-color: #00572B;" styleClass="btn-tambah">
             <graphic>
                 <HBox alignment="CENTER_LEFT">
                     <Label styleClass="btn-tambah-plus" text="+" textFill="WHITE" />
@@ -60,169 +60,7 @@
                             <Label styleClass="harga-satuan" text="/ Hari" />
                         </HBox>
                     </VBox>
-                    <Button id="produk-tas-carrier-1" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
-                        <VBox.margin>
-                            <Insets top="4" />
-                        </VBox.margin>
-                    </Button>
-                </VBox>
-
-                <VBox maxWidth="Infinity" minWidth="0" styleClass="kartu-produk" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
-                    <StackPane alignment="CENTER" styleClass="bingkai-gambar">
-                        <ImageView fitHeight="136" preserveRatio="true" smooth="true" />
-                    </StackPane>
-                    <VBox spacing="4">
-                        <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Label maxWidth="Infinity" minWidth="0" styleClass="nama-produk" text="Kompor Portable" textOverrun="ELLIPSIS" HBox.hgrow="ALWAYS" />
-                            <Label style="-fx-background-color: C9FFBC;" styleClass="badge-tersedia" text="Tersedia" textFill="#00572b" />
-                        </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="4">
-                            <Label styleClass="harga" text="Rp 35.000" textFill="#005a32" />
-                            <Label styleClass="harga-satuan" text="/ Hari" />
-                        </HBox>
-                    </VBox>
-                    <Button id="produk-kompor-portable" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
-                        <VBox.margin>
-                            <Insets top="4" />
-                        </VBox.margin>
-                    </Button>
-                </VBox>
-
-                <VBox maxWidth="Infinity" minWidth="0" styleClass="kartu-produk" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
-                    <StackPane alignment="CENTER" styleClass="bingkai-gambar">
-                        <ImageView fitHeight="136" preserveRatio="true" smooth="true" />
-                    </StackPane>
-                    <VBox spacing="4">
-                        <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Label maxWidth="Infinity" minWidth="0" styleClass="nama-produk" text="Sepatu Uk 40" textOverrun="ELLIPSIS" HBox.hgrow="ALWAYS" />
-                            <Label style="-fx-background-color: FEC5C5;" styleClass="badge-dipinjam" text="Dipinjamkan" textFill="#861010" />
-                        </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="4">
-                            <Label styleClass="harga" text="Rp 45.000" />
-                            <Label styleClass="harga-satuan" text="/ Hari" />
-                        </HBox>
-                    </VBox>
-                    <Button id="produk-sepatu-uk-40" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
-                        <VBox.margin>
-                            <Insets top="4" />
-                        </VBox.margin>
-                    </Button>
-                </VBox>
-
-                <VBox maxWidth="Infinity" minWidth="0" styleClass="kartu-produk" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
-                    <StackPane alignment="CENTER" styleClass="bingkai-gambar">
-                        <ImageView fitHeight="136" preserveRatio="true" smooth="true" />
-                    </StackPane>
-                    <VBox spacing="4">
-                        <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Label maxWidth="Infinity" minWidth="0" styleClass="nama-produk" text="Tas Carrier" textOverrun="ELLIPSIS" HBox.hgrow="ALWAYS" />
-                            <Label style="-fx-background-color: C9FFBC;" styleClass="badge-tersedia" text="Tersedia" textFill="#00572b" />
-                        </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="4">
-                            <Label styleClass="harga" text="Rp 45.000" />
-                            <Label styleClass="harga-satuan" text="/ Hari" />
-                        </HBox>
-                    </VBox>
-                    <Button id="produk-tas-carrier-2" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
-                        <VBox.margin>
-                            <Insets top="4" />
-                        </VBox.margin>
-                    </Button>
-                </VBox>
-
-                <VBox maxWidth="Infinity" minWidth="0" styleClass="kartu-produk" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
-                    <StackPane alignment="CENTER" styleClass="bingkai-gambar">
-                        <ImageView fitHeight="136" preserveRatio="true" smooth="true" />
-                    </StackPane>
-                    <VBox spacing="4">
-                        <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Label maxWidth="Infinity" minWidth="0" styleClass="nama-produk" text="Tas Carrier" textOverrun="ELLIPSIS" HBox.hgrow="ALWAYS" />
-                            <Label style="-fx-background-color: C9FFBC;" styleClass="badge-tersedia" text="Tersedia" textFill="#00572b" />
-                        </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="4">
-                            <Label styleClass="harga" text="Rp 45.000" />
-                            <Label styleClass="harga-satuan" text="/ Hari" />
-                        </HBox>
-                    </VBox>
-                    <Button id="produk-tas-carrier-3" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
-                        <VBox.margin>
-                            <Insets top="4" />
-                        </VBox.margin>
-                    </Button>
-                </VBox>
-
-                <VBox maxWidth="Infinity" minWidth="0" styleClass="kartu-produk" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
-                    <StackPane alignment="CENTER" styleClass="bingkai-gambar">
-                        <ImageView fitHeight="136" preserveRatio="true" smooth="true" />
-                    </StackPane>
-                    <VBox spacing="4">
-                        <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Label maxWidth="Infinity" minWidth="0" styleClass="nama-produk" text="Tas Carrier" textOverrun="ELLIPSIS" HBox.hgrow="ALWAYS" />
-                            <Label style="-fx-background-color: C9FFBC;" styleClass="badge-tersedia" text="Tersedia" textFill="#00572b" />
-                        </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="4">
-                            <Label styleClass="harga" text="Rp 45.000" />
-                            <Label styleClass="harga-satuan" text="/ Hari" />
-                        </HBox>
-                    </VBox>
-                    <Button id="produk-tas-carrier-4" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
-                        <VBox.margin>
-                            <Insets top="4" />
-                        </VBox.margin>
-                    </Button>
-                </VBox>
-
-                <VBox maxWidth="Infinity" minWidth="0" styleClass="kartu-produk" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
-                    <StackPane alignment="CENTER" styleClass="bingkai-gambar">
-                        <ImageView fitHeight="136" preserveRatio="true" smooth="true" />
-                    </StackPane>
-                    <VBox spacing="4">
-                        <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Label maxWidth="Infinity" minWidth="0" styleClass="nama-produk" text="Tas Carrier" textOverrun="ELLIPSIS" HBox.hgrow="ALWAYS" />
-                            <Label style="-fx-background-color: C9FFBC;" styleClass="badge-tersedia" text="Tersedia" textFill="#00572b" />
-                        </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="4">
-                            <Label styleClass="harga" text="Rp 45.000" textFill="#005a32">
-                        <font>
-                           <Font name="System Bold" size="12.0" />
-                        </font></Label>
-                            <Label styleClass="harga-satuan" text="/ Hari" textFill="#005a32" />
-                        </HBox>
-                    </VBox>
-                    <Button id="produk-tas-carrier-5" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
-                        <VBox.margin>
-                            <Insets top="4" />
-                        </VBox.margin>
-                    </Button>
-                </VBox>
-
-                <VBox maxWidth="Infinity" minWidth="0" styleClass="kartu-produk" GridPane.columnIndex="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
-                    <StackPane alignment="CENTER" styleClass="bingkai-gambar">
-                        <ImageView fitHeight="136" preserveRatio="true" smooth="true" />
-                    </StackPane>
-                    <VBox spacing="4">
-                        <HBox alignment="CENTER_LEFT" spacing="8">
-                            <Label maxWidth="Infinity" minWidth="0" styleClass="nama-produk" text="Tas Carrier" textOverrun="ELLIPSIS" HBox.hgrow="ALWAYS" />
-                            <Label prefHeight="18.0" prefWidth="56.0" style="-fx-background-color: C9FFBC;" styleClass="badge-tersedia" text="Tersedia" textAlignment="RIGHT" textFill="#00572b">
-                        <HBox.margin>
-                           <Insets left="5.0" right="5.0" />
-                        </HBox.margin>
-                        <padding>
-                           <Insets right="10.0" />
-                        </padding>
-                        <opaqueInsets>
-                           <Insets right="5.0" />
-                        </opaqueInsets></Label>
-                        </HBox>
-                        <HBox alignment="BASELINE_LEFT" spacing="4">
-                            <Label styleClass="harga" text="Rp 45.000" textFill="#005a32">
-                        <font>
-                           <Font name="System Bold" size="12.0" />
-                        </font></Label>
-                            <Label styleClass="harga-satuan" text="/ Hari" textFill="#005a32" />
-                        </HBox>
-                    </VBox>
-                    <Button id="produk-tas-carrier-6" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
+                    <Button id="produk-tas-carrier-1" fx:id="lihatDetail" maxWidth="Infinity" mnemonicParsing="false" onAction="#lihatDetail" style="-fx-background-color: #00572B;" styleClass="btn-detail" text="Detail" textFill="WHITE">
                         <VBox.margin>
                             <Insets top="4" />
                         </VBox.margin>
@@ -235,4 +73,9 @@
             </GridPane>
         </content>
     </ScrollPane>
+   <HBox fx:id="containerPagination"
+      alignment="CENTER"
+      spacing="8.0"
+      minHeight="38.0"
+      prefHeight="38.0"/>
 </VBox>

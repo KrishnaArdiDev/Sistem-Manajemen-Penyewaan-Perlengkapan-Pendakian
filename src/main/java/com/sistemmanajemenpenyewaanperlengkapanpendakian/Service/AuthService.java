@@ -7,23 +7,28 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.LoginGagalExc
 public class AuthService {
     // Penambahan, buat ngatur proses autentikasi vendor
     public Vendor login(String emailAtauUsername, String password) throws LoginGagalException{
-        // penambahan, buat validasi input login
+        // Membersihkan sesi sebelumnya sebelum login baru
+        TransaksiService.bersihkanVendorAktif();
+
         if (emailAtauUsername == null || emailAtauUsername.trim().isEmpty() || password == null || password.isEmpty()){
             throw new LoginGagalException("Email atau username dan password wajib diisi");
         }
 
-        // penambahan, membuat objek vendor untuk proses login
         Vendor vendor = new Vendor();
 
         vendor.setEmailAtauUsername(emailAtauUsername.trim());
         vendor.setPwAdm(password);
 
-        // Penambahan, menjalankan proses login lewat model vendor 
         if (vendor.login()){
+            TransaksiService.aturanVendorAktif(vendor.getIdVendor());
             return vendor;
         }
 
-        // Penambahan, buat menangani kegagalan akses database
         throw new IllegalStateException("Terjadi kesalahan saat mengakses database. Login tidak bisa diproses");
+    }
+
+    // Membersihkan sesi vendor saat logout
+    public void logout(){
+        TransaksiService.bersihkanVendorAktif();
     }
 }

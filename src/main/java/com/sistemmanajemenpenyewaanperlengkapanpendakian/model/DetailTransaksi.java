@@ -9,6 +9,8 @@ public class DetailTransaksi {
     private Perlengkapan perlengkapanYangDisewa;
     private String statusPengembalian;
     private long biayaGantiRugi;
+    // penambahan
+    private Long hargaSewaHarianSaatTransaksi;
 
     // penambahan
     private boolean pengembalianSudahDiproses;
@@ -28,6 +30,21 @@ public class DetailTransaksi {
         return biayaGantiRugi;
     }
 
+    public Long getHargaSewaHarianSaatTransaksi(){
+    return hargaSewaHarianSaatTransaksi;
+    }
+
+    public void setHargaSewaHarianSaatTransaksi(Long hargaSewaHarianSaatTransaksi){
+        if (hargaSewaHarianSaatTransaksi != null && hargaSewaHarianSaatTransaksi < 0){
+            throw new IllegalArgumentException("Harga sewa harian saat transaksi tidak boleh negatif");
+        }
+        this.hargaSewaHarianSaatTransaksi = hargaSewaHarianSaatTransaksi;
+    }
+
+    private long ambilHargaSewaHarianUntukPerhitungan(){
+        return hargaSewaHarianSaatTransaksi != null ? hargaSewaHarianSaatTransaksi : perlengkapanYangDisewa.getHargaSewaHarian();
+    }
+
     public long getSubTotal(){
         if (perlengkapanYangDisewa == null){
             throw new IllegalStateException("Perlengkapan yang disewa belum ditemukan");
@@ -36,7 +53,7 @@ public class DetailTransaksi {
         if (kuantitasPerAlat <= 0){
             throw new IllegalStateException("Kuantitas perlengkapan belum ditentukan");
         }
-        return Math.multiplyExact(perlengkapanYangDisewa.hitungHargaSewa(1), kuantitasPerAlat);
+        return Math.multiplyExact(ambilHargaSewaHarianUntukPerhitungan(), kuantitasPerAlat);
     }
 
     public LocalDate getTanggalPengembalianBarang(){
@@ -99,7 +116,8 @@ public class DetailTransaksi {
             throw new IllegalArgumentException("Durasi sewa harus lebih dari 0");
         }
 
-        return Math.multiplyExact(perlengkapanYangDisewa.hitungHargaSewa(durasiSewa), kuantitasPerAlat);
+        long totalPerUnit = Math.multiplyExact(ambilHargaSewaHarianUntukPerhitungan(), durasiSewa);
+        return Math.multiplyExact(totalPerUnit, kuantitasPerAlat);
     }
 
     // penambahan

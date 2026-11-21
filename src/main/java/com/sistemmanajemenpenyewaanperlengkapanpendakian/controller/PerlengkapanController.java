@@ -1,142 +1,227 @@
+
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.PerlengkapanService;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Kompor;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Sepatu;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Tas;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Window;
+
 
 public class PerlengkapanController {
 
-    @FXML
-    private VBox pageRoot;
+    private static final int BATAS_PER_HALAMAN = 5;
 
-    private final List<Produk> daftarProduk = new ArrayList<>();
-    private String selectedFotoUri;
+    private static final String PATH_PERLENGKAPAN =
+            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/perlengkapan.fxml";
+
+    private static final String PATH_FORMULIR =
+            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/formulir-data-perlengkapan.fxml";
+
+    private static final String PATH_DETAIL =
+            "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/detail-perlengkapan.fxml";
+
+
+    // =========================
+    // KOMPONEN FXML
+    // =========================
+
+    @FXML
+    private GridPane gridProduk;
+
+    @FXML
+    private Button tambahProduk;
+
+    @FXML
+    private HBox containerPagination;
+
+
+    // =========================
+    // DATA DAN SERVICE
+    // =========================
+
+    private final PerlengkapanService perlengkapanService =
+            new PerlengkapanService();
+
+    private final List<Perlengkapan> daftarPerlengkapan =
+            new ArrayList<>();
+
+    private int idVendorAktif;
+    private int halamanAktif;
+
+    private BorderPane layoutUtama;
+
+
+    // =========================
+    // INITIALIZE
+    // =========================
 
     @FXML
     private void initialize() {
-        isiDataContoh();
-        tampilkanDaftar();
+
+        muatPerlengkapan();
     }
 
-    private void isiDataContoh() {
-        daftarProduk.clear();
 
-        daftarProduk.add(new Produk(
-                "Tas Carrier", "Tas", 45000, 4, "60 L", null));
+    // =========================
+    // MEMUAT DATA PERLENGKAPAN
+    // =========================
 
-        daftarProduk.add(new Produk(
-                "Kompor Portable", "Kompor", 35000, 3,
-                "Portable", null));
+    private void muatPerlengkapan() {
 
-        daftarProduk.add(new Produk(
-                "Sepatu Uk 40", "Sepatu", 45000, 0, "40", null));
+        daftarPerlengkapan.clear();
+        halamanAktif = 0;
 
-        daftarProduk.add(new Produk(
-                "Tas Carrier Puma", "Tas", 45000, 4, "40", null));
+        try {
 
-        daftarProduk.add(new Produk(
-                "Tas Carrier 45L", "Tas", 45000, 3, "45 L", null));
+            idVendorAktif =
+                    TransaksiService.getIdVendorAktif();
 
-        daftarProduk.add(new Produk(
-                "Tas Carrier 50L", "Tas", 45000, 5, "50 L", null));
+            daftarPerlengkapan.addAll(
+                    perlengkapanService.ambilPerlengkapanVendor(
+                            idVendorAktif
+                    )
+            );
 
-        daftarProduk.add(new Produk(
-                "Kompor Outdoor", "Kompor", 35000, 2,
-                "Outdoor", null));
+            tampilkanDaftar();
 
-        daftarProduk.add(new Produk(
-                "Sepatu Gunung", "Sepatu", 40000, 2, "42", null));
+        } catch (IllegalArgumentException e) {
+
+            idVendorAktif = 0;
+
+            tampilkanPesanKosong(
+                    "Sesi vendor belum aktif. Login untuk melihat data perlengkapan."
+            );
+
+        } catch (SQLException e) {
+
+            idVendorAktif = 0;
+
+            tampilkanPesanKosong(
+                    "Data perlengkapan gagal dimuat dari database."
+            );
+
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Gagal Memuat Perlengkapan",
+                    e.getMessage()
+            );
+        }
     }
+
+
+    // =========================
+    // MENAMPILKAN DAFTAR PRODUK
+    // =========================
 
     private void tampilkanDaftar() {
-        VBox screen = new VBox(14);
-        screen.setFillWidth(true);
-        screen.setStyle("-fx-background-color: transparent;");
 
-        HBox header = new HBox(12);
-        header.setAlignment(Pos.CENTER_LEFT);
+        gridProduk.getChildren().clear();
 
-        Label title = new Label("Data Perlengkapan");
-        title.setStyle(
-                "-fx-font-size: 22px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #00643D;"
-        );
+        if (daftarPerlengkapan.isEmpty()) {
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+            tampilkanPesanKosong(
+                    "Belum ada perlengkapan yang terdaftar."
+            );
 
-        Button tambahButton = buatTombol(
-                "+  Tambah Produk", true, this::tampilkanFormTambah);
-
-        header.getChildren().addAll(title, spacer, tambahButton);
-
-        Label jumlah = new Label(
-                daftarProduk.size() + " produk ditampilkan");
-
-        jumlah.setStyle(
-                "-fx-font-size: 12px;" +
-                "-fx-text-fill: #686868;"
-        );
-
-        FlowPane productContainer = new FlowPane();
-        productContainer.setHgap(14);
-        productContainer.setVgap(18);
-        productContainer.setPrefWrapLength(850);
-        productContainer.setAlignment(Pos.TOP_LEFT);
-        productContainer.setPadding(new Insets(4, 4, 12, 4));
-
-        for (Produk produk : daftarProduk) {
-            productContainer.getChildren().add(
-                    buatKartuProduk(produk));
+            return;
         }
 
-        javafx.scene.control.ScrollPane scroll =
-                new javafx.scene.control.ScrollPane(productContainer);
+        int jumlahHalaman = hitungJumlahHalaman();
 
-        scroll.setFitToWidth(true);
-        scroll.setHbarPolicy(
-                javafx.scene.control.ScrollPane.ScrollBarPolicy.NEVER);
-        scroll.setPannable(true);
-        scroll.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-background: transparent;" +
-                "-fx-border-color: transparent;"
+        if (halamanAktif >= jumlahHalaman) {
+            halamanAktif = jumlahHalaman - 1;
+        }
+
+        if (halamanAktif < 0) {
+            halamanAktif = 0;
+        }
+
+        int indeksAwal =
+                halamanAktif * BATAS_PER_HALAMAN;
+
+        int indeksAkhir = Math.min(
+                indeksAwal + BATAS_PER_HALAMAN,
+                daftarPerlengkapan.size()
         );
 
-        VBox.setVgrow(scroll, Priority.ALWAYS);
+        for (int indeks = indeksAwal;
+                indeks < indeksAkhir;
+                indeks++) {
 
-        screen.getChildren().addAll(header, jumlah, scroll);
-        gantiHalaman(screen);
+            Perlengkapan perlengkapan =
+                    daftarPerlengkapan.get(indeks);
+
+            int posisi = indeks - indeksAwal;
+
+            VBox kartu = buatKartuProduk(perlengkapan);
+
+            GridPane.setHgrow(
+                    kartu,
+                    Priority.ALWAYS
+            );
+
+            GridPane.setFillWidth(
+                    kartu,
+                    true
+            );
+
+            gridProduk.add(
+                    kartu,
+                    posisi % 4,
+                    posisi / 4
+            );
+        }
+
+        aturPagination();
     }
 
-    private VBox buatKartuProduk(Produk produk) {
+
+    // =========================
+    // KARTU PRODUK
+    // =========================
+
+    private VBox buatKartuProduk(
+            Perlengkapan perlengkapan) {
+
         VBox kartu = new VBox(9);
-        kartu.setPrefWidth(194);
-        kartu.setMinWidth(178);
-        kartu.setMaxWidth(205);
+
+        kartu.setMinWidth(0);
+        kartu.setMaxWidth(Double.MAX_VALUE);
         kartu.setPadding(new Insets(8));
+
+        kartu.getStyleClass().add("kartu-produk");
 
         kartu.setStyle(
                 "-fx-background-color: white;" +
@@ -145,531 +230,679 @@ public class PerlengkapanController {
                 "-fx-border-radius: 10;"
         );
 
+
+        // AREA GAMBAR
+
         StackPane areaGambar = new StackPane();
-        areaGambar.setPrefHeight(145);
-        areaGambar.setMinHeight(145);
-        areaGambar.setMaxHeight(145);
+
+        areaGambar.setAlignment(Pos.CENTER);
+        areaGambar.setMinHeight(136);
+        areaGambar.setPrefHeight(136);
+        areaGambar.setMaxHeight(136);
+
+        areaGambar.getStyleClass().add(
+                "bingkai-gambar"
+        );
+
         areaGambar.setStyle(
-                "-fx-background-color: #EEEEEE;" +
+                "-fx-background-color: #F1F1F1;" +
                 "-fx-background-radius: 7;"
         );
 
-        tampilkanFoto(areaGambar, produk, 160, 135);
+        ImageView gambar = buatGambar(perlengkapan);
 
-        HBox informasi = new HBox(5);
-        informasi.setAlignment(Pos.CENTER_LEFT);
+        if (gambar != null) {
 
-        Label nama = new Label(produk.nama);
+            areaGambar.getChildren().add(gambar);
+
+        } else {
+
+            Label ikon = new Label(
+                    ikonProduk(perlengkapan)
+            );
+
+            ikon.setStyle("-fx-font-size: 58px;");
+
+            areaGambar.getChildren().add(ikon);
+        }
+
+
+        // NAMA DAN STATUS PRODUK
+
+        HBox barisNama = new HBox(8);
+
+        barisNama.setAlignment(
+                Pos.CENTER_LEFT
+        );
+
+        Label nama = new Label(
+                perlengkapan.getNamaPerlengkapan()
+        );
+
+        nama.setMaxWidth(Double.MAX_VALUE);
+        nama.setMinWidth(0);
         nama.setWrapText(true);
-        nama.setMaxWidth(100);
+
+        nama.getStyleClass().add("nama-produk");
+
         nama.setStyle(
-                "-fx-font-size: 11px;" +
+                "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
                 "-fx-text-fill: #333333;"
         );
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox.setHgrow(
+                nama,
+                Priority.ALWAYS
+        );
 
         Label status = new Label(
-                produk.stok > 0 ? "Tersedia" : "Dipinjamkan");
-
-        status.setStyle(produk.stok > 0
-                ? "-fx-background-color: #C9F5CC;" +
-                  "-fx-text-fill: #17652B;" +
-                  "-fx-background-radius: 4;" +
-                  "-fx-padding: 3 5 3 5;" +
-                  "-fx-font-size: 9px;"
-                : "-fx-background-color: #F8D7DA;" +
-                  "-fx-text-fill: #A3212B;" +
-                  "-fx-background-radius: 4;" +
-                  "-fx-padding: 3 5 3 5;" +
-                  "-fx-font-size: 9px;"
+                perlengkapan.getStok() > 0
+                        ? "Tersedia"
+                        : "Stok Habis"
         );
 
-        informasi.getChildren().addAll(nama, spacer, status);
+        status.getStyleClass().add(
+                perlengkapan.getStok() > 0
+                        ? "badge-tersedia"
+                        : "badge-dipinjam"
+        );
+
+        status.setStyle(
+                perlengkapan.getStok() > 0
+                        ? "-fx-background-color: #C9FFBC;" +
+                          "-fx-text-fill: #00572B;" +
+                          "-fx-background-radius: 5;" +
+                          "-fx-padding: 4 7 4 7;" +
+                          "-fx-font-size: 9px;"
+                        : "-fx-background-color: #FEC5C5;" +
+                          "-fx-text-fill: #861010;" +
+                          "-fx-background-radius: 5;" +
+                          "-fx-padding: 4 7 4 7;" +
+                          "-fx-font-size: 9px;"
+        );
+
+        barisNama.getChildren().addAll(
+                nama,
+                status
+        );
+
+
+        // HARGA SEWA
+
+        HBox barisHarga = new HBox(4);
+
+        barisHarga.setAlignment(
+                Pos.BASELINE_LEFT
+        );
 
         Label harga = new Label(
-                "Rp " + formatRupiah(produk.harga) + " / Hari");
+                "Rp " + formatRupiah(
+                        perlengkapan.getHargaSewaHarian()
+                )
+        );
+
+        harga.getStyleClass().add("harga");
 
         harga.setStyle(
-                "-fx-font-size: 13px;" +
+                "-fx-font-size: 12px;" +
                 "-fx-font-weight: bold;" +
-                "-fx-text-fill: #00643D;"
+                "-fx-text-fill: #005A32;"
         );
 
-        Button detailButton = buatTombol(
-                "Detail", true, () -> tampilkanDetail(produk));
+        Label satuan = new Label("/ Hari");
 
-        detailButton.setMaxWidth(Double.MAX_VALUE);
+        satuan.getStyleClass().add("harga-satuan");
 
-        kartu.getChildren().addAll(
-                areaGambar, informasi, harga, detailButton);
-
-        return kartu;
-    }
-
-    private void tampilkanFormTambah() {
-        selectedFotoUri = null;
-
-        VBox screen = new VBox(14);
-        screen.setFillWidth(true);
-
-        screen.getChildren().add(
-                buatHeader("Data Perlengkapan", this::tampilkanDaftar));
-
-        VBox panel = new VBox(17);
-        panel.setPadding(new Insets(25, 32, 25, 32));
-        panel.setPrefWidth(760);
-        panel.setMaxWidth(820);
-        panel.setMaxHeight(Double.MAX_VALUE);
-        panel.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 14;"
-        );
-
-        Label judul = new Label("FORMULIR TAMBAH PERLENGKAPAN");
-        judul.setMaxWidth(Double.MAX_VALUE);
-        judul.setAlignment(Pos.CENTER);
-        judul.setStyle(
-                "-fx-font-size: 16px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #00643D;"
-        );
-
-        TextField namaField = buatInput("Masukkan nama barang");
-        TextField hargaField = buatInput("Contoh: 45000");
-        TextField ukuranField = buatInput("Contoh: 40 atau 60 L");
-        TextField stokField = buatInput("Masukkan total stok");
-
-        VBox namaFieldBox = buatField("Nama Barang", namaField);
-        VBox hargaFieldBox = buatField(
-                "Harga Barang/Hari", hargaField);
-        VBox ukuranFieldBox = buatField(
-                "Ukuran Barang", ukuranField);
-        VBox stokFieldBox = buatField("Total Stok", stokField);
-
-        Label namaFoto = new Label("Belum ada foto dipilih");
-        namaFoto.setStyle(
-                "-fx-font-size: 11px;" +
-                "-fx-text-fill: #666666;"
-        );
-
-        StackPane uploadArea = buatAreaUpload(namaFoto);
-        VBox fotoBox = new VBox(6);
-        fotoBox.getChildren().addAll(
-                labelForm("Foto Barang"), uploadArea, namaFoto);
-
-        VBox formulir = new VBox(13);
-        formulir.getChildren().addAll(
-                namaFieldBox,
-                hargaFieldBox,
-                ukuranFieldBox,
-                stokFieldBox,
-                fotoBox
-        );
-
-        Button batalButton = buatTombol(
-                "Batalkan", false, this::tampilkanDaftar);
-
-        Button konfirmasiButton = buatTombol(
-                "Konfirmasi",
-                true,
-                () -> konfirmasiTambah(
-                        namaField, hargaField, ukuranField, stokField));
-
-        HBox tombol = new HBox(10, batalButton, konfirmasiButton);
-        tombol.setAlignment(Pos.CENTER_RIGHT);
-
-        panel.getChildren().addAll(judul, formulir, tombol);
-
-        HBox holder = new HBox(panel);
-        holder.setAlignment(Pos.TOP_CENTER);
-        holder.setMaxHeight(Double.MAX_VALUE);
-        HBox.setHgrow(panel, Priority.ALWAYS);
-        VBox.setVgrow(holder, Priority.ALWAYS);
-
-        screen.getChildren().add(holder);
-        gantiHalaman(screen);
-    }
-
-    private StackPane buatAreaUpload(Label namaFoto) {
-        StackPane area = new StackPane();
-        area.setPrefHeight(88);
-        area.setMinHeight(88);
-        area.setMaxHeight(88);
-        area.setCursor(Cursor.HAND);
-
-        area.setStyle(
-                "-fx-background-color: #E8E8E8;" +
-                "-fx-border-color: #777777;" +
-                "-fx-border-radius: 6;" +
-                "-fx-background-radius: 6;"
-        );
-
-        VBox petunjuk = new VBox(2);
-        petunjuk.setAlignment(Pos.CENTER);
-
-        Label ikon = new Label("☁ ⬆");
-        ikon.setStyle(
-                "-fx-font-size: 30px;" +
-                "-fx-text-fill: #505050;"
-        );
-
-        Label teks = new Label("Klik untuk upload foto");
-        teks.setStyle(
+        satuan.setStyle(
                 "-fx-font-size: 11px;" +
                 "-fx-text-fill: #555555;"
         );
 
-        petunjuk.getChildren().addAll(ikon, teks);
-        area.getChildren().add(petunjuk);
+        barisHarga.getChildren().addAll(
+                harga,
+                satuan
+        );
 
-        area.setOnMouseClicked(event -> {
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle("Pilih Foto Barang");
-            chooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter(
-                            "File gambar", "*.png", "*.jpg", "*.jpeg"));
 
-            Window owner = pageRoot.getScene() == null
-                    ? null : pageRoot.getScene().getWindow();
+        // TOMBOL DETAIL
 
-            File file = chooser.showOpenDialog(owner);
+        Button detail = new Button("Detail");
 
-            if (file != null) {
-                selectedFotoUri = file.toURI().toString();
-                namaFoto.setText(file.getName());
+        detail.setMaxWidth(Double.MAX_VALUE);
+        detail.setMnemonicParsing(false);
 
-                Image image = new Image(
-                        selectedFotoUri, 240, 80, true, true);
+        detail.getStyleClass().add("btn-detail");
 
-                ImageView preview = new ImageView(image);
-                preview.setFitWidth(240);
-                preview.setFitHeight(80);
-                preview.setPreserveRatio(true);
+        detail.setStyle(
+                "-fx-background-color: #00572B;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-radius: 5;" +
+                "-fx-cursor: hand;"
+        );
 
-                area.getChildren().setAll(preview);
+        detail.setUserData(perlengkapan);
+
+        detail.setOnAction(
+                this::lihatDetail
+        );
+
+
+        kartu.getChildren().addAll(
+                areaGambar,
+                barisNama,
+                barisHarga,
+                detail
+        );
+
+        return kartu;
+    }
+
+
+    // =========================
+    // PAGINATION
+    // =========================
+
+    private int hitungJumlahHalaman() {
+
+        return Math.max(
+                1,
+                (int) Math.ceil(
+                        (double) daftarPerlengkapan.size()
+                        / BATAS_PER_HALAMAN
+                )
+        );
+    }
+
+
+    private void aturPagination() {
+
+        containerPagination.getChildren().clear();
+
+        int jumlahHalaman = hitungJumlahHalaman();
+
+
+        // TOMBOL SEBELUMNYA
+
+        Button sebelumnya =
+                buatTombolPagination("‹");
+
+        sebelumnya.setDisable(
+                halamanAktif == 0
+        );
+
+        sebelumnya.setOnAction(event -> {
+
+            if (halamanAktif > 0) {
+
+                halamanAktif--;
+
+                tampilkanDaftar();
             }
         });
 
-        return area;
+        containerPagination.getChildren().add(
+                sebelumnya
+        );
+
+
+        // NOMOR HALAMAN
+
+        for (int i = 0; i < jumlahHalaman; i++) {
+
+            final int nomorHalaman = i;
+
+            Button nomor = buatTombolPagination(
+                    String.valueOf(i + 1)
+            );
+
+            if (i == halamanAktif) {
+
+                nomor.setStyle(
+                        "-fx-background-color: #005A32;" +
+                        "-fx-text-fill: #FFFFFF;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-border-color: #005A32;" +
+                        "-fx-border-radius: 6;"
+                );
+            }
+
+            nomor.setOnAction(event -> {
+
+                halamanAktif = nomorHalaman;
+
+                tampilkanDaftar();
+            });
+
+            containerPagination.getChildren().add(
+                    nomor
+            );
+        }
+
+
+        // TOMBOL BERIKUTNYA
+
+        Button berikutnya =
+                buatTombolPagination("›");
+
+        berikutnya.setDisable(
+                halamanAktif >= jumlahHalaman - 1
+        );
+
+        berikutnya.setOnAction(event -> {
+
+            if (halamanAktif < jumlahHalaman - 1) {
+
+                halamanAktif++;
+
+                tampilkanDaftar();
+            }
+        });
+
+        containerPagination.getChildren().add(
+                berikutnya
+        );
+
+        containerPagination.setVisible(true);
+        containerPagination.setManaged(true);
     }
 
-    private void konfirmasiTambah(
-            TextField namaField,
-            TextField hargaField,
-            TextField ukuranField,
-            TextField stokField) {
 
-        String nama = namaField.getText().trim();
-        String hargaText = hargaField.getText().trim()
-                .replace(".", "")
-                .replace(",", "");
-        String ukuran = ukuranField.getText().trim();
-        String stokText = stokField.getText().trim();
+    private Button buatTombolPagination(String teks) {
 
-        if (nama.isEmpty() || hargaText.isEmpty()
-                || stokText.isEmpty()) {
+        Button tombol = new Button(teks);
+
+        tombol.setMinSize(34, 30);
+        tombol.setPrefSize(34, 30);
+        tombol.setMaxSize(34, 30);
+
+        tombol.setCursor(Cursor.HAND);
+
+        tombol.setStyle(
+                "-fx-background-color: #FFFFFF;" +
+                "-fx-text-fill: #005A32;" +
+                "-fx-border-color: #005A32;" +
+                "-fx-border-radius: 6;" +
+                "-fx-background-radius: 6;" +
+                "-fx-font-weight: bold;"
+        );
+
+        return tombol;
+    }
+
+
+    // =========================
+    // MEMBUKA FORM TAMBAH PRODUK
+    // =========================
+
+    @FXML
+    private void tambahProduk() {
+
+        if (!siapkanLayoutUtama()) {
+
             tampilkanPeringatan(
-                    "Nama barang, harga, dan total stok wajib diisi.");
+                    Alert.AlertType.ERROR,
+                    "Gagal Membuka Formulir",
+                    "Layout utama aplikasi tidak ditemukan."
+            );
+
             return;
         }
 
         try {
-            long harga = Long.parseLong(hargaText);
-            int stok = Integer.parseInt(stokText);
 
-            if (harga <= 0) {
-                tampilkanPeringatan(
-                        "Harga barang harus lebih besar dari 0.");
-                return;
+            URL lokasiFormulir =
+                    App.class.getResource(PATH_FORMULIR);
+
+            if (lokasiFormulir == null) {
+
+                throw new IOException(
+                        "formulir-data-perlengkapan.fxml tidak ditemukan."
+                );
             }
 
-            if (stok < 0) {
-                tampilkanPeringatan(
-                        "Total stok tidak boleh negatif.");
-                return;
-            }
+            FXMLLoader loader =
+                    new FXMLLoader(lokasiFormulir);
 
-            if (ukuran.isEmpty()) {
-                ukuran = "-";
-            }
+            Parent formulir = loader.load();
 
-            daftarProduk.add(new Produk(
-                    nama,
-                    tentukanJenis(nama),
-                    harga,
-                    stok,
-                    ukuran,
-                    selectedFotoUri
-            ));
+            ControllerFormulirDataPerlengkapan controller =
+                    loader.getController();
 
-            selectedFotoUri = null;
-            tampilkanDaftar();
+            controller.setAksiKembali(
+                    this::kembaliKeDaftar
+            );
 
-        } catch (NumberFormatException e) {
+            BorderPane.setMargin(
+                    formulir,
+                    new Insets(16)
+            );
+
+            layoutUtama.setCenter(formulir);
+
+        } catch (IOException | RuntimeException e) {
+
             tampilkanPeringatan(
-                    "Harga dan total stok harus berupa angka.");
+                    Alert.AlertType.ERROR,
+                    "Gagal Membuka Formulir",
+                    e.getMessage()
+            );
         }
     }
 
-    private void tampilkanDetail(Produk produk) {
-        VBox screen = new VBox(14);
-        screen.setFillWidth(true);
 
-        screen.getChildren().add(
-                buatHeader("Detail perlengkapan", this::tampilkanDaftar));
+    // =========================
+    // MENEMUKAN LAYOUT UTAMA
+    // =========================
 
-        VBox panel = new VBox(17);
-        panel.setPadding(new Insets(25, 32, 25, 32));
-        panel.setPrefWidth(850);
-        panel.setMaxWidth(900);
-        panel.setMaxHeight(Double.MAX_VALUE);
-        panel.setStyle(
-                "-fx-background-color: white;" +
-                "-fx-background-radius: 14;"
-        );
+    private boolean siapkanLayoutUtama() {
 
-        StackPane gambar = new StackPane();
-        gambar.setPrefHeight(120);
-        gambar.setMinHeight(120);
-        gambar.setMaxHeight(120);
-        tampilkanFoto(gambar, produk, 140, 115);
+        if (layoutUtama != null) {
+            return true;
+        }
 
-        VBox bidang = new VBox(12);
+        if (gridProduk.getScene() == null) {
+            return false;
+        }
 
-        bidang.getChildren().addAll(
-                buatField(
-                        "Nama Barang",
-                        fieldBacaSaja(produk.nama)),
-                buatField(
-                        "Harga Sewa (Per hari)",
-                        fieldBacaSaja(
-                                "Rp " + formatRupiah(produk.harga))),
-                buatField(
-                        "Status Barang",
-                        fieldBacaSaja(
-                                produk.stok > 0
-                                        ? "Tersedia" : "Dipinjamkan")),
-                buatField(
-                        "Ukuran Barang",
-                        fieldBacaSaja(produk.ukuran))
-        );
+        Node node = gridProduk;
 
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
+        while (node.getParent() != null) {
 
-        Button konfirmasi = buatTombol(
-                "Konfirmasi", true, this::tampilkanDaftar);
+            Parent parent = node.getParent();
 
-        HBox barisTombol = new HBox(konfirmasi);
-        barisTombol.setAlignment(Pos.CENTER_RIGHT);
+            if (parent instanceof BorderPane
+                    && ((BorderPane) parent).getCenter() == node) {
 
-        panel.getChildren().addAll(
-                gambar, bidang, spacer, barisTombol);
+                layoutUtama = (BorderPane) parent;
 
-        HBox holder = new HBox(panel);
-        holder.setAlignment(Pos.TOP_CENTER);
-        holder.setMaxHeight(Double.MAX_VALUE);
-        HBox.setHgrow(panel, Priority.ALWAYS);
-        VBox.setVgrow(holder, Priority.ALWAYS);
-
-        screen.getChildren().add(holder);
-        gantiHalaman(screen);
-    }
-
-    private HBox buatHeader(String teks, Runnable aksiKembali) {
-        HBox header = new HBox(8);
-        header.setAlignment(Pos.CENTER_LEFT);
-
-        Button kembali = new Button("‹");
-        kembali.setStyle(
-                "-fx-background-color: transparent;" +
-                "-fx-text-fill: #00643D;" +
-                "-fx-font-size: 26px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-padding: 0 3 0 0;" +
-                "-fx-cursor: hand;"
-        );
-        kembali.setOnAction(event -> aksiKembali.run());
-
-        Label judul = new Label(teks);
-        judul.setStyle(
-                "-fx-font-size: 20px;" +
-                "-fx-font-weight: bold;" +
-                "-fx-text-fill: #00643D;"
-        );
-
-        header.getChildren().addAll(kembali, judul);
-        return header;
-    }
-
-    private VBox buatField(String teks, javafx.scene.control.Control input) {
-        VBox field = new VBox(5);
-        field.setFillWidth(true);
-        field.getChildren().addAll(labelForm(teks), input);
-        return field;
-    }
-
-    private Label labelForm(String teks) {
-        Label label = new Label(teks);
-        label.setStyle(
-                "-fx-font-size: 12px;" +
-                "-fx-text-fill: #333333;"
-        );
-        return label;
-    }
-
-    private TextField buatInput(String prompt) {
-        TextField field = new TextField();
-        field.setPromptText(prompt);
-        field.setPrefHeight(35);
-        field.setMaxWidth(Double.MAX_VALUE);
-        field.setStyle(gayaInput());
-        return field;
-    }
-
-    private TextField fieldBacaSaja(String isi) {
-        TextField field = new TextField(isi);
-        field.setEditable(false);
-        field.setPrefHeight(35);
-        field.setMaxWidth(Double.MAX_VALUE);
-        field.setStyle(gayaInput());
-        return field;
-    }
-
-    private String gayaInput() {
-        return "-fx-background-color: #E8E8E8;" +
-               "-fx-border-color: #777777;" +
-               "-fx-border-radius: 6;" +
-               "-fx-background-radius: 6;" +
-               "-fx-padding: 7 10 7 10;" +
-               "-fx-font-size: 12px;";
-    }
-
-    private Button buatTombol(
-            String teks, boolean utama, Runnable aksi) {
-
-        Button tombol = new Button(teks);
-        tombol.setPrefHeight(34);
-        tombol.setMinWidth(98);
-        tombol.setCursor(Cursor.HAND);
-        tombol.setStyle(utama
-                ? "-fx-background-color: #00643D;" +
-                  "-fx-text-fill: white;" +
-                  "-fx-font-weight: bold;" +
-                  "-fx-background-radius: 6;" +
-                  "-fx-padding: 8 20 8 20;"
-                : "-fx-background-color: white;" +
-                  "-fx-text-fill: #00643D;" +
-                  "-fx-border-color: #00643D;" +
-                  "-fx-border-radius: 6;" +
-                  "-fx-background-radius: 6;" +
-                  "-fx-padding: 8 20 8 20;"
-        );
-
-        tombol.setOnAction(event -> aksi.run());
-        return tombol;
-    }
-
-    private void tampilkanFoto(
-            StackPane area, Produk produk,
-            double lebar, double tinggi) {
-
-        area.getChildren().clear();
-
-        if (produk.fotoUri != null
-                && !produk.fotoUri.trim().isEmpty()) {
-
-            try {
-                Image image = new Image(
-                        produk.fotoUri, lebar, tinggi, true, true);
-
-                ImageView imageView = new ImageView(image);
-                imageView.setFitWidth(lebar);
-                imageView.setFitHeight(tinggi);
-                imageView.setPreserveRatio(true);
-
-                area.getChildren().add(imageView);
-                return;
-
-            } catch (IllegalArgumentException e) {
+                break;
             }
+
+            node = parent;
         }
 
-        Label ikon = new Label(ikonProduk(produk.jenis));
-        ikon.setStyle("-fx-font-size: 58px;");
-        area.getChildren().add(ikon);
+        return layoutUtama != null;
     }
 
-    private void gantiHalaman(VBox halaman) {
-        pageRoot.getChildren().setAll(halaman);
-        VBox.setVgrow(halaman, Priority.ALWAYS);
-        halaman.setMaxWidth(Double.MAX_VALUE);
-        halaman.setMaxHeight(Double.MAX_VALUE);
-    }
 
-    private void tampilkanPeringatan(String pesan) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Periksa Data");
-        alert.setHeaderText(null);
-        alert.setContentText(pesan);
-        alert.showAndWait();
-    }
+    // =========================
+    // KEMBALI KE DAFTAR PERLENGKAPAN
+    // =========================
 
-    private String tentukanJenis(String nama) {
-        String teks = nama.toLowerCase(Locale.ROOT);
+    private void kembaliKeDaftar() {
 
-        if (teks.contains("kompor")) {
-            return "Kompor";
+        if (layoutUtama == null) {
+            return;
         }
 
-        if (teks.contains("sepatu")) {
-            return "Sepatu";
-        }
+        try {
 
-        return "Tas";
+            URL lokasiDaftar =
+                    App.class.getResource(PATH_PERLENGKAPAN);
+
+            if (lokasiDaftar == null) {
+
+                throw new IOException(
+                        "perlengkapan.fxml tidak ditemukan."
+                );
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(lokasiDaftar);
+
+            Parent halamanPerlengkapan = loader.load();
+
+            BorderPane.setMargin(
+                    halamanPerlengkapan,
+                    new Insets(16)
+            );
+
+            layoutUtama.setCenter(
+                    halamanPerlengkapan
+            );
+
+        } catch (IOException | RuntimeException e) {
+
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Gagal Kembali",
+                    e.getMessage()
+            );
+        }
     }
 
-    private String ikonProduk(String jenis) {
-        if ("Kompor".equals(jenis)) {
+
+    // =========================
+    // DETAIL PERLENGKAPAN
+    // =========================
+
+    @FXML
+    private void lihatDetail(ActionEvent event) {
+
+        if (!(event.getSource() instanceof Button)) {
+            return;
+        }
+
+        Object data =
+                ((Button) event.getSource()).getUserData();
+
+        if (!(data instanceof Perlengkapan)) {
+            return;
+        }
+
+        Perlengkapan perlengkapan =
+                (Perlengkapan) data;
+
+        if (!siapkanLayoutUtama()) {
+
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Gagal Membuka Detail",
+                    "Layout utama aplikasi tidak ditemukan."
+            );
+
+            return;
+        }
+
+        try {
+
+            URL lokasiDetail =
+                    App.class.getResource(PATH_DETAIL);
+
+            if (lokasiDetail == null) {
+
+                throw new IOException(
+                        "detail-perlengkapan.fxml tidak ditemukan."
+                );
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(lokasiDetail);
+
+            Parent halamanDetail = loader.load();
+
+            DetailPerlengkapanController controller =
+                    loader.getController();
+
+            controller.setData(
+                    perlengkapan,
+                    this::kembaliKeDaftar
+            );
+
+            BorderPane.setMargin(
+                    halamanDetail,
+                    new Insets(16)
+            );
+
+            layoutUtama.setCenter(halamanDetail);
+
+        } catch (IOException | RuntimeException e) {
+
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Gagal Membuka Detail",
+                    e.getMessage()
+            );
+        }
+    }
+
+
+    // =========================
+    // FOTO PERLENGKAPAN
+    // =========================
+
+    private ImageView buatGambar(
+            Perlengkapan perlengkapan) {
+
+        String lokasi = perlengkapan.getFotoBarang();
+
+        if (lokasi == null || lokasi.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+
+            String sumber = lokasi.trim();
+
+            if (!sumber.regionMatches(
+                    true,
+                    0,
+                    "file:",
+                    0,
+                    5
+            )) {
+
+                File file = new File(sumber);
+
+                if (file.isFile() && file.canRead()) {
+
+                    sumber = file.toURI().toString();
+
+                } else {
+
+                    URL resource = getClass().getResource(
+                            sumber.startsWith("/")
+                                    ? sumber
+                                    : "/images/" + sumber
+                    );
+
+                    if (resource == null) {
+                        return null;
+                    }
+
+                    sumber = resource.toExternalForm();
+                }
+            }
+
+            Image gambar = new Image(
+                    sumber,
+                    160,
+                    136,
+                    true,
+                    true
+            );
+
+            if (gambar.isError()) {
+                return null;
+            }
+
+            ImageView view = new ImageView(gambar);
+
+            view.setFitWidth(160);
+            view.setFitHeight(136);
+            view.setPreserveRatio(true);
+            view.setSmooth(true);
+
+            return view;
+
+        } catch (RuntimeException e) {
+
+            return null;
+        }
+    }
+
+
+    private String ikonProduk(
+            Perlengkapan perlengkapan) {
+
+        if (perlengkapan instanceof Kompor) {
             return "🔥";
         }
 
-        if ("Sepatu".equals(jenis)) {
+        if (perlengkapan instanceof Sepatu) {
             return "🥾";
         }
 
         return "🎒";
     }
 
-    private String formatRupiah(long nominal) {
-        return String.format("%,d", nominal).replace(',', '.');
+
+    // =========================
+    // MENAMPILKAN DATA KOSONG
+    // =========================
+
+    private void tampilkanPesanKosong(String pesan) {
+
+        gridProduk.getChildren().clear();
+
+        Label label = new Label(pesan);
+
+        label.setWrapText(true);
+
+        label.setStyle(
+                "-fx-font-size: 14px;" +
+                "-fx-text-fill: #686868;" +
+                "-fx-padding: 24px;"
+        );
+
+        GridPane.setColumnSpan(label, 4);
+
+        gridProduk.add(
+                label,
+                0,
+                0
+        );
+
+        aturPagination();
     }
 
-    private static class Produk {
-        private final String nama;
-        private final String jenis;
-        private final long harga;
-        private final int stok;
-        private final String ukuran;
-        private final String fotoUri;
 
-        private Produk(
-                String nama,
-                String jenis,
-                long harga,
-                int stok,
-                String ukuran,
-                String fotoUri) {
+    // =========================
+    // FORMAT RUPIAH
+    // =========================
 
-            this.nama = nama;
-            this.jenis = jenis;
-            this.harga = harga;
-            this.stok = stok;
-            this.ukuran = ukuran;
-            this.fotoUri = fotoUri;
-        }
+    private String formatRupiah(long nominal) {
+
+        NumberFormat format =
+                NumberFormat.getIntegerInstance(
+                        Locale.forLanguageTag("id-ID")
+                );
+
+        return format.format(nominal);
+    }
+
+
+    // =========================
+    // ALERT
+    // =========================
+
+    private void tampilkanPeringatan(
+            Alert.AlertType tipe,
+            String judul,
+            String pesan) {
+
+        Alert alert = new Alert(tipe);
+
+        alert.setTitle(judul);
+        alert.setHeaderText(null);
+
+        alert.setContentText(
+                pesan == null || pesan.trim().isEmpty()
+                        ? "Terjadi kesalahan yang tidak diketahui."
+                        : pesan
+        );
+
+        alert.showAndWait();
     }
 }

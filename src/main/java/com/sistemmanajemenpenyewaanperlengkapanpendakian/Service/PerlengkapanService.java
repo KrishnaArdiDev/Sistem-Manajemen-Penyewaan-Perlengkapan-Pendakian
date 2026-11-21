@@ -5,6 +5,7 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.PerlengkapanDAO;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class PerlengkapanService {
 
@@ -22,6 +23,14 @@ public class PerlengkapanService {
 
         perlengkapanDAO.tambahDataPerlengkapan(
                 perlengkapan, idVendor);
+    }
+
+    // READ
+    public List<Perlengkapan> ambilPerlengkapanVendor(int idVendor) throws SQLException{
+        if (idVendor <=0){
+            throw new IllegalArgumentException("ID vendor tidak valid");
+        }
+        return perlengkapanDAO.ambilPerlengkapanVendor(idVendor);
     }
 
     // UPDATE: Validasi dan memperbarui perlengkapan

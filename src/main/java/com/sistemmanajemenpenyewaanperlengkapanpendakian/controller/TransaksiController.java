@@ -6,6 +6,8 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Transaksi;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +34,7 @@ public class TransaksiController {
 
     private static final String PATH_ITEM = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/item-transaksi.fxml";
     private static final String PATH_NOTA = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/nota.fxml";
-    private static final String PATH_TAMBAH = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/tambah-transaksi.fxml";
+    private static final String PATH_TAMBAH = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/tambah-transaksi.fxml";
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     private BorderPane layoutUtama;
@@ -44,17 +46,40 @@ public class TransaksiController {
     }
 
     private void muatTransaksi() {
-        containerTransaksi.getChildren().clear();
-        if (TransaksiService.semua().isEmpty()) {
-            Label kosong = new Label("Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama.");
-            kosong.setStyle("-fx-font-size: 14px; -fx-text-fill: #7A7A7A;");
-            containerTransaksi.getChildren().add(kosong);
-            return;
-        }
-        for (Transaksi t : TransaksiService.semua()) {
-            tambahKartu(t, "/images/tas.png");
-        }
+    containerTransaksi.getChildren().clear();
+
+    // >>> PERUBAHAN: MENANGANI KONDISI TANPA SESI VENDOR
+    List<Transaksi> daftarTransaksi;
+
+    try {
+        daftarTransaksi = TransaksiService.semua();
+    } catch (IllegalArgumentException e) {
+        Label kosong = new Label(
+                "Login vendor diperlukan untuk melihat transaksi."
+        );
+        kosong.setStyle(
+                "-fx-font-size: 14px; -fx-text-fill: #7A7A7A;"
+        );
+        containerTransaksi.getChildren().add(kosong);
+        return;
     }
+    // <<< AKHIR PERUBAHAN
+
+    if (daftarTransaksi.isEmpty()) {
+        Label kosong = new Label(
+                "Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama."
+        );
+        kosong.setStyle(
+                "-fx-font-size: 14px; -fx-text-fill: #7A7A7A;"
+        );
+        containerTransaksi.getChildren().add(kosong);
+        return;
+    }
+
+    for (Transaksi t : daftarTransaksi) {
+        tambahKartu(t, "/images/tas.png");
+    }
+}
 
     private void tambahKartu(Transaksi t, String gambar) {
         try {
@@ -67,14 +92,20 @@ public class TransaksiController {
             Node kartu = loader.load();
             ItemTransaksiController item = loader.getController();
 
-            String barang = t.getNamaBarang();
-            String penyewa = t.getNamaPenyewa();
-            String tglSewa = t.getTglSewa().format(FMT);
-            String tglKembali = t.getTglKembali().format(FMT);
-            String status = t.getStatus();
+            String barang = t.getDaftarDetail() == null ? "" : t.getDaftarDetail().stream().filter(detail -> detail != null && detail.getPerlengkapanYangDisewa() != null).map(detail -> detail.getPerlengkapanYangDisewa().getNamaPerlengkapan()).filter(nama -> nama != null && !nama.isBlank()).distinct().collect(Collectors.joining(", "));
+            if (barang.isBlank()){
+                barang = "Perlengkapan tidak diketahui";
+            }
+            final String namaBarang = barang;
+            String penyewa = t.getPelanggan() == null || t.getPelanggan().getNamaPelanggan() == null ? "-" : t.getPelanggan().getNamaPelanggan();
+            String tglSewa = t.getTanggalSewa() == null ? "-" : t.getTanggalSewa().format(FMT);
+            String tglKembali = t.getTanggalKembali() == null ? "-" : t.getTanggalKembali().format(FMT);
+            String status = "Berhasil";
 
-            item.setData(barang, penyewa, tglSewa, tglKembali, status, gambar,
-                    () -> tampilkanDetail(barang, penyewa, tglSewa, tglKembali, status, gambar));
+            
+            String fotoIdentitas = t.getFotoIdentitas();
+            item.setData(namaBarang, penyewa, tglSewa, tglKembali, status, gambar,() -> tampilkanDetail(namaBarang, penyewa, tglSewa, tglKembali, status, fotoIdentitas, gambar));
+
             item.setAksiUnduh(() -> tampilkanNota(t));
             containerTransaksi.getChildren().add(kartu);
         } catch (Exception e) {
@@ -135,8 +166,7 @@ public class TransaksiController {
         }
     }
 
-    private void tampilkanDetail(String barang, String penyewa, String tglSewa,
-            String tglKembali, String status, String gambar) {
+    private void tampilkanDetail(String barang, String penyewa, String tglSewa, String tglKembali, String status, String fotoIdentitas, String gambar) {
         if (containerTransaksi.getScene() == null)
             return;
 
@@ -197,7 +227,7 @@ public class TransaksiController {
                 buatFieldDetail("Nama Barang", barang),
                 buatFieldDetail("Status Transaksi", status),
                 buatFieldDetail("Nama Peminjam", penyewa),
-                buatFieldDetail("Kartu Identitas Peminjam", "Kartuidentitas.png"),
+                buatFieldDetail("Kartu Identitas Peminjam", fotoIdentitas == null || fotoIdentitas.isBlank() ? "-" : fotoIdentitas),
                 buatFieldDetail("Tanggal Meminjam", tglSewa),
                 buatFieldDetail("Tanggal Kembali", tglKembali));
 

@@ -20,7 +20,7 @@
                <children>
                   <ImageView fx:id="logoTapak" fitHeight="239.0" fitWidth="239.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../images/Logo.png" />
+                        <Image url="@../../../../images/Logo.png" />
                      </image>
                   </ImageView>
                </children>
