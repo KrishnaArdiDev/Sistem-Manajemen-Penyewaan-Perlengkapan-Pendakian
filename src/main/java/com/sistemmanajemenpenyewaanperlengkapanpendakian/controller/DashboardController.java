@@ -80,7 +80,7 @@ public class DashboardController {
 //#region Style
     private final PerlengkapanService perlengkapanService = new PerlengkapanService();
     private final List<ItemDashboard> daftarProdukDipinjam = new ArrayList<>();
-    private static final int ITEM_PER_HALAMAN = 4;
+    private static final int ITEM_PER_HALAMAN = 3;
     private static final DateTimeFormatter FORMAT_TANGGAL =DateTimeFormatter.ofPattern("dd - MM - yyyy");
     private int halamanAktif = 0;
     private static final String PATH_KARTU =  "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/components/card-produk-disewa.fxml";

@@ -37,8 +37,6 @@ import javafx.scene.layout.VBox;
 
 public class PengembalianController {
 
-    // >>> KOMPONEN FXML HALAMAN DAFTAR
-
     @FXML
     private VBox rootPengembalian;
 
@@ -51,11 +49,6 @@ public class PengembalianController {
     @FXML
     private HBox containerPagination;
 
-    // <<< AKHIR KOMPONEN FXML
-
-    // >>> KONFIGURASI DAFTAR
-
-    // PERUBAHAN: Enam kartu per halaman mengikuti rancangan Figma.
     private static final int ITEM_PER_HALAMAN = 6;
 
     private static final String PATH_KARTU =
@@ -72,23 +65,11 @@ public class PengembalianController {
 
     private int halamanAktif = 0;
 
-    // <<< AKHIR KONFIGURASI DAFTAR
-
-    // =========================
-    // INITIALIZE
-    // =========================
-
     @FXML
     public void initialize() {
         styleHalaman();
         muatDataPengembalian();
     }
-
-    // =========================
-    // MEMUAT DATA PENGEMBALIAN
-    // =========================
-
-    // >>> TAMBAHAN: MEMUAT DETAIL YANG BELUM DIKEMBALIKAN
 
     private void muatDataPengembalian() {
 
@@ -126,7 +107,6 @@ public class PengembalianController {
                 }
             }
 
-            // Barang terlambat didahulukan.
             daftarItem.sort(Comparator
                     .comparing(
                             (ItemPengembalian item) -> !item.isTerlambat()
@@ -137,7 +117,6 @@ public class PengembalianController {
                     )
             );
 
-            // Memastikan nomor halaman tetap valid setelah data diperbarui.
             int jumlahHalaman = hitungJumlahHalaman();
 
             if (halamanAktif >= jumlahHalaman) {
@@ -173,14 +152,6 @@ public class PengembalianController {
             );
         }
     }
-
-    // <<< AKHIR TAMBAHAN: MEMUAT DATA PENGEMBALIAN
-
-    // =========================
-    // PAGINATION
-    // =========================
-
-    // >>> TAMBAHAN: PAGINATION ENAM KARTU PER HALAMAN
 
     private int hitungJumlahHalaman() {
 
@@ -238,7 +209,6 @@ public class PengembalianController {
 
         int jumlahHalaman = hitungJumlahHalaman();
 
-        // TOMBOL SEBELUMNYA
         Button sebelumnya = buatTombolPagination("‹");
 
         sebelumnya.setDisable(halamanAktif == 0);
@@ -253,7 +223,6 @@ public class PengembalianController {
 
         containerPagination.getChildren().add(sebelumnya);
 
-        // NOMOR HALAMAN
         for (int i = 0; i < jumlahHalaman; i++) {
 
             final int nomorHalaman = i;
@@ -282,7 +251,6 @@ public class PengembalianController {
             containerPagination.getChildren().add(nomor);
         }
 
-        // TOMBOL BERIKUTNYA
         Button berikutnya = buatTombolPagination("›");
 
         berikutnya.setDisable(
@@ -299,7 +267,6 @@ public class PengembalianController {
 
         containerPagination.getChildren().add(berikutnya);
 
-        // Pagination tetap ditampilkan sesuai struktur FXML.
         containerPagination.setVisible(true);
         containerPagination.setManaged(true);
     }
@@ -324,14 +291,6 @@ public class PengembalianController {
 
         return tombol;
     }
-
-    // <<< AKHIR TAMBAHAN: PAGINATION
-
-    // =========================
-    // MEMBUAT KARTU PENGEMBALIAN
-    // =========================
-
-    // >>> TAMBAHAN: MEMUAT CARD DARI FXML KOMPONEN
 
     private HBox buatKartuPengembalian(
             ItemPengembalian item) throws Exception {
@@ -387,7 +346,6 @@ public class PengembalianController {
         Perlengkapan barang =
                 item.detail.getPerlengkapanYangDisewa();
 
-        // MENGISI DATA KARTU
         labelNamaBarang.setText(
                 barang.getNamaPerlengkapan()
         );
@@ -404,12 +362,10 @@ public class PengembalianController {
                 formatTanggal(item.transaksi.getTanggalKembali())
         );
 
-        // FOTO PERLENGKAPAN
         gambarProduk.setImage(
                 ambilGambar(barang.getFotoBarang(), 97, 97)
         );
 
-        // STATUS
         boolean terlambat = item.isTerlambat();
 
         String warna = terlambat ? "#A3212B" : "#C28A00";
@@ -432,7 +388,6 @@ public class PengembalianController {
                 "-fx-background-radius: 8;"
         );
 
-        // STYLE KARTU
         kartu.setStyle(
                 "-fx-background-color: #F5F5F5;" +
                 "-fx-background-radius: 12;"
@@ -459,7 +414,6 @@ public class PengembalianController {
                 "-fx-text-fill: #868686;"
         );
 
-        // TOMBOL DETAIL
         btnDetail.setCursor(Cursor.HAND);
 
         btnDetail.setStyle(
@@ -474,7 +428,6 @@ public class PengembalianController {
                 event -> bukaDetail(item, false)
         );
 
-        // TOMBOL KONFIRMASI
         btnKonfirmasi.setCursor(Cursor.HAND);
 
         btnKonfirmasi.setStyle(
@@ -510,14 +463,6 @@ public class PengembalianController {
 
         return tipe.cast(value);
     }
-
-    // <<< AKHIR TAMBAHAN: KOMPONEN KARTU
-
-    // =========================
-    // NAVIGASI KE DETAIL PENGEMBALIAN
-    // =========================
-
-    // >>> TAMBAHAN: MEMBUKA DETAIL DAN MENGIRIM DATA PILIHAN
 
     private void bukaDetail(
             ItemPengembalian item,
@@ -569,13 +514,11 @@ public class PengembalianController {
             DetailPengembalianController controller =
                     loader.getController();
 
-            // MENGIRIM TRANSAKSI DAN DETAIL YANG DIPILIH.
             controller.setData(
                     item.transaksi,
                     item.detail,
                     () -> {
 
-                        // Mengembalikan halaman daftar sebelumnya.
                         if (marginSebelumnya != null) {
                             BorderPane.setMargin(
                                     halamanDaftar,
@@ -585,7 +528,6 @@ public class PengembalianController {
 
                         layoutPage.setCenter(halamanDaftar);
 
-                        // Memuat ulang data setelah kembali dari detail.
                         muatDataPengembalian();
                     }
             );
@@ -597,7 +539,6 @@ public class PengembalianController {
 
             layoutPage.setCenter(halamanDetail);
 
-            // Tombol Konfirmasi pada kartu langsung membuka dialog konfirmasi.
             if (langsungKonfirmasi) {
                 controller.mintaKonfirmasi();
             }
@@ -611,12 +552,6 @@ public class PengembalianController {
             );
         }
     }
-
-    // <<< AKHIR TAMBAHAN: NAVIGASI DETAIL
-
-    // =========================
-    // GAMBAR, PELANGGAN, DAN TANGGAL
-    // =========================
 
     private Image ambilGambar(
             String lokasi,
@@ -694,10 +629,6 @@ public class PengembalianController {
                 : tanggal.format(FORMAT_TANGGAL);
     }
 
-    // =========================
-    // STATUS DAFTAR
-    // =========================
-
     private void tampilkanStatusKosong(String pesan) {
 
         containerDaftarPengembalian.getChildren().clear();
@@ -717,10 +648,6 @@ public class PengembalianController {
         containerDaftarPengembalian.getChildren().add(kosong);
     }
 
-    // =========================
-    // STYLING
-    // =========================
-
     private void styleHalaman() {
 
         rootPengembalian.setStyle(
@@ -739,10 +666,6 @@ public class PengembalianController {
         containerPagination.setAlignment(Pos.CENTER);
     }
 
-    // =========================
-    // ALERT
-    // =========================
-
     private void tampilkanPesan(
             Alert.AlertType tipe,
             String judul,
@@ -760,12 +683,6 @@ public class PengembalianController {
 
         alert.showAndWait();
     }
-
-    // =========================
-    // DATA ITEM PENGEMBALIAN
-    // =========================
-
-    // >>> TAMBAHAN: MENYIMPAN SATU DETAIL TRANSAKSI
 
     private static class ItemPengembalian {
 
@@ -796,6 +713,4 @@ public class PengembalianController {
                     : "Akan Terlambat";
         }
     }
-
-    // <<< AKHIR TAMBAHAN: ITEM PENGEMBALIAN
 }
