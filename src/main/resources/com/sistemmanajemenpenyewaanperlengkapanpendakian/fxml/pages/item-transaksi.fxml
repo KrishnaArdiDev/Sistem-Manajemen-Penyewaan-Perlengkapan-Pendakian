@@ -31,18 +31,18 @@
 
                     <Region HBox.hgrow="ALWAYS" />
 
-                    <!-- status + tombol detail + unduh -->
+                    <!-- status + tombol detail + Cetak -->
          <VBox alignment="TOP_RIGHT" maxHeight="100.0" spacing="40.0" HBox.hgrow="ALWAYS">
             <children>
                 <Label fx:id="labelStatus" alignment="CENTER" text="Berhasil" VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_RIGHT" spacing="8.0">
                     <children>
-                        <Button fx:id="tombolUnduh" accessibleText="Unduh Nota" maxHeight="Infinity" minWidth="31.0" mnemonicParsing="false" onAction="#unduh" prefWidth="31.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 4 0 4 0;">
+                        <Button fx:id="tombolCetak" accessibleText="Cetak Nota" maxHeight="Infinity" minWidth="31.0" mnemonicParsing="false" onAction="#Cetak" prefWidth="31.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 4 0 4 0;">
                             <graphic>
-                                <SVGPath content="M11 3h2v10.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17V3zM5 19h14v2H5z" fill="WHITE" mouseTransparent="true" scaleX="0.85" scaleY="0.85" />
+                                <SVGPath content="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z" fill="WHITE" mouseTransparent="true" scaleX="0.85" scaleY="0.85" />
                             </graphic>
                             <tooltip>
-                                <Tooltip text="Unduh Nota" />
+                                <Tooltip text="Cetak Nota" />
                             </tooltip>
                         </Button>
                         <Button fx:id="tombolDetail" maxHeight="30.0" maxWidth="150.0" mnemonicParsing="false" onAction="#bukaDetail" prefHeight="30.0" prefWidth="98.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Detail" />

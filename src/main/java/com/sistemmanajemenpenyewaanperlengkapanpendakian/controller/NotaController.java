@@ -25,7 +25,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.transform.Scale;
+import javafx.print.PageLayout;
+import javafx.print.PrinterJob;
 import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 public class NotaController {
 
@@ -57,12 +65,15 @@ public class NotaController {
     @FXML private Label labelFotoKosong;
 
     @FXML private Button tombolKembali;
-    @FXML private Button btnUnduhNota;
-    @FXML private Button btnUnduhRingkasan;
+    @FXML private ScrollPane scrollPreview;
+    @FXML private Label labelJudulDokumen;
+
+    @FXML private Button btnCetakDokumen;
 
 
     private Runnable aksiKembali;
     private Transaksi transaksiAktif;
+    private Node pratinjauAktif;
 
     @FXML
     public void initialize() {
@@ -75,11 +86,10 @@ public class NotaController {
         containerTagihanPengembalian.setManaged(false);
 
         tombolKembali.setCursor(Cursor.HAND);
-        btnUnduhNota.setCursor(Cursor.HAND);
-        btnUnduhRingkasan.setCursor(Cursor.HAND);
+        btnCetakDokumen.setCursor(Cursor.HAND);
     }
 
-    public void setTransaksi(Transaksi transaksi) {
+    public void setTransaksi(Transaksi transaksi, String jenisDokumen) {
 
         if (transaksi == null) {
             tampilkanPesan(
@@ -90,6 +100,13 @@ public class NotaController {
         }
 
         this.transaksiAktif = transaksi;
+        boolean pilihRingkasan = "Ringkasan".equalsIgnoreCase(jenisDokumen);
+
+                if (pilihRingkasan) {
+                    transaksi.ringkasanCetak();
+                } else {
+                    transaksi.cetakNota();
+        }
 
         LocalDate tanggalKembali =
                 ambilTanggalKembali(transaksi);
@@ -134,6 +151,39 @@ public class NotaController {
         tampilkanFoto(
                 transaksi.getFotoIdentitas()
         );
+        if (pilihRingkasan) {
+
+                Label previewRingkasan = new Label(
+                        transaksi.getRingkasanTransaksi() == null
+                                ? "Ringkasan transaksi tidak tersedia."
+                                : transaksi.getRingkasanTransaksi()
+                );
+
+                previewRingkasan.setWrapText(true);
+                previewRingkasan.setMaxWidth(Double.MAX_VALUE);
+                previewRingkasan.setPadding(new Insets(30, 40, 30, 40));
+
+                previewRingkasan.setStyle(
+                        "-fx-background-color: white;" +
+                        "-fx-font-family: 'Consolas';" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-text-fill: #222222;"
+                );
+
+                scrollPreview.setContent(previewRingkasan);
+
+                labelJudulDokumen.setText("Ringkasan Transaksi");
+
+                pratinjauAktif = previewRingkasan;
+
+                } else {
+
+    scrollPreview.setContent(kertasNota);
+
+    labelJudulDokumen.setText("Nota Transaksi");
+
+    pratinjauAktif = kertasNota;
+}
     }
 
     private void tampilkanDetailBarang(
@@ -311,99 +361,116 @@ public class NotaController {
     }
 
     @FXML
-    private void unduhNota() {
+private void cetakDokumen() {
 
-        if (transaksiAktif == null) {
-            tampilkanPesan(
-                    Alert.AlertType.WARNING,
-                    "Data transaksi belum dimuat."
-            );
-            return;
-        }
-
-        transaksiAktif.cetakNota();
-
-        simpanTeks(
-                transaksiAktif.getIsiNota(),
-                "Nota_Transaksi_" + transaksiAktif.getIdTransaksi() + ".txt",
-                "Unduh Nota"
+    if (transaksiAktif == null || pratinjauAktif == null) {
+        tampilkanPesan(
+                Alert.AlertType.WARNING,
+                "Preview dokumen belum tersedia."
         );
+        return;
     }
 
-    @FXML
-    private void unduhRingkasan() {
+    PrinterJob job = PrinterJob.createPrinterJob();
 
-        if (transaksiAktif == null) {
-            tampilkanPesan(
-                    Alert.AlertType.WARNING,
-                    "Data transaksi belum dimuat."
-            );
-            return;
-        }
-
-        transaksiAktif.ringkasanCetak();
-
-        simpanTeks(
-                transaksiAktif.getRingkasanTransaksi(),
-                "Ringkasan_Transaksi_" + transaksiAktif.getIdTransaksi() + ".txt",
-                "Unduh Ringkasan Transaksi"
+    if (job == null) {
+        tampilkanPesan(
+                Alert.AlertType.ERROR,
+                "Tidak ada printer yang tersedia pada perangkat ini."
         );
+        return;
     }
 
-    private void simpanTeks(
-            String isi,
-            String namaAwal,
-            String judul) {
+    Window pemilik = btnCetakDokumen.getScene() == null
+            ? null
+            : btnCetakDokumen.getScene().getWindow();
 
-        if (isi == null || isi.trim().isEmpty()) {
+    if (!job.showPrintDialog(pemilik)) {
+        return;
+    }
+
+    scrollPreview.applyCss();
+    scrollPreview.layout();
+
+    pratinjauAktif.applyCss();
+    if (pratinjauAktif instanceof Parent) {
+    Parent parent = (Parent) pratinjauAktif;
+    parent.applyCss();
+    parent.layout();
+}
+
+    Bounds batas = pratinjauAktif.getBoundsInLocal();
+
+    PageLayout halaman = job.getJobSettings().getPageLayout();
+
+    if (batas.getWidth() <= 0 || batas.getHeight() <= 0) {
+        job.cancelJob();
+
+        tampilkanPesan(
+                Alert.AlertType.ERROR,
+                "Ukuran preview dokumen tidak valid untuk dicetak."
+        );
+        return;
+    }
+
+    double skala = Math.min(
+            1.0,
+            Math.min(
+                    halaman.getPrintableWidth() / batas.getWidth(),
+                    halaman.getPrintableHeight() / batas.getHeight()
+            )
+    );
+
+    Scale skalaCetak = new Scale(
+            skala,
+            skala,
+            batas.getMinX(),
+            batas.getMinY()
+    );
+
+    try {
+        pratinjauAktif.getTransforms().add(skalaCetak);
+
+        boolean halamanBerhasil = job.printPage(
+                halaman,
+                pratinjauAktif
+        );
+
+        if (!halamanBerhasil) {
+            job.cancelJob();
+
             tampilkanPesan(
                     Alert.AlertType.ERROR,
-                    "Isi dokumen tidak berhasil dibuat."
+                    "Dokumen gagal dikirim ke printer."
             );
             return;
         }
 
-        FileChooser chooser = new FileChooser();
-
-        chooser.setTitle(judul);
-        chooser.setInitialFileName(namaAwal);
-
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter(
-                        "Text Files (*.txt)",
-                        "*.txt"
-                )
-        );
-
-        File tujuan = chooser.showSaveDialog(
-                kertasNota.getScene().getWindow()
-        );
-
-        if (tujuan == null) {
-            return;
-        }
-
-        try {
-
-            Files.write(
-                    tujuan.toPath(),
-                    isi.getBytes(StandardCharsets.UTF_8)
-            );
-
+        if (job.endJob()) {
             tampilkanPesan(
                     Alert.AlertType.INFORMATION,
-                    "Dokumen berhasil disimpan di:\n"
-                            + tujuan.getAbsolutePath()
+                    "Dokumen berhasil dikirim ke antrean printer."
             );
-
-        } catch (IOException e) {
-
+        } else {
             tampilkanPesan(
                     Alert.AlertType.ERROR,
-                    "Dokumen gagal disimpan:\n" + e.getMessage()
+                    "Dokumen tidak berhasil dikirim ke antrean printer."
             );
         }
+
+    } catch (RuntimeException e) {
+
+        job.cancelJob();
+
+        tampilkanPesan(
+                Alert.AlertType.ERROR,
+                "Terjadi kesalahan saat mencetak dokumen:\n" + e.getMessage()
+        );
+
+    } finally {
+        pratinjauAktif.getTransforms().remove(skalaCetak);
     }
+}
 
     public void setAksiKembali(Runnable aksiKembali) {
         this.aksiKembali = aksiKembali;

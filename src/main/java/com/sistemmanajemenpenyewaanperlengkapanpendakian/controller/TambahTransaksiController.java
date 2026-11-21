@@ -11,6 +11,7 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.DetailTransaksi;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Pelanggan;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Transaksi;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.RingkasanTransaksiController;
 
 import java.io.File;
 import java.io.IOException;
@@ -800,14 +801,7 @@ public class TambahTransaksiController {
                     idVendor
             );
 
-            tampilkanPesan(
-                    Alert.AlertType.INFORMATION,
-                    "Transaksi untuk " + nama.trim()
-                            + " berhasil disimpan.\nTotal: "
-                            + rupiah(transaksi.getTotalHarga())
-            );
-
-            kembaliKeTransaksi();
+            tampilkanRingkasan(transaksi);
 
         } catch (DataTidakLengkapException | SQLException e) {
 
@@ -829,6 +823,53 @@ public class TambahTransaksiController {
             tombolSimpan.setDisable(false);
         }
     }
+
+
+private void tampilkanRingkasan(Transaksi transaksi) {
+
+    try {
+
+        FXMLLoader loader = new FXMLLoader(
+                App.class.getResource(
+                        "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/ringkasan-transaksi.fxml"
+                )
+        );
+
+        Parent halamanRingkasan = loader.load();
+
+        RingkasanTransaksiController controller =
+                loader.getController();
+
+        controller.setDataTransaksi(transaksi);
+
+        BorderPane layout = (BorderPane)
+                tombolSimpan.getScene().lookup("#layoutPage");
+
+        if (layout == null) {
+            throw new IllegalStateException(
+                    "Layout utama tidak ditemukan."
+            );
+        }
+
+        BorderPane.setMargin(
+                halamanRingkasan,
+                new Insets(16)
+        );
+
+        layout.setCenter(halamanRingkasan);
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        tampilkanPesan(
+                Alert.AlertType.ERROR,
+                "Transaksi berhasil disimpan, tetapi halaman ringkasan gagal dibuka.\n"
+                        + e.getMessage()
+        );
+    }
+}
+
 
     @FXML
     private void batal() {
