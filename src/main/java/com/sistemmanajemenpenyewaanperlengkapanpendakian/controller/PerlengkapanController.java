@@ -67,6 +67,8 @@ public class PerlengkapanController {
     private final List<Perlengkapan> daftarPerlengkapan =
             new ArrayList<>();
 
+    private final List<Perlengkapan> daftarPerlengkapanAsli = new ArrayList<>();
+
     private int idVendorAktif;
     private int halamanAktif;
 
@@ -93,6 +95,8 @@ public class PerlengkapanController {
                             idVendorAktif
                     )
             );
+            daftarPerlengkapanAsli.clear();
+            daftarPerlengkapanAsli.addAll(daftarPerlengkapan);
 
             tampilkanDaftar();
 
@@ -810,4 +814,28 @@ public class PerlengkapanController {
 
         alert.showAndWait();
     }
+
+    public void terapkanPencarian(String kataKunci) {
+
+    daftarPerlengkapan.clear();
+
+    if (kataKunci == null || kataKunci.trim().isEmpty()) {
+        daftarPerlengkapan.addAll(daftarPerlengkapanAsli);
+    } else {
+        String kataKunciBersih = kataKunci.trim().toLowerCase();
+
+        List<Perlengkapan> hasilPencarian = daftarPerlengkapanAsli.stream()
+                .filter(p -> p.getNamaPerlengkapan() != null
+                        && p.getNamaPerlengkapan()
+                        .toLowerCase()
+                        .contains(kataKunciBersih))
+                .collect(java.util.stream.Collectors.toList());
+
+        daftarPerlengkapan.addAll(hasilPencarian);
+    }
+
+    halamanAktif = 0;
+    tampilkanDaftar();
+    }
+
 }
