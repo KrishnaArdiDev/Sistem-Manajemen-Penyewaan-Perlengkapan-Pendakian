@@ -5,6 +5,9 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiServic
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Transaksi;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.DetailTransaksi;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Kompor;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Sepatu;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Tas;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -240,7 +243,7 @@ public class TransaksiController {
         }
     }
 
-    private String ambilGambarTransaksi(Transaksi transaksi){
+        private String ambilGambarTransaksi(Transaksi transaksi){
         if (transaksi == null || transaksi.getDaftarDetail() == null){
             return null;
         }
@@ -250,15 +253,34 @@ public class TransaksiController {
                 continue;
             }
 
-            String foto = detail.getPerlengkapanYangDisewa().getFotoBarang();
+            Perlengkapan barang = detail.getPerlengkapanYangDisewa();
+            String foto = barang.getFotoBarang();
 
             if (foto != null && !foto.trim().isEmpty()){
                 return foto.trim();
+            }
+
+            String gambarBawaan = gambarBawaanPerlengkapan(barang);
+            if (gambarBawaan != null){
+                return gambarBawaan;
             }
         }
         return null;
     }
 
+    private String gambarBawaanPerlengkapan(Perlengkapan barang){
+        if (barang instanceof Kompor){
+            return "/images/kompor.png";
+        }
+        if (barang instanceof Sepatu){
+            return "/images/sepatu.png";
+        }
+        if (barang instanceof Tas){
+            return "/images/tas.png";
+        }
+        return null;
+    }
+    
     private String buatRingkasanStatusPengembalian(Transaksi transaksi){
         if (transaksi == null || transaksi.getDaftarDetail() == null || transaksi.getDaftarDetail().isEmpty()){
             return "Berhasil";
