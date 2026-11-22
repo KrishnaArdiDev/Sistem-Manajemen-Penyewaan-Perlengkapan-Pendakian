@@ -15,10 +15,15 @@ public class Vendor {
     private String pwAdm;
     private String email;
     private String namaVendor;
-
-    // ini atribut tambahan, biar vendor bisa login dengan usn atau email
     private String emailAtauUsername;
-
+    private int idVendor;
+    private String lokasiToko;
+    private final VendorDAO vendorDAO;
+    private final PerlengkapanDAO perlengkapanDAO;
+    private final TransaksiDAO transaksiDAO;
+    private Perlengkapan perlengkapanYangDikelola;
+    private Transaksi transaksiYangDikelola;
+    
     public String getEmailAtauUsername(){
         return emailAtauUsername;
     }
@@ -27,16 +32,6 @@ public class Vendor {
         this.emailAtauUsername = emailAtauUsername;
     } 
 
-    // Tambahan buat nyimpan id vendor
-    private int idVendor;
-
-    // tambahan untuk DAO
-    private final VendorDAO vendorDAO;
-    private final PerlengkapanDAO perlengkapanDAO;
-    private final TransaksiDAO transaksiDAO;
-
-    // Tambahan, ini untuk lokasi toko dan foto profile vendor
-    private String lokasiToko;
 
     public String getLokasiToko(){
         return lokasiToko;
@@ -55,20 +50,11 @@ public class Vendor {
     public void setFotoProfile(String fotoProfile){
         this.fotoProfile = fotoProfile;
     }
-
-    // Penambahan, ini untuk data yang akan dikelola oleh vendor
-    private Perlengkapan perlengkapanYangDikelola;
-    private Transaksi transaksiYangDikelola;
-
-    // Ini constructor untuk si Vendor
     public Vendor(){
         this.vendorDAO = new VendorDAO();
         this.perlengkapanDAO = new PerlengkapanDAO();
         this.transaksiDAO = new TransaksiDAO();
     }
-
-    // Ini method yg memang dibikin di rancangan
-    //#region
     public boolean login() throws LoginGagalException{
         try{
             Vendor vendorDitemukan = vendorDAO.login(emailAtauUsername, pwAdm);
@@ -154,7 +140,6 @@ public class Vendor {
     public void setIdVendor(int idVendor){
         this.idVendor = idVendor;
     }
-    // getter setter atribut
     public String getUsernameAdm(){
         return usernameAdm;
     }
@@ -186,10 +171,6 @@ public class Vendor {
     public void setNamaVendor(String namaVendor){
         this.namaVendor = namaVendor;
     }
-    //#endregion
-
-    //#region
-    // ada penambahan, menentukan objek
     public void setPerlengkapanYangDikelola(Perlengkapan perlengkapan){
         this.perlengkapanYangDikelola = perlengkapan;
     }
@@ -197,5 +178,4 @@ public class Vendor {
     public void setTransaksiYangDikelola(Transaksi transaksi){
         this.transaksiYangDikelola = transaksi;
     }
-    //#endregion
 }

@@ -124,7 +124,6 @@ public class MainLayoutController {
 
     @FXML
     private ImageView elementHeader;
-//#endregion
 
     private void muatDataPencarian() {
     try {
@@ -236,10 +235,6 @@ public class MainLayoutController {
         tombolProfile.setMaxHeight(48);
         tombolProfile.setPadding(Insets.EMPTY);
     }
-    
-
-//#region
-
     private void styleSidebar(){
         paneVbox.setStyle(
             "-fx-background-color: #FFFFFF;" +
@@ -348,11 +343,6 @@ public class MainLayoutController {
             "-fx-faint-focus-color: transparent;"
         );
     }
-
-    
-
-//#endregion
-
     private void muatInformasiVendor(){
         Vendor vendor = AuthService.getVendorAktif();
         

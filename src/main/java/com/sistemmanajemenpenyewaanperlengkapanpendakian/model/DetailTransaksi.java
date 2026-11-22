@@ -9,10 +9,7 @@ public class DetailTransaksi {
     private Perlengkapan perlengkapanYangDisewa;
     private String statusPengembalian;
     private long biayaGantiRugi;
-    // penambahan
     private Long hargaSewaHarianSaatTransaksi;
-
-    // penambahan
     private boolean pengembalianSudahDiproses;
 
     public String getStatusPengembalianBarang(){
@@ -67,8 +64,6 @@ public class DetailTransaksi {
     public void setIdDetailTransaksi(int idDetailTransaksi){
         this.idDetailTransaksi = idDetailTransaksi;
     }
-
-    // Penambahan setter getter kuantitas
     public int getKuantitasPerAlat(){
         return kuantitasPerAlat;
     }
@@ -79,13 +74,9 @@ public class DetailTransaksi {
         }
         this.kuantitasPerAlat = kuantitasPerAlat;
     }
-
-    // penambahan getter setter tanggal pengembalian
     public void setTanggalPengembalianBarang(LocalDate tanggalPengembalianBarang){
         this.tanggalPengembalianBarang = tanggalPengembalianBarang;
     }
-
-    // penambahan getter dan setter obj perlengkapan
     public Perlengkapan getPerlengkapanYangDisewa(){
         return perlengkapanYangDisewa;
     }
@@ -93,16 +84,12 @@ public class DetailTransaksi {
     public void setPerlengkapanYangDisewa(Perlengkapan perlengkapanYangDisewa){
         this.perlengkapanYangDisewa = perlengkapanYangDisewa;
     }
-
-    // penambahan setter getter biaya ganti rugi
     public void setBiayaGantiRugi(long biayaGantiRugi){
         if (biayaGantiRugi <0){
             throw new IllegalArgumentException("Biaya gantirugi tidak boleh negatif");
         }
         this.biayaGantiRugi = biayaGantiRugi;
     }
-
-    // Penambahan subtotal didasarkan durasi penyewaan
     public long getSubTotal(int durasiSewa){
         if (perlengkapanYangDisewa == null){
             throw new IllegalStateException("Perlengkapan yang disewa belum ditemukan");
@@ -119,8 +106,6 @@ public class DetailTransaksi {
         long totalPerUnit = Math.multiplyExact(ambilHargaSewaHarianUntukPerhitungan(), durasiSewa);
         return Math.multiplyExact(totalPerUnit, kuantitasPerAlat);
     }
-
-    // penambahan
     public long prosesPengembalianBarang(LocalDate tanggalPengembalian, String kondisi){
         if (pengembalianSudahDiproses || tanggalPengembalianBarang != null){
             throw new IllegalStateException("Pengembalian barang sudah diproses");
@@ -131,8 +116,6 @@ public class DetailTransaksi {
         if (kuantitasPerAlat <= 0){
             throw new IllegalStateException("Kuantitas perlengkapan belum ditentukan");
         }
-
-        // argum except
         if (tanggalPengembalian == null){
             throw new IllegalArgumentException("Tanggal pengembalian wajib diisi");
         }

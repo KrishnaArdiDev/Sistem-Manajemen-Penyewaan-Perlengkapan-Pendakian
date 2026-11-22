@@ -15,7 +15,6 @@ public class PerlengkapanService {
         this.perlengkapanDAO = new PerlengkapanDAO();
     }
 
-    // CREATE: Validasi dan menambahkan perlengkapan
     public void tambahDataPerlengkapan(
             Perlengkapan perlengkapan, int idVendor) throws SQLException {
 
@@ -24,8 +23,6 @@ public class PerlengkapanService {
         perlengkapanDAO.tambahDataPerlengkapan(
                 perlengkapan, idVendor);
     }
-
-    // READ
     public List<Perlengkapan> ambilPerlengkapanVendor(int idVendor) throws SQLException{
         if (idVendor <=0){
             throw new IllegalArgumentException("ID vendor tidak valid");
@@ -33,7 +30,6 @@ public class PerlengkapanService {
         return perlengkapanDAO.ambilPerlengkapanVendor(idVendor);
     }
 
-    // UPDATE: Validasi dan memperbarui perlengkapan
     public void updateDataPerlengkapan(
             Perlengkapan perlengkapan, int idVendor) throws SQLException {
 
@@ -47,8 +43,6 @@ public class PerlengkapanService {
         perlengkapanDAO.updateDataPerlengkapan(
                 perlengkapan, idVendor);
     }
-
-    // DELETE: Menghapus perlengkapan
     public void hapusDataPerlengkapan(
             Perlengkapan perlengkapan, int idVendor) throws SQLException {
 
@@ -71,7 +65,14 @@ public class PerlengkapanService {
                 perlengkapan, idVendor);
     }
 
-    // Validasi data sebelum diteruskan ke DAO
+    public int hitungKuantitasSedangDisewa(int idPerlengkapan) throws SQLException {
+        if (idPerlengkapan <= 0) {
+            throw new IllegalArgumentException(
+                    "ID perlengkapan tidak valid");
+        }
+        return perlengkapanDAO.hitungKuantitasSedangDisewa(idPerlengkapan);
+    }
+    
     private void validasiData(
             Perlengkapan perlengkapan, int idVendor) {
 

@@ -8,11 +8,7 @@ public abstract class Perlengkapan {
     private int stok;
     private long hargaPerlengkapan;
     private long hargaSewaHarian;
-
-    // penambahan buat id perlengkapan
     private int idPerlengkapan;
-
-    // Penambahan, ini buat foto barangnya
     private String fotoBarang;
 
     public  String getFotoBarang(){
@@ -70,7 +66,6 @@ public abstract class Perlengkapan {
     }
 
     public void tambahStok(int jumlah){
-        // ini penambahan
         if (jumlah <=0){
             throw new IllegalArgumentException("Jumlah penambahan stok harus lebih dari 0");
         }
@@ -79,7 +74,6 @@ public abstract class Perlengkapan {
     }
 
     public void kurangiStok(int jumlah){
-        // ini penambahan
         if (jumlah <= 0){
             throw new IllegalArgumentException("Jumlah pengurangan harus lebih dari 0");
         }
@@ -90,7 +84,6 @@ public abstract class Perlengkapan {
     }
 
     public void hitungJumlahStok(int jumlah){
-        // ini penambahan
         if (jumlah < 0){
             throw new IllegalArgumentException("Jumlah stok tidak boleh negatif");
         }
@@ -102,13 +95,9 @@ public abstract class Perlengkapan {
     public long hitungGantiRugi(){
         return hargaPerlengkapan;
     }
-
-    // ini penambahan
     public String getNamaVendor(){
         return namaVendor;
     }
-
-    // ini penambahan
     public void setNamaVendor(String namaVendor){
         this.namaVendor = namaVendor;
     }

@@ -79,7 +79,6 @@ public void tambahDataTransaksi(
         }
     }
 }
-
     public List<Transaksi> ambilSemuaTransaksiByVendor(int idVendor) throws SQLException {
 
         if (idVendor <= 0){
@@ -87,10 +86,7 @@ public void tambahDataTransaksi(
         }
 
 
-        String sql = "SELECT "
-                +"t.id_transaksi, "
-                +"t.id_pelanggan, " + "p.nama_pelanggan, "+"p.no_identitas, "
-                + "t.tanggal_transaksi, "+"t.tanggal_sewa, "+"t.durasi_sewa, "+"t.tanggal_kembali, "
+        String sql = "SELECT " +"t.id_transaksi, "+"t.id_pelanggan, " + "p.nama_pelanggan, "+"p.no_identitas, "+ "t.tanggal_transaksi, "+"t.tanggal_sewa, "+"t.durasi_sewa, "+"t.tanggal_kembali, "
                 + "t.total_harga, "+"t.denda, "
                 +"t.metode_pembayaran, " + "t.foto_identitas "
                 + "FROM transaksi t "
@@ -98,7 +94,6 @@ public void tambahDataTransaksi(
                 + "WHERE t.id_vendor = ? " + "ORDER BY t.id_transaksi DESC";
 
         List<Transaksi> daftarTransaksi = new ArrayList<>();
-
         DetailTransaksiDAO detailDAO = new DetailTransaksiDAO();
         try (Connection connection = DatabaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

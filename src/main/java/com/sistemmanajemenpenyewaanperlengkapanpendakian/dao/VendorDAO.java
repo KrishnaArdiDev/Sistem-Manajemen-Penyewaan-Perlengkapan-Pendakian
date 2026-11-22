@@ -2,7 +2,6 @@ package com.sistemmanajemenpenyewaanperlengkapanpendakian.dao;
 
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.DatabaseConnection;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Vendor;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,7 +34,6 @@ public class VendorDAO {
                 }
             }
     }
-
     public void updateProfileVendor(Vendor vendor) throws SQLException{
         if (vendor == null){
             throw new IllegalArgumentException("Data vendor tidak boleh null");

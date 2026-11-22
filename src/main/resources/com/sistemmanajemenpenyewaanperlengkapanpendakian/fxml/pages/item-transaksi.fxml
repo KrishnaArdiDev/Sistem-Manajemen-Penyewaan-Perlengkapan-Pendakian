@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
 
 <HBox alignment="CENTER_LEFT" prefHeight="119.0" spacing="45.0" style="-fx-background-color: #F5F5F5; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.ItemTransaksiController">
     <children>
@@ -37,13 +37,17 @@
                 <Label fx:id="labelStatus" alignment="CENTER" text="Berhasil" VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER_RIGHT" spacing="8.0">
                     <children>
-                        <Button fx:id="tombolCetak" accessibleText="Cetak Nota" maxHeight="Infinity" minWidth="31.0" mnemonicParsing="false" onAction="#Cetak" prefWidth="31.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 4 0 4 0;">
-                            <graphic>
-                                <SVGPath content="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z" fill="WHITE" mouseTransparent="true" scaleX="0.85" scaleY="0.85" />
-                            </graphic>
+                        <Button fx:id="tombolCetak" accessibleText="Cetak Nota" maxHeight="Infinity" minWidth="31.0" mnemonicParsing="false" onAction="#Cetak" prefHeight="30.0" prefWidth="90.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-background-radius: 6; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 4 0 4 0;" text="Cetak Nota" textFill="WHITE">
                             <tooltip>
-                                <Tooltip text="Cetak Nota" />
+                                <Tooltip text="Cetak Nota">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Tooltip>
                             </tooltip>
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
                         </Button>
                         <Button fx:id="tombolDetail" maxHeight="30.0" maxWidth="150.0" mnemonicParsing="false" onAction="#bukaDetail" prefHeight="30.0" prefWidth="98.0" style="-fx-font-size: 14px; -fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Detail" />
                     </children>
