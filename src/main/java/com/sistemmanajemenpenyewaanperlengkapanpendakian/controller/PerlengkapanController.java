@@ -380,8 +380,7 @@ public class PerlengkapanController {
 
         int jumlahHalaman = hitungJumlahHalaman();
 
-        Button sebelumnya =
-                buatTombolPagination("‹");
+        Button sebelumnya =buatTombolPagination("‹");
 
         sebelumnya.setDisable(
                 halamanAktif == 0
