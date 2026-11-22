@@ -5,10 +5,7 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.LoginGagalExc
 
 public class AuthService {
     public static volatile Vendor vendorAktif;
-
-    // Penambahan, buat ngatur proses autentikasi vendor
     public Vendor login(String emailAtauUsername, String password) throws LoginGagalException {
-        // Membersihkan sesi sebelumnya sebelum login baru
         vendorAktif = null;
         TransaksiService.bersihkanVendorAktif();
 
@@ -17,7 +14,6 @@ public class AuthService {
         }
 
         Vendor vendor = new Vendor();
-
         vendor.setEmailAtauUsername(emailAtauUsername.trim());
         vendor.setPwAdm(password);
 
@@ -39,8 +35,6 @@ public class AuthService {
         }
         vendorAktif = vendor;
     }
-
-    // Membersihkan sesi vendor saat logout
     public static void logout() {
         vendorAktif = null;
         TransaksiService.bersihkanVendorAktif();

@@ -17,6 +17,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -537,58 +538,67 @@ public class PerlengkapanController {
 
     @FXML
     private void tambahProduk() {
+        bukaFormulir(null);
+    }
+    private void bukaFormulirEdit(Perlengkapan perlengkapan) {
+        bukaFormulir(perlengkapan);
+    }
+    private void bukaFormulir(Perlengkapan perlengkapanDiedit){
 
-        if (!siapkanLayoutUtama()) {
-
-            tampilkanPeringatan(
-                    Alert.AlertType.ERROR,
-                    "Gagal Membuka Formulir",
-                    "Layout utama aplikasi tidak ditemukan."
-            );
-
-            return;
-        }
-
-        try {
-
-            URL lokasiFormulir =
-                    App.class.getResource(PATH_FORMULIR);
-
-            if (lokasiFormulir == null) {
-
-                throw new IOException(
-                        "formulir-data-perlengkapan.fxml tidak ditemukan."
+            if (!siapkanLayoutUtama()) {
+    
+                tampilkanPeringatan(
+                        Alert.AlertType.ERROR,
+                        "Gagal Membuka Formulir",
+                        "Layout utama aplikasi tidak ditemukan."
+                );
+    
+                return;
+            }
+    
+            try {
+    
+                URL lokasiFormulir =
+                        App.class.getResource(PATH_FORMULIR);
+    
+                if (lokasiFormulir == null) {
+    
+                    throw new IOException(
+                            "formulir-data-perlengkapan.fxml tidak ditemukan."
+                    );
+                }
+    
+                FXMLLoader loader =
+                        new FXMLLoader(lokasiFormulir);
+    
+                Parent formulir = loader.load();
+    
+                ControllerFormulirDataPerlengkapan controller =
+                        loader.getController();
+    
+                controller.setAksiKembali(
+                        this::kembaliKeDaftar
+                );
+                if (perlengkapanDiedit != null) {
+                controller.setDataUntukEdit(perlengkapanDiedit);
+            }
+                BorderPane.setMargin(
+                        formulir,
+                        new Insets(16)
+                );
+    
+                layoutUtama.setCenter(formulir);
+    
+            } catch (IOException | RuntimeException e) {
+    
+                tampilkanPeringatan(
+                        Alert.AlertType.ERROR,
+                        "Gagal Membuka Formulir",
+                        e.getMessage()
                 );
             }
-
-            FXMLLoader loader =
-                    new FXMLLoader(lokasiFormulir);
-
-            Parent formulir = loader.load();
-
-            ControllerFormulirDataPerlengkapan controller =
-                    loader.getController();
-
-            controller.setAksiKembali(
-                    this::kembaliKeDaftar
-            );
-
-            BorderPane.setMargin(
-                    formulir,
-                    new Insets(16)
-            );
-
-            layoutUtama.setCenter(formulir);
-
-        } catch (IOException | RuntimeException e) {
-
-            tampilkanPeringatan(
-                    Alert.AlertType.ERROR,
-                    "Gagal Membuka Formulir",
-                    e.getMessage()
-            );
         }
-    }
+    
 
 
     // =========================
@@ -729,7 +739,7 @@ public class PerlengkapanController {
                     perlengkapan,
                     this::kembaliKeDaftar
             );
-
+        controller.setAksiEdit(this::bukaFormulirEdit);
             BorderPane.setMargin(
                     halamanDetail,
                     new Insets(16)

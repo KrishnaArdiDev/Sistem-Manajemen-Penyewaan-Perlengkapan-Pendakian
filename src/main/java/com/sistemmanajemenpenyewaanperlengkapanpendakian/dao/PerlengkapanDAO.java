@@ -18,7 +18,6 @@ public class PerlengkapanDAO {
             + "JOIN vendor v ON v.id_vendor = p.id_vendor ";
 
     // ===== Create =====
-    // Dipanggil oleh Vendor.tambahDataPerlengkapan(); id hasil auto-increment diisi ke objek.
     public void tambahDataPerlengkapan(Perlengkapan perlengkapan, int idVendor) throws SQLException {
         periksa(perlengkapan);
         String sql = "INSERT INTO perlengkapan (id_vendor, nama_perlengkapan, jenis_perlengkapan, stok, "
@@ -32,7 +31,6 @@ public class PerlengkapanDAO {
             isiKolomPerlengkapan(ps, perlengkapan, 2);
             ps.executeUpdate();
             
-            // Ini buat meengambil ID AUTO_INCREMENT dari MySQL
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     perlengkapan.setIdPerlengkapan(keys.getInt(1));
@@ -44,8 +42,6 @@ public class PerlengkapanDAO {
     }
 
     // ===== Read =====
-
-    // Mengambil dan read seluruh data perlengkapan
     public List<Perlengkapan> ambilSemuaPerlengkapan() throws SQLException {
         String sql = SELECT_DASAR + "ORDER BY p.nama_perlengkapan";
         List<Perlengkapan> hasil = new ArrayList<>();
@@ -59,7 +55,6 @@ public class PerlengkapanDAO {
         return hasil;
     }
 
-    // ini untuk mengambil dan read perlengkapan berdasarkan pemilik vendor
     public List<Perlengkapan> ambilPerlengkapanVendor(int idVendor) throws SQLException {
         String sql = SELECT_DASAR + "WHERE p.id_vendor = ? " + "ORDER BY p.nama_perlengkapan";
         List<Perlengkapan> hasil = new ArrayList<>();
@@ -75,15 +70,12 @@ public class PerlengkapanDAO {
         return hasil;
     }
 
-    // Mengambil perlengkapan berdasarkan ID
-    // Mengembalikan null jika data tidak ditemukan.
     public Perlengkapan ambilPerlengkapanBerdasarkanId(int idPerlengkapan) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection()) {
             return ambilPerlengkapanBerdasarkanId(conn, idPerlengkapan);
         }
     }
 
-    // Menggunakan koneksi dari luar untuk transaksi database
     public Perlengkapan ambilPerlengkapanBerdasarkanId(Connection conn, int idPerlengkapan) throws SQLException {
         String sql = SELECT_DASAR + "WHERE p.id_perlengkapan = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -94,8 +86,6 @@ public class PerlengkapanDAO {
         }
     }
 
-// Mengambil perlengkapan berdasarkan ID barang dan pemilik vendor
-// FOR UPDATE mengunci baris stok selama transaksi database berlangsung
 public Perlengkapan ambilPerlengkapanBerdasarkanId(
         Connection conn, int idPerlengkapan, int idVendor) throws SQLException {
 
@@ -125,7 +115,6 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
 
 
     // ===== Update =====
-    // Memperbarui data perlengkapan milik Vendor
     public void updateDataPerlengkapan(Perlengkapan perlengkapan, int idVendor) throws SQLException {
         periksa(perlengkapan);
         String sql = "UPDATE perlengkapan SET " +"nama_perlengkapan = ?, " +" jenis_perlengkapan = ?, " + "stok = ?, " 
@@ -153,14 +142,12 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
         }
     }
 
-    // Memperbarui stok perlengkapan
     public void updateStokPerlengkapan(int idPerlengkapan, int stokBaru) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection()) {
             updateStokPerlengkapan(conn, idPerlengkapan, stokBaru);
         }
     }
 
-    // Menggunakan koneksi dari luar untuk transaksi database
     public void updateStokPerlengkapan(Connection conn, int idPerlengkapan, int stokBaru) throws SQLException {
         String sql = "UPDATE perlengkapan " + "SET stok = ? " + "WHERE id_perlengkapan = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -182,23 +169,88 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
             }
         }
     }
+    public int hitungKuantitasSedangDisewa(int idPerlengkapan) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(kuantitas_per_alat), 0) AS jumlah "
+                + "FROM detail_transaksi "
+                + "WHERE id_perlengkapan = ? "
+                + "AND tanggal_pengembalian_barang IS NULL";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPerlengkapan);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt("jumlah") : 0;
+            }
+        }
+    }
+    public boolean adaRiwayatTransaksi(int idPerlengkapan) throws SQLException {
+        String sql = "SELECT 1 FROM detail_transaksi "
+                + "WHERE id_perlengkapan = ? LIMIT 1";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPerlengkapan);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public String pesanTidakDapatDihapus(int idPerlengkapan) throws SQLException {
+        int sedangDisewa = hitungKuantitasSedangDisewa(idPerlengkapan);
+        if (sedangDisewa > 0) {
+            return "Perlengkapan tidak dapat dihapus karena masih ada "
+                    + sedangDisewa
+                    + " unit yang sedang disewa. Selesaikan pengembalian terlebih dahulu.";
+        }
+        return "Perlengkapan tidak dapat dihapus karena sudah tercatat pada riwayat transaksi.";
+    }
 
     // ===== Delete =====
-    // Menghapus perlengkapan milik Vendor
     public void hapusDataPerlengkapan(Perlengkapan perlengkapan, int idVendor) throws SQLException {
         if (perlengkapan == null) {
             throw new IllegalArgumentException("Data perlengkapan tidak boleh kosong");
         }
+
+        if (adaRiwayatTransaksi(perlengkapan.getIdPerlengkapan())) {
+            throw new SQLException(pesanTidakDapatDihapus(perlengkapan.getIdPerlengkapan()));
+        }
+
         String sql = "DELETE FROM perlengkapan " + "WHERE id_perlengkapan = ? AND id_vendor = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, perlengkapan.getIdPerlengkapan());
             ps.setInt(2, idVendor);
-            if (ps.executeUpdate() == 0) {
-                throw new SQLException("Perlengkapan tidak ditemukan atau bukan milik vendor ini.");
+            try {
+                if (ps.executeUpdate() == 0) {
+                    throw new SQLException("Perlengkapan tidak ditemukan atau bukan milik vendor ini.");
+                }
+            } catch (SQLException e) {
+                if (adalahPelanggaranForeignKey(e)) {
+                    throw new SQLException(pesanTidakDapatDihapus(perlengkapan.getIdPerlengkapan()), e);
+                }
+                throw e;
             }
         }
+    }
+
+    private boolean adalahPelanggaranForeignKey(SQLException e) {
+        if (e.getErrorCode() == 1451) {
+            return true;
+        }
+        String state = e.getSQLState();
+        if (state != null && state.startsWith("23")) {
+            return true;
+        }
+        String pesan = e.getMessage();
+        if (pesan == null) {
+            return false;
+        }
+        String kecil = pesan.toLowerCase();
+        return kecil.contains("foreign key")
+                || kecil.contains("cannot delete")
+                || kecil.contains("constraint");
     }
 
     // ===== Helper =====
