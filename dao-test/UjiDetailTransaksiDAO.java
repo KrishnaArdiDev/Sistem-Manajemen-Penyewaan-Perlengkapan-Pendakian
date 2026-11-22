@@ -46,14 +46,12 @@ public class UjiDetailTransaksiDAO {
 
         System.out.println("=== PENGUJIAN DETAILTRANSAKSIDAO ===");
 
-        // Menyiapkan pelanggan dari data seed
         Pelanggan pelanggan = new Pelanggan();
 
         pelanggan.setIdPelanggan(1);
         pelanggan.setNamaPelanggan("Budi");
         pelanggan.setNoIdentitasPelanggan("510000000");
 
-        // Menyiapkan objek Kompor
         Kompor kompor = new Kompor();
 
         kompor.setIdPerlengkapan(1);
@@ -63,7 +61,6 @@ public class UjiDetailTransaksiDAO {
         kompor.setHargaSewaHarian(30000);
         kompor.setTipeKompor("2 sumbu");
 
-        // Menyiapkan objek Tas
         Tas tas = new Tas();
 
         tas.setIdPerlengkapan(2);
@@ -73,7 +70,6 @@ public class UjiDetailTransaksiDAO {
         tas.setHargaSewaHarian(50000);
         tas.setTipeTas("Carrier");
 
-        // Menyiapkan objek Sepatu
         Sepatu sepatu = new Sepatu();
 
         sepatu.setIdPerlengkapan(3);
@@ -83,7 +79,6 @@ public class UjiDetailTransaksiDAO {
         sepatu.setHargaSewaHarian(40000);
         sepatu.setUkuranSepatu(42);
 
-        // Membuat tiga detail transaksi
         DetailTransaksi detailKompor = buatDetail(kompor, 30000L);
         DetailTransaksi detailTas = buatDetail(tas, 50000L);
         DetailTransaksi detailSepatu = buatDetail(sepatu, 40000L);
@@ -94,7 +89,6 @@ public class UjiDetailTransaksiDAO {
         daftarDetail.add(detailTas);
         daftarDetail.add(detailSepatu);
 
-        // Membuat header transaksi sementara
         Transaksi transaksi = new Transaksi(
                 pelanggan,
                 daftarDetail,
@@ -106,7 +100,6 @@ public class UjiDetailTransaksiDAO {
 
         try {
 
-            // Membuat header transaksi terlebih dahulu
             transaksiDAO.tambahDataTransaksi(transaksi, idVendor);
 
             idTransaksiUji = transaksi.getIdTransaksi();
@@ -114,21 +107,18 @@ public class UjiDetailTransaksiDAO {
             periksa(idTransaksiUji > 0,
                     "Header transaksi gagal dibuat");
 
-            // 1. CREATE detail Kompor
             detailDAO.tambahDetailTransaksi(
                     detailKompor, idTransaksiUji);
 
             periksa(detailKompor.getIdDetailTransaksi() > 0,
                     "ID detail Kompor gagal dibuat");
 
-            // 2. CREATE detail Tas
             detailDAO.tambahDetailTransaksi(
                     detailTas, idTransaksiUji);
 
             periksa(detailTas.getIdDetailTransaksi() > 0,
                     "ID detail Tas gagal dibuat");
 
-            // 3. CREATE detail Sepatu
             detailDAO.tambahDetailTransaksi(
                     detailSepatu, idTransaksiUji);
 
@@ -137,7 +127,6 @@ public class UjiDetailTransaksiDAO {
 
             System.out.println("LULUS: Menambahkan tiga detail transaksi");
 
-            // 4. READ seluruh detail berdasarkan transaksi
             List<DetailTransaksi> hasilBaca =
                     detailDAO.ambilDetailBerdasarkanTransaksi(idTransaksiUji);
 
@@ -146,7 +135,6 @@ public class UjiDetailTransaksiDAO {
 
             System.out.println("LULUS: Membaca detail berdasarkan transaksi");
 
-            // 5. Memastikan pemetaan jenis perlengkapan
             boolean komporDitemukan = false;
             boolean tasDitemukan = false;
             boolean sepatuDitemukan = false;
@@ -209,7 +197,6 @@ public class UjiDetailTransaksiDAO {
             System.out.println("LULUS: Pemetaan Kompor, Tas, dan Sepatu");
             System.out.println("LULUS: Pembacaan harga sewa historis");
 
-            // 6. UPDATE detail Kompor
             LocalDate tanggalPengembalian =
                     LocalDate.of(2026, 11, 24);
 
@@ -222,7 +209,6 @@ public class UjiDetailTransaksiDAO {
 
             detailDAO.updateDetailTransaksi(detailKompor);
 
-            // 7. READ kembali hasil UPDATE
             List<DetailTransaksi> hasilUpdate =
                     detailDAO.ambilDetailBerdasarkanTransaksi(idTransaksiUji);
 
@@ -262,8 +248,6 @@ public class UjiDetailTransaksiDAO {
 
         } finally {
 
-            // Membersihkan header transaksi sementara.
-            // Detail akan terhapus melalui ON DELETE CASCADE.
             if (idTransaksiUji > 0) {
 
                 String sql =
@@ -282,7 +266,6 @@ public class UjiDetailTransaksiDAO {
                     statement.executeUpdate();
                 }
 
-                // Memastikan header dan seluruh detail telah dibersihkan
                 String sqlPeriksa =
                         "SELECT COUNT(*) FROM detail_transaksi "
                         + "WHERE id_transaksi = ?";

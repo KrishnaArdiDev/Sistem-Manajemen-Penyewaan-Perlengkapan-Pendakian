@@ -85,7 +85,6 @@ public class UjiTransaksiService {
         int idTransaksiUji = 0;
         boolean pengembalianBerhasil = false;
 
-        // Deklarasi di luar try agar dapat digunakan oleh finally.
         DetailTransaksi detail = null;
         Transaksi transaksi = null;
 
@@ -96,10 +95,6 @@ public class UjiTransaksiService {
         System.out.println("=== PENGUJIAN TRANSAKSISERVICE ===");
 
         try {
-
-            // ==========================================
-            // 1. PENGUJIAN CREATE TRANSAKSI
-            // ==========================================
 
             Pelanggan pelanggan = new Pelanggan();
 
@@ -155,10 +150,6 @@ public class UjiTransaksiService {
             System.out.println("LULUS: Perhitungan total harga Rp60.000");
             System.out.println("LULUS: Perhitungan tanggal kembali");
 
-            // ==========================================
-            // 2. PENGUJIAN PENGURANGAN STOK
-            // ==========================================
-
             int stokSetelahSewa =
                     ambilStok(perlengkapanDAO, idPerlengkapan);
 
@@ -166,10 +157,6 @@ public class UjiTransaksiService {
                     "Stok tidak berkurang sesuai kuantitas");
 
             System.out.println("LULUS: Pengurangan stok setelah transaksi");
-
-            // ==========================================
-            // 3. PENGUJIAN STOK TIDAK MENCUKUPI
-            // ==========================================
 
             Kompor komporTidakCukup = new Kompor();
 
@@ -227,10 +214,6 @@ public class UjiTransaksiService {
             System.out.println("LULUS: Rollback dan pemulihan ID transaksi");
             System.out.println("LULUS: Stok tetap ketika transaksi ditolak");
 
-            // ==========================================
-            // 4. PENGUJIAN PENGEMBALIAN BARANG UTUH
-            // ==========================================
-
             PengembalianService.HasilPengembalian hasil =
                     PengembalianService.prosesPengembalian(
                             transaksi,
@@ -240,7 +223,6 @@ public class UjiTransaksiService {
                             idVendor
                     );
 
-            // Ditandai berhasil setelah proses pengembalian selesai.
             pengembalianBerhasil = true;
 
             periksa(hasil.getDenda() == 0,
@@ -256,10 +238,6 @@ public class UjiTransaksiService {
             System.out.println("LULUS: Denda tepat waktu sebesar Rp0");
             System.out.println("LULUS: Biaya ganti rugi sebesar Rp0");
 
-            // ==========================================
-            // 5. MEMASTIKAN STOK KEMBALI
-            // ==========================================
-
             int stokSetelahPengembalian =
                     ambilStok(perlengkapanDAO, idPerlengkapan);
 
@@ -270,14 +248,7 @@ public class UjiTransaksiService {
 
         } finally {
 
-            // ==========================================
-            // PEMBERSIHAN DATA PENGUJIAN
-            // ==========================================
-
             if (idTransaksiUji > 0) {
-
-                // Jika pengujian terhenti sebelum pengembalian berhasil,
-                // coba kembalikan barang agar stok tidak tertinggal berkurang.
 
                 if (!pengembalianBerhasil
                         && detail != null
@@ -309,8 +280,6 @@ public class UjiTransaksiService {
                         );
                     }
                 }
-
-                // Hapus transaksi uji hanya jika pengembalian berhasil.
 
                 if (detail != null
                         && (detail.getTanggalPengembalianBarang() != null

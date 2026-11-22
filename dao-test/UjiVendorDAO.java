@@ -17,7 +17,6 @@ public class UjiVendorDAO {
 
         System.out.println("=== PENGUJIAN VENDORDao ===");
 
-        // 1. Login menggunakan username
         Vendor vendor1 = dao.login("vendor_santai", "Admin123");
 
         periksa(vendor1 != null && vendor1.getIdVendor() == 1,
@@ -25,7 +24,6 @@ public class UjiVendorDAO {
 
         System.out.println("LULUS: Login menggunakan username");
 
-        // 2. Login menggunakan email
         Vendor vendor2 = dao.login(
                 "vendorSantai@gmail.com", "Admin123");
 
@@ -34,7 +32,6 @@ public class UjiVendorDAO {
 
         System.out.println("LULUS: Login menggunakan email");
 
-        // 3. Login menggunakan vendor kedua
         Vendor vendor3 = dao.login("vendor_rumah", "321Admin");
 
         periksa(vendor3 != null && vendor3.getIdVendor() == 2,
@@ -42,7 +39,6 @@ public class UjiVendorDAO {
 
         System.out.println("LULUS: Login vendor kedua");
 
-        // 4. Login menggunakan password salah
         Vendor vendor4 = dao.login("vendor_santai", "PasswordSalah");
 
         periksa(vendor4 == null,
@@ -50,13 +46,11 @@ public class UjiVendorDAO {
 
         System.out.println("LULUS: Penolakan password salah");
 
-        // 5. Mengambil data profil asli untuk pemulihan
         Vendor dataAsli = dao.login("vendor_santai", "Admin123");
 
         periksa(dataAsli != null,
                 "Data vendor untuk pengujian tidak ditemukan");
 
-        // 6. Menyiapkan data profil sementara
         Vendor perubahan = new Vendor();
 
         perubahan.setIdVendor(dataAsli.getIdVendor());
@@ -67,10 +61,8 @@ public class UjiVendorDAO {
 
         try {
 
-            // 7. Menjalankan UPDATE
             dao.updateProfileVendor(perubahan);
 
-            // 8. Membaca kembali hasil UPDATE
             Vendor hasil = dao.login("vendor_santai", "Admin123");
 
             periksa(hasil != null, "Data vendor tidak ditemukan setelah update");
@@ -95,7 +87,6 @@ public class UjiVendorDAO {
 
         } finally {
 
-            // 9. Mengembalikan profil ke data semula
             Vendor pemulihan = new Vendor();
 
             pemulihan.setIdVendor(dataAsli.getIdVendor());
@@ -106,7 +97,6 @@ public class UjiVendorDAO {
 
             dao.updateProfileVendor(pemulihan);
 
-            // 10. Memastikan data sudah kembali seperti semula
             Vendor hasilPemulihan = dao.login("vendor_santai", "Admin123");
 
             periksa(hasilPemulihan != null,

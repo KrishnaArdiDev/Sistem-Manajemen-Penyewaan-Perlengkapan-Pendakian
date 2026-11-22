@@ -113,10 +113,8 @@ public class UjiKonsistensiStokService {
 
             transaksi.setFotoIdentitas(marker);
 
-            // Menandakan bahwa objek permintaan sudah siap.
             siap.countDown();
 
-            // Menunggu kedua thread dilepaskan bersamaan.
             if (!mulai.await(20, TimeUnit.SECONDS)) {
                 throw new IllegalStateException(
                         "Permintaan tidak menerima sinyal mulai"
@@ -196,8 +194,6 @@ public class UjiKonsistensiStokService {
             String markerA,
             String markerB) throws Exception {
 
-        // Menghapus transaksi sementara dan memulihkan stok
-        // menggunakan transaksi database yang sama.
 
         try (Connection connection = DatabaseConnection.getConnection()) {
 
@@ -264,7 +260,6 @@ public class UjiKonsistensiStokService {
                 "Stok belum kembali ke nilai awal setelah cleanup"
         );
 
-        // Menghapus perlengkapan sementara melalui Service.
         Kompor sementara = new Kompor();
         sementara.setIdPerlengkapan(idPerlengkapan);
 
@@ -312,10 +307,7 @@ public class UjiKonsistensiStokService {
         );
 
         try {
-
-            // ==========================================
-            // 1. MEMBUAT PERLENGKAPAN DENGAN STOK SATU
-            // ==========================================
+=
 
             perlengkapanService.tambahDataPerlengkapan(
                     perlengkapanUji,
@@ -342,10 +334,6 @@ public class UjiKonsistensiStokService {
             System.out.println(
                     "LULUS: Perlengkapan sementara dibuat dengan stok satu"
             );
-
-            // ==========================================
-            // 2. MENJALANKAN DUA PERMINTAAN BERSAMAAN
-            // ==========================================
 
             Future<HasilPemesanan> permintaanA =
                     executor.submit(
@@ -384,9 +372,6 @@ public class UjiKonsistensiStokService {
             HasilPemesanan hasilB =
                     permintaanB.get(45, TimeUnit.SECONDS);
 
-            // ==========================================
-            // 3. MEMERIKSA JUMLAH TRANSAKSI BERHASIL
-            // ==========================================
 
             int jumlahBerhasil =
                     (hasilA.berhasil ? 1 : 0)
@@ -442,9 +427,6 @@ public class UjiKonsistensiStokService {
                     "LULUS: ID transaksi dan detail pada permintaan gagal dipulihkan"
             );
 
-            // ==========================================
-            // 4. MEMERIKSA STOK AKHIR
-            // ==========================================
 
             int stokAkhir =
                     perlengkapanDAO
@@ -460,10 +442,6 @@ public class UjiKonsistensiStokService {
             System.out.println(
                     "LULUS: Stok akhir nol, tidak terjadi stok negatif"
             );
-
-            // ==========================================
-            // 5. MEMERIKSA HEADER DAN DETAIL DATABASE
-            // ==========================================
 
             periksa(
                     hitungTransaksiUji(markerA, markerB) == 1,
@@ -487,8 +465,6 @@ public class UjiKonsistensiStokService {
 
         } finally {
 
-            // Membuka barrier jika terjadi kegagalan sebelum
-            // kedua thread dilepaskan.
             mulai.countDown();
 
             executor.shutdown();

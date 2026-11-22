@@ -22,7 +22,6 @@ public class UjiPerlengkapanDAO {
 
         System.out.println("=== PENGUJIAN PERLENGKAPANDao ===");
 
-        // Membuat objek perlengkapan sementara
         Kompor perlengkapanBaru = new Kompor();
 
         perlengkapanBaru.setNamaPerlengkapan("UJI Perlengkapan DAO");
@@ -34,7 +33,6 @@ public class UjiPerlengkapanDAO {
 
         try {
 
-            // 1. CREATE
             dao.tambahDataPerlengkapan(perlengkapanBaru, idVendorUji);
 
             idPerlengkapanUji = perlengkapanBaru.getIdPerlengkapan();
@@ -44,7 +42,6 @@ public class UjiPerlengkapanDAO {
 
             System.out.println("LULUS: Menambahkan perlengkapan");
 
-            // 2. READ berdasarkan ID
             Perlengkapan hasilID =
                     dao.ambilPerlengkapanBerdasarkanId(idPerlengkapanUji);
 
@@ -60,7 +57,6 @@ public class UjiPerlengkapanDAO {
 
             System.out.println("LULUS: Membaca perlengkapan berdasarkan ID");
 
-            // 3. READ seluruh perlengkapan
             List<Perlengkapan> seluruhPerlengkapan =
                     dao.ambilSemuaPerlengkapan();
 
@@ -78,7 +74,6 @@ public class UjiPerlengkapanDAO {
 
             System.out.println("LULUS: Membaca seluruh perlengkapan");
 
-            // 4. READ berdasarkan vendor
             List<Perlengkapan> perlengkapanVendor =
                     dao.ambilPerlengkapanVendor(idVendorUji);
 
@@ -96,7 +91,6 @@ public class UjiPerlengkapanDAO {
 
             System.out.println("LULUS: Membaca perlengkapan berdasarkan vendor");
 
-            // 5. UPDATE seluruh data perlengkapan
             perlengkapanBaru.setNamaPerlengkapan(
                     "UJI Perlengkapan DAO UPDATE");
 
@@ -139,7 +133,6 @@ public class UjiPerlengkapanDAO {
 
             System.out.println("LULUS: Memperbarui data perlengkapan");
 
-            // 6. UPDATE stok secara khusus
             dao.updateStokPerlengkapan(idPerlengkapanUji, 13);
 
             Perlengkapan hasilStok =
@@ -150,7 +143,6 @@ public class UjiPerlengkapanDAO {
 
             System.out.println("LULUS: Memperbarui stok perlengkapan");
 
-            // 7. DELETE perlengkapan sementara
             dao.hapusDataPerlengkapan(perlengkapanBaru, idVendorUji);
 
             berhasilDihapus = true;
@@ -165,7 +157,6 @@ public class UjiPerlengkapanDAO {
 
         } finally {
 
-            // Membersihkan data uji apabila terjadi kegagalan
             if (idPerlengkapanUji > 0 && !berhasilDihapus) {
 
                 Perlengkapan sisa =

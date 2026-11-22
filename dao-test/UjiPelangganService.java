@@ -110,10 +110,6 @@ public class UjiPelangganService {
 
         try {
 
-            // ==========================================
-            // 1. IDENTITAS GANDA: BUDI
-            // ==========================================
-
             periksa(
                     hitungIdentitas(marker) == 0,
                     "Marker pengujian sudah digunakan. Jalankan ulang."
@@ -141,9 +137,6 @@ public class UjiPelangganService {
                     "LULUS: Pencocokan identitas ganda berdasarkan nama Budi"
             );
 
-            // ==========================================
-            // 2. IDENTITAS GANDA: ICA
-            // ==========================================
 
             Pelanggan ica =
                     PelangganService.prosesDataPelanggan(
@@ -160,10 +153,6 @@ public class UjiPelangganService {
                     "LULUS: Pencocokan identitas ganda berdasarkan nama Ica"
             );
 
-            // ==========================================
-            // 3. IDENTITAS GANDA DENGAN NAMA TIDAK COCOK
-            // ==========================================
-
             ujiDataTidakLengkap(
                     "identitas ganda dengan nama yang tidak cocok",
                     () -> PelangganService.prosesDataPelanggan(
@@ -171,10 +160,6 @@ public class UjiPelangganService {
                             "510000000"
                     )
             );
-
-            // ==========================================
-            // 4. PENCARIAN LANGSUNG IDENTITAS GANDA
-            // ==========================================
 
             boolean pencarianGandaDitolak = false;
 
@@ -196,10 +181,6 @@ public class UjiPelangganService {
             System.out.println(
                     "LULUS: Pencarian langsung identitas ganda ditolak"
             );
-
-            // ==========================================
-            // 5. MENAMBAHKAN PELANGGAN BARU
-            // ==========================================
 
             Pelanggan baru =
                     PelangganService.prosesDataPelanggan(
@@ -228,9 +209,6 @@ public class UjiPelangganService {
                     "LULUS: Menambahkan pelanggan baru dengan trim data"
             );
 
-            // ==========================================
-            // 6. MENCARI PELANGGAN BARU
-            // ==========================================
 
             Pelanggan ditemukan =
                     PelangganService.cariByNoIdentitas(
@@ -247,9 +225,6 @@ public class UjiPelangganService {
                     "LULUS: Mencari pelanggan baru berdasarkan identitas"
             );
 
-            // ==========================================
-            // 7. MEMASTIKAN TIDAK ADA DUPLIKASI
-            // ==========================================
 
             Pelanggan hasilUlang =
                     PelangganService.prosesDataPelanggan(
@@ -271,10 +246,6 @@ public class UjiPelangganService {
                     "LULUS: Identitas yang sudah terdaftar tidak dibuat ulang"
             );
 
-            // ==========================================
-            // 8. PENCARIAN TIDAK DITEMUKAN
-            // ==========================================
-
             periksa(
                     PelangganService.cariByNoIdentitas(
                             identitasTidakAda
@@ -295,10 +266,6 @@ public class UjiPelangganService {
             System.out.println(
                     "LULUS: Pencarian identitas tidak ditemukan, null, dan kosong"
             );
-
-            // ==========================================
-            // 9. MEMBACA SELURUH PELANGGAN
-            // ==========================================
 
             List<Pelanggan> semua =
                     PelangganService.semua();
@@ -322,9 +289,6 @@ public class UjiPelangganService {
                     "LULUS: Membaca seluruh data pelanggan"
             );
 
-            // ==========================================
-            // 10. MEMERIKSA UNMODIFIABLE LIST
-            // ==========================================
 
             boolean tidakDapatDiubah = false;
 
@@ -343,10 +307,6 @@ public class UjiPelangganService {
             System.out.println(
                     "LULUS: Daftar semua pelanggan bersifat unmodifiable"
             );
-
-            // ==========================================
-            // 11. VALIDASI INPUT
-            // ==========================================
 
             ujiDataTidakLengkap(
                     "nama null",
