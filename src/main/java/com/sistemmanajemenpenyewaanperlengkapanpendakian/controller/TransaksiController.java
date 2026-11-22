@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.Optional;
 import javafx.scene.control.ChoiceDialog;
+import java.net.URL;
 
 public class TransaksiController {
 
@@ -63,9 +64,7 @@ public class TransaksiController {
     try {
         daftarTransaksi = TransaksiService.semua();
     } catch (IllegalArgumentException e) {
-        Label kosong = new Label(
-                "Login vendor diperlukan untuk melihat transaksi."
-        );
+        Label kosong = new Label("Login vendor diperlukan untuk melihat transaksi.");
         kosong.setStyle(
                 "-fx-font-size: 14px; -fx-text-fill: #7A7A7A;"
         );
@@ -85,11 +84,14 @@ public class TransaksiController {
     }
 
     for (Transaksi t : daftarTransaksi) {
-        tambahKartu(t, "/images/tas.png");
+        tambahKartu(t);
     }
 }
 
-    private void tambahKartu(Transaksi t, String gambar) {
+    private void tambahKartu(Transaksi t) {
+
+        String gambar = ambilGambarTransaksi(t);
+
         try {
             var res = App.class.getResource(PATH_ITEM);
             if (res == null) {
@@ -124,6 +126,25 @@ public class TransaksiController {
         }
     }
 
+    private String ambilGambarTransaksi(Transaksi transaksi){
+        if (transaksi == null || transaksi.getDaftarDetail() == null){
+            return null;
+        }
+
+        for (DetailTransaksi detail : transaksi.getDaftarDetail()){
+            if (detail == null || detail.getPerlengkapanYangDisewa() == null){
+                continue;
+            }
+
+            String foto = detail.getPerlengkapanYangDisewa().getFotoBarang();
+
+            if (foto != null && !foto.trim().isEmpty()){
+                return foto.trim();
+            }
+        }
+        return null;
+    }
+
     private String buatRingkasanStatusPengembalian(Transaksi transaksi){
         if (transaksi == null || transaksi.getDaftarDetail() == null || transaksi.getDaftarDetail().isEmpty()){
             return "Berhasil";
@@ -131,13 +152,20 @@ public class TransaksiController {
 
         StringBuilder hasil = new StringBuilder();
         for (DetailTransaksi detail : transaksi.getDaftarDetail()){
-            if (detail == null || detail.getPerlengkapanYangDisewa() == null || detail.getTanggalPengembalianBarang() == null){
+            if (detail == null || detail.getPerlengkapanYangDisewa() == null){
                 continue;
             }
+
+            String namaBarang = detail.getPerlengkapanYangDisewa().getNamaPerlengkapan();
+            if (namaBarang == null || namaBarang.trim().isEmpty()){
+                namaBarang = "Perlengkapan tidak diketahui";
+            }
+
+
             if (hasil.length() > 0){
                 hasil.append("\n");
             }
-            hasil.append(statusPengembalian(transaksi, detail));
+            hasil.append(namaBarang).append(": ").append(statusPengembalian(transaksi, detail));
         }
         return hasil.length() == 0 ? "Berhasil" : hasil.toString();
     }
@@ -149,7 +177,7 @@ public class TransaksiController {
         if (tanggalAktual == null){
             boolean terlambat = tanggalJatuhTempo != null && LocalDate.now().isAfter(tanggalJatuhTempo);
 
-            return terlambat ? "Masih Disewa • Terlambat" : "Sedang Disewa";
+            return terlambat ? "Terlambat" : "Sedang Disewa";
         }
 
         String kondisi = detail.getStatusPengembalianBarang();
@@ -324,9 +352,9 @@ private void tampilkanNota(Transaksi t) {
         foto.setPreserveRatio(true);
         foto.setSmooth(true);
         
-        java.net.URL url = App.class.getResource(gambar);
-        if (url != null){
-            foto.setImage(new Image(url.toExternalForm()));
+        Image gambarPreview = muatGambar(gambar, 100, 100);
+        if (gambarPreview != null){
+            foto.setImage(gambarPreview);
         }
 
         HBox wadahFoto = new HBox(foto);
@@ -439,6 +467,43 @@ private void tampilkanNota(Transaksi t) {
         if (layoutUtama != null && halamanTransaksi != null) {
             BorderPane.setMargin(halamanTransaksi, new Insets(16));
             layoutUtama.setCenter(halamanTransaksi);
+        }
+    }
+
+    private Image muatGambar(String lokasi, double lebar, double tinggi){
+        if (lokasi == null || lokasi.trim().isEmpty()){
+            return null;
+        }
+
+        try{
+            String sumber = lokasi.trim();
+            if (sumber.startsWith("file:") || sumber.startsWith("http://") || sumber.startsWith("https://")){
+                String pathResource = sumber.startsWith("/") ?  sumber : "/" + sumber;
+                URL resource = getClass().getResource(pathResource);
+
+                if (resource != null){
+                    sumber = resource.toExternalForm();
+                } else {
+                java.io.File file = new java.io.File(sumber);
+                if (!file.isFile() || !file.canRead()){
+                    System.err.println("Gambar tidak ditemukan: " + lokasi);
+                    return null;
+                }
+                sumber = file.toURI().toString();
+            } 
+            }
+            Image gambar = new Image(sumber, lebar, tinggi, true, true);
+
+            if (gambar.isError()){
+                System.err.println("Gambar gagal dimuat: " + lokasi);
+                return null;
+            }
+            return gambar;
+        } catch (RuntimeException e){
+            System.err.println("Gagal memuat gambar: " + lokasi);
+
+            e.printStackTrace();
+            return null;
         }
     }
 }
