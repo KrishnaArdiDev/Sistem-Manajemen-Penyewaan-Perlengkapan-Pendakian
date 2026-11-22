@@ -8,6 +8,7 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javafx.scene.control.ScrollPane;
@@ -16,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -45,47 +47,131 @@ public class TransaksiController {
 
     private BorderPane layoutUtama;
     private Node halamanTransaksi;
-
+    
     @FXML
+    private HBox containerPagination;
+    private static final int ITEM_PER_HALAMAN = 4;
+    private final List<Transaksi> daftarTransaksi = new ArrayList<>();
+    private int halamanAktif = 0;
+
+        @FXML
     public void initialize() {
+        if (containerPagination != null) {
+            containerPagination.setAlignment(Pos.CENTER);
+        }
         muatTransaksi();
     }
 
     private void muatTransaksi() {
-    containerTransaksi.getChildren().clear();
+        daftarTransaksi.clear();
+        halamanAktif = 0;
+        containerTransaksi.getChildren().clear();
 
-    // >>> PERUBAHAN: MENANGANI KONDISI TANPA SESI VENDOR
-    List<Transaksi> daftarTransaksi;
+        try {
+            daftarTransaksi.addAll(TransaksiService.semua());
+        } catch (IllegalArgumentException e) {
+            tampilkanStatusKosong("Login vendor diperlukan untuk melihat transaksi.");
+            aturPagination();
+            return;
+        }
 
-    try {
-        daftarTransaksi = TransaksiService.semua();
-    } catch (IllegalArgumentException e) {
-        Label kosong = new Label(
-                "Login vendor diperlukan untuk melihat transaksi."
-        );
-        kosong.setStyle(
-                "-fx-font-size: 14px; -fx-text-fill: #7A7A7A;"
-        );
+        tampilkanHalamanAktif();
+    }
+
+    private void tampilkanStatusKosong(String pesan) {
+        containerTransaksi.getChildren().clear();
+        Label kosong = new Label(pesan);
+        kosong.setStyle("-fx-font-size: 14px; -fx-text-fill: #7A7A7A;");
         containerTransaksi.getChildren().add(kosong);
-        return;
-    }
-    // <<< AKHIR PERUBAHAN
-
-    if (daftarTransaksi.isEmpty()) {
-        Label kosong = new Label(
-                "Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama."
-        );
-        kosong.setStyle(
-                "-fx-font-size: 14px; -fx-text-fill: #7A7A7A;"
-        );
-        containerTransaksi.getChildren().add(kosong);
-        return;
     }
 
-    for (Transaksi t : daftarTransaksi) {
-        tambahKartu(t, "/images/tas.png");
+    private int hitungJumlahHalaman() {
+        return Math.max(1, (int) Math.ceil((double) daftarTransaksi.size() / ITEM_PER_HALAMAN));
     }
-}
+
+    private void tampilkanHalamanAktif() {
+        containerTransaksi.getChildren().clear();
+
+        if (daftarTransaksi.isEmpty()) {
+            tampilkanStatusKosong("Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama.");
+            aturPagination();
+            return;
+        }
+
+        int jumlahHalaman = hitungJumlahHalaman();
+        if (halamanAktif >= jumlahHalaman) halamanAktif = jumlahHalaman - 1;
+        if (halamanAktif < 0) halamanAktif = 0;
+
+        int indeksAwal = halamanAktif * ITEM_PER_HALAMAN;
+        int indeksAkhir = Math.min(indeksAwal + ITEM_PER_HALAMAN, daftarTransaksi.size());
+
+        for (int i = indeksAwal; i < indeksAkhir; i++) {
+            tambahKartu(daftarTransaksi.get(i), "/images/tas.png");
+        }
+
+        aturPagination();
+    }
+
+    private void aturPagination() {
+        containerPagination.getChildren().clear();
+        int jumlahHalaman = hitungJumlahHalaman();
+
+        Button sebelumnya = buatTombolPagination("<");
+        sebelumnya.setDisable(halamanAktif == 0);
+        sebelumnya.setOnAction(e -> {
+            if (halamanAktif > 0) {
+                halamanAktif--;
+                tampilkanHalamanAktif();
+            }
+        });
+        containerPagination.getChildren().add(sebelumnya);
+
+        for (int i = 0; i < jumlahHalaman; i++) {
+            final int nomorHalaman = i;
+            Button nomor = buatTombolPagination(String.valueOf(i + 1));
+
+            if (i == halamanAktif) {
+                nomor.setStyle(
+                        "-fx-background-color: #005A32;" +
+                        "-fx-text-fill: #FFFFFF;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-border-color: #005A32;" +
+                        "-fx-border-radius: 6;" +
+                        "-fx-font-weight: bold;");
+            }
+
+            nomor.setOnAction(e -> {
+                halamanAktif = nomorHalaman;
+                tampilkanHalamanAktif();
+            });
+            containerPagination.getChildren().add(nomor);
+        }
+
+        Button berikutnya = buatTombolPagination(">");
+        berikutnya.setDisable(halamanAktif >= jumlahHalaman - 1);
+        berikutnya.setOnAction(e -> {
+            if (halamanAktif < jumlahHalaman - 1) {
+                halamanAktif++;
+                tampilkanHalamanAktif();
+            }
+        });
+        containerPagination.getChildren().add(berikutnya);
+    }
+
+    private Button buatTombolPagination(String teks) {
+        Button tombol = new Button(teks);
+        tombol.setMinSize(34, 30);
+        tombol.setPrefSize(34, 30);
+        tombol.setMaxSize(34, 30);
+        tombol.setCursor(Cursor.HAND);
+        tombol.setStyle(
+                "-fx-background-color: #FFFFFF;" +
+                "-fx-text-fill: #9E9E9E;" +
+                "-fx-border-color: #CFCFCF;" +
+                "-fx-border-radius: 6;" +
+                "-fx-background-radius: 6;");
+        return tombol;
+    }
 
     private void tambahKartu(Transaksi t, String gambar) {
         try {
