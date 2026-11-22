@@ -1,6 +1,8 @@
 
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.PerlengkapanService;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Kompor;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Sepatu;
@@ -8,12 +10,17 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Tas;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -48,14 +55,23 @@ public class DetailPerlengkapanController {
     @FXML
     private Button btnKonfirmasi;
 
+    @FXML
+    private Button btnEdit;
+
+    @FXML
+    private Button btnHapus;
+
 
     // =========================
     // DATA DETAIL
     // =========================
 
-    private Perlengkapan perlengkapanAktif;
+    private final PerlengkapanService perlengkapanService =
+            new PerlengkapanService();
 
+    private Perlengkapan perlengkapanAktif;
     private Runnable aksiKembali;
+    private Consumer<Perlengkapan> aksiEdit;
 
 
     // =========================
@@ -70,8 +86,12 @@ public class DetailPerlengkapanController {
         this.aksiKembali = aksiKembali;
 
         tampilkanData();
+        
     }
 
+    public void setAksiEdit(Consumer<Perlengkapan> aksiEdit) {
+        this.aksiEdit = aksiEdit;
+    }
 
     // =========================
     // MENAMPILKAN DATA PERLENGKAPAN
@@ -302,13 +322,87 @@ public class DetailPerlengkapanController {
     // KONFIRMASI KEMBALI
     // =========================
 
-    @FXML
+        @FXML
     private void handleKonfirmasi() {
+        kembaliKeDaftar();
+    }
 
+    @FXML
+    private void handleEdit() {
+        if (perlengkapanAktif == null) {
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Data Tidak Tersedia",
+                    "Data perlengkapan yang dipilih tidak ditemukan."
+            );
+            return;
+        }
+
+        if (aksiEdit == null) {
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Navigasi Tidak Tersedia",
+                    "Formulir edit perlengkapan tidak terhubung."
+            );
+            return;
+        }
+
+        aksiEdit.accept(perlengkapanAktif);
+    }
+
+    @FXML
+    private void handleHapus() {
+        if (perlengkapanAktif == null) {
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Data Tidak Tersedia",
+                    "Data perlengkapan yang dipilih tidak ditemukan."
+            );
+            return;
+        }
+
+        ButtonType batal = new ButtonType("Batal", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType ya = new ButtonType("Ya", ButtonBar.ButtonData.OK_DONE);
+
+        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+        dialog.setTitle("Hapus Perlengkapan");
+        dialog.setHeaderText(null);
+        dialog.setContentText(
+                "Apakah Anda yakin ingin menghapus perlengkapan "
+                + nilaiTeks(perlengkapanAktif.getNamaPerlengkapan())
+                + "? Data akan dihapus secara permanen."
+        );
+        dialog.getButtonTypes().setAll(batal, ya);
+
+        Optional<ButtonType> jawaban = dialog.showAndWait();
+        if (!jawaban.isPresent() || jawaban.get() != ya) {
+            return;
+        }
+
+        try {
+            int idVendor = TransaksiService.getIdVendorAktif();
+            perlengkapanService.hapusDataPerlengkapan(perlengkapanAktif, idVendor);
+
+            tampilkanPeringatan(
+                    Alert.AlertType.INFORMATION,
+                    "Berhasil",
+                    "Perlengkapan berhasil dihapus."
+            );
+
+            kembaliKeDaftar();
+
+        } catch (SQLException | IllegalArgumentException e) {
+            tampilkanPeringatan(
+                    Alert.AlertType.ERROR,
+                    "Gagal Menghapus Perlengkapan",
+                    e.getMessage()
+            );
+        }
+    }
+
+    private void kembaliKeDaftar() {
         if (aksiKembali != null) {
-
             aksiKembali.run();
-
             return;
         }
 
@@ -318,7 +412,6 @@ public class DetailPerlengkapanController {
                 "Halaman daftar perlengkapan tidak terhubung."
         );
     }
-
 
     // =========================
     // HELPER

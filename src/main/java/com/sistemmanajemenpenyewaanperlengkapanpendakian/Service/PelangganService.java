@@ -11,15 +11,11 @@ import java.util.List;
 public class PelangganService {
 
     private static final PelangganDAO pelangganDAO = new PelangganDAO();
-
-    // Memvalidasi dan memproses data pelanggan untuk transaksi
     public static Pelanggan prosesDataPelanggan(String nama, String noIdentitas) throws DataTidakLengkapException, SQLException{
-        // Validasi nama pelanggan
         if (nama == null || nama.trim().isEmpty()) {
             throw new DataTidakLengkapException("Nama pelanggan wajib diisi.");
         }
 
-        // Validasi nomor identitas
         if (noIdentitas == null || noIdentitas.trim().isEmpty()) {
             throw new DataTidakLengkapException("Nomor identitas pelanggan wajib diisi.");
         }
@@ -27,7 +23,6 @@ public class PelangganService {
         String namaBersih = nama.trim();
         String noIdBersih = noIdentitas.trim();
 
-        // Validasi panjang data berdasarkan struktur database
         if (namaBersih.length() >150){
             throw new DataTidakLengkapException("Nama pelanggan maksimal 150 karakter");
         }
@@ -36,14 +31,11 @@ public class PelangganService {
             throw new DataTidakLengkapException("Nomor identitas pelanggan maksimal 50 karakter");
         }
 
-        // Mengambil data pelanggan dari DB
         List<Pelanggan> daftarPelanggan = pelangganDAO.ambilBerdasarkanNoIdentitas(noIdBersih);
-        // Jika hanya ditemukan satu pelanggan, gunakan pelanggan tersebut
         if (daftarPelanggan.size() == 1) {
             return daftarPelanggan.get(0);
         }
-        // Jika terdapat beberapa pelanggan dengan identitas sama,
-        // cocokkan kembali berdasarkan nama
+
         if (daftarPelanggan.size() > 1) {
             Pelanggan pelangganYangCocok = null;
             int jumlahNamaCocok = 0;
@@ -67,28 +59,15 @@ public class PelangganService {
                     + "Nama pelanggan tidak dapat menentukan data yang benar."
             );
         }
-
-        // Membuat objek pelanggan baru jika belum terdaftar
         Pelanggan pelangganBaru = new Pelanggan();
         
         pelangganBaru.setNamaPelanggan(namaBersih);
         pelangganBaru.setNoIdentitasPelanggan(noIdBersih);
-
-        // Menyimpan pelanggan ke database
-        // ID pelanggan akan diisi otomatis melalui generated keys
         pelangganDAO.tambahDataPelanggan(pelangganBaru);
 
         return pelangganBaru;
     }
-
-    // Mengambil seluruh data pelanggan dari database
-    public static List<Pelanggan> semua() throws SQLException{
-        List<Pelanggan> daftarPelanggan = pelangganDAO.ambilSemuaPelanggan();
-
-        return Collections.unmodifiableList(daftarPelanggan);
-    }
     
-    // Mencari pelanggan berdasarkan nomor identitas
     public static Pelanggan cariByNoIdentitas(String noIdentitas) throws SQLException {
         if (noIdentitas == null){
             return null;
@@ -98,7 +77,7 @@ public class PelangganService {
             return null;
         }
         List<Pelanggan> daftarPelanggan = pelangganDAO.ambilBerdasarkanNoIdentitas(identitasDicari);
-
+        
         if (daftarPelanggan.isEmpty()){
             return null;
         }
@@ -106,5 +85,10 @@ public class PelangganService {
             throw new SQLException("Nomor identitas dimiliki oleh beberapa pelanggan. " + "Data tidak dapat ditentukan secara otomatis.");
         }
         return daftarPelanggan.get(0);
+    }
+    public static List<Pelanggan> semua() throws SQLException{
+        List<Pelanggan> daftarPelanggan = pelangganDAO.ambilSemuaPelanggan();
+    
+        return Collections.unmodifiableList(daftarPelanggan);
     }
 }

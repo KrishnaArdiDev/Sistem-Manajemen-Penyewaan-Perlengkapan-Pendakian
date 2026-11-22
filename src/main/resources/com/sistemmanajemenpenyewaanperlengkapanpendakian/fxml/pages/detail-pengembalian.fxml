@@ -82,7 +82,7 @@
 
                                 <Label fx:id="labelNamaBarang"
                                        text="-"
-                                       style="-fx-font-size: 18px;"/>
+                                       style="-fx-font-size: 18px; -fx-text-fill: #333333;"/>
 
                             </HBox>
                         </VBox>
@@ -124,7 +124,7 @@
 
                                 <Label fx:id="labelNamaPeminjam"
                                        text="-"
-                                       style="-fx-font-size: 18px;"/>
+                                       style="-fx-font-size: 18px; -fx-text-fill: #333333;"/>
 
                             </HBox>
                         </VBox>
@@ -145,7 +145,7 @@
 
                                 <Label fx:id="labelKartuIdentitas"
                                        text="-"
-                                       style="-fx-font-size: 18px;"/>
+                                       style="-fx-font-size: 18px; -fx-text-fill: #333333;"/>
 
                             </HBox>
                         </VBox>
@@ -166,7 +166,7 @@
 
                                 <Label fx:id="labelTanggalMeminjam"
                                        text="-"
-                                       style="-fx-font-size: 18px;"/>
+                                       style="-fx-font-size: 18px; -fx-text-fill: #333333;"/>
 
                             </HBox>
                         </VBox>
@@ -187,7 +187,7 @@
 
                                 <Label fx:id="labelTanggalKembali"
                                        text="-"
-                                       style="-fx-font-size: 18px;"/>
+                                       style="-fx-font-size: 18px; -fx-text-fill: #333333;"/>
 
                             </HBox>
                         </VBox>

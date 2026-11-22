@@ -26,10 +26,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 
 public class LoginController {
-// ini penambahan atribut untuk Auth
 private final AuthService authService = new AuthService();
 
-//#region
 @FXML 
     private HBox loginContainer;
 @FXML 
@@ -60,19 +58,13 @@ private final AuthService authService = new AuthService();
     private Hyperlink linkLupaPassword;
 @FXML 
     private Button buttonMasuk;
-//#endregion
 
-//#region
     @FXML 
     private void initialize(){
         styleSideWelkam();
         styleSideLogin();
-
-        // penambahan ini untuk connect tombol masuk dengan proses login
         buttonMasuk.setOnAction(event -> prosesLogin());
     }
-//#endregion
-//#region
     private void styleSideWelkam(){
         sideWelkam.setStyle(
             "-fx-background-color: #195338;"
@@ -113,10 +105,6 @@ private final AuthService authService = new AuthService();
             "-fx-text-fill: #FFFFFF;"
         );
     }
-//#endregion
-
-
-//#region Proses login
     private void prosesLogin(){
         try{
             authService.login(inputEmail.getText(), inputPassword.getText());
@@ -130,8 +118,6 @@ private final AuthService authService = new AuthService();
             tampilkanPesan(Alert.AlertType.ERROR, "Kesalahan aplikasi", "Login berhasil, tapi halaman utama gagal dibuka\n" + e.getMessage());
         }
     }
-
-// penambahan buat show notif ke user
 private void tampilkanPesan(Alert.AlertType tipe, String judul, String pesan){
     Alert alert = new Alert(tipe);
     alert.setTitle(judul);
@@ -139,7 +125,6 @@ private void tampilkanPesan(Alert.AlertType tipe, String judul, String pesan){
     alert.setContentText(pesan);
     alert.showAndWait();
 }
-//#endregion
     @FXML
     private void switchToSecondary() throws IOException {
         App.setRoot("login");

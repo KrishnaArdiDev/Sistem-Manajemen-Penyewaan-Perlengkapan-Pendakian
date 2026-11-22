@@ -121,10 +121,6 @@ public class UjiPerlengkapanService {
 
         try {
 
-            // ==========================================
-            // 1. CREATE PERLENGKAPAN VENDOR 1
-            // ==========================================
-
             service.tambahDataPerlengkapan(
                     perlengkapanVendor1,
                     ID_VENDOR_1
@@ -140,10 +136,6 @@ public class UjiPerlengkapanService {
             System.out.println(
                     "LULUS: Menambahkan perlengkapan Vendor 1"
             );
-
-            // ==========================================
-            // 2. READ DAN PEMETAAN DATA VENDOR 1
-            // ==========================================
 
             Perlengkapan hasilVendor1 = cariById(
                     service,
@@ -205,10 +197,6 @@ public class UjiPerlengkapanService {
                     "LULUS: Pemetaan subclass Kompor dan atributnya"
             );
 
-            // ==========================================
-            // 3. UPDATE PERLENGKAPAN VENDOR 1
-            // ==========================================
-
             perlengkapanVendor1.setNamaPerlengkapan(
                     marker + "-V1-UPDATED"
             );
@@ -268,10 +256,6 @@ public class UjiPerlengkapanService {
                     "LULUS: Memperbarui data perlengkapan Vendor 1"
             );
 
-            // ==========================================
-            // 4. CREATE PERLENGKAPAN VENDOR 2
-            // ==========================================
-
             service.tambahDataPerlengkapan(
                     perlengkapanVendor2,
                     ID_VENDOR_2
@@ -287,10 +271,6 @@ public class UjiPerlengkapanService {
             System.out.println(
                     "LULUS: Menambahkan perlengkapan Vendor 2"
             );
-
-            // ==========================================
-            // 5. ISOLASI DATA ANTARVENDOR
-            // ==========================================
 
             periksa(
                     cariById(
@@ -313,10 +293,6 @@ public class UjiPerlengkapanService {
             System.out.println(
                     "LULUS: Isolasi data perlengkapan antarvendor"
             );
-
-            // ==========================================
-            // 6. TOLAK UPDATE OLEH VENDOR YANG SALAH
-            // ==========================================
 
             perlengkapanVendor2.setNamaPerlengkapan(
                     marker + "-V2-CHANGED"
@@ -364,10 +340,6 @@ public class UjiPerlengkapanService {
                     "LULUS: Update lintas vendor ditolak"
             );
 
-            // ==========================================
-            // 7. TOLAK DELETE OLEH VENDOR YANG SALAH
-            // ==========================================
-
             boolean deleteDitolak = false;
 
             try {
@@ -400,10 +372,6 @@ public class UjiPerlengkapanService {
             System.out.println(
                     "LULUS: Delete lintas vendor ditolak"
             );
-
-            // ==========================================
-            // 8. VALIDASI CREATE
-            // ==========================================
 
             ujiValidasi(
                     "objek perlengkapan null",
@@ -455,10 +423,6 @@ public class UjiPerlengkapanService {
                     )
             );
 
-            // ==========================================
-            // 9. VALIDASI READ DAN UPDATE
-            // ==========================================
-
             ujiValidasi(
                     "ID vendor nol saat read",
                     () -> service.ambilPerlengkapanVendor(0)
@@ -479,10 +443,6 @@ public class UjiPerlengkapanService {
                             ID_VENDOR_1
                     )
             );
-
-            // ==========================================
-            // 10. VALIDASI DELETE
-            // ==========================================
 
             ujiValidasi(
                     "objek null saat delete",
@@ -508,10 +468,6 @@ public class UjiPerlengkapanService {
                     )
             );
 
-            // ==========================================
-            // 11. DELETE PERLENGKAPAN VENDOR 1
-            // ==========================================
-
             service.hapusDataPerlengkapan(
                     perlengkapanVendor1,
                     ID_VENDOR_1
@@ -531,10 +487,6 @@ public class UjiPerlengkapanService {
             System.out.println(
                     "LULUS: Menghapus perlengkapan Vendor 1"
             );
-
-            // ==========================================
-            // 12. DELETE PERLENGKAPAN VENDOR 2
-            // ==========================================
 
             Perlengkapan vendor2Valid = cariById(
                     service,

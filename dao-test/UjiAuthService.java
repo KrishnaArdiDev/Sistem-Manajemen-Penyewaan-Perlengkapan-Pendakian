@@ -16,8 +16,6 @@ public class UjiAuthService {
         }
     }
 
-    // Memastikan sesi vendor aktif dan data transaksi
-    // sesuai dengan ID vendor yang berhasil login.
     private static void periksaSesiAktif(int idVendor)
             throws Exception {
 
@@ -46,8 +44,6 @@ public class UjiAuthService {
         }
     }
 
-    // Memastikan operasi yang membutuhkan sesi vendor
-    // ditolak ketika belum login atau sudah logout.
     private static void periksaSesiTidakAktif() {
 
         boolean ditolak = false;
@@ -73,19 +69,11 @@ public class UjiAuthService {
 
         System.out.println("=== PENGUJIAN AUTHSERVICE ===");
 
-        // ==========================================
-        // 1. KONDISI AWAL SESI
-        // ==========================================
-
         authService.logout();
 
         periksaSesiTidakAktif();
 
         System.out.println("LULUS: Kondisi awal tanpa sesi vendor");
-
-        // ==========================================
-        // 2. LOGIN VENDOR 1 MENGGUNAKAN USERNAME
-        // ==========================================
 
         Vendor vendor1 = authService.login(
                 "vendor_santai",
@@ -118,19 +106,11 @@ public class UjiAuthService {
         System.out.println("LULUS: Data Vendor 1 berhasil dikembalikan");
         System.out.println("LULUS: Sesi Vendor 1 berhasil diaktifkan");
 
-        // ==========================================
-        // 3. LOGOUT VENDOR 1
-        // ==========================================
-
         authService.logout();
 
         periksaSesiTidakAktif();
 
         System.out.println("LULUS: Logout Vendor 1 membersihkan sesi");
-
-        // ==========================================
-        // 4. LOGIN VENDOR 2 MENGGUNAKAN EMAIL
-        // ==========================================
 
         Vendor vendor2 = authService.login(
                 "vendorRumah@gmail.com",
@@ -165,10 +145,6 @@ public class UjiAuthService {
         System.out.println("LULUS: Data Vendor 2 berhasil dikembalikan");
         System.out.println("LULUS: Sesi Vendor 2 berhasil diaktifkan");
 
-        // ==========================================
-        // 5. PASSWORD SALAH
-        // ==========================================
-
         boolean passwordDitolak = false;
 
         try {
@@ -193,10 +169,6 @@ public class UjiAuthService {
         System.out.println("LULUS: Login dengan password salah ditolak");
         System.out.println("LULUS: Sesi dibersihkan setelah login gagal");
 
-        // ==========================================
-        // 6. USERNAME TIDAK DITEMUKAN
-        // ==========================================
-
         boolean akunTidakDitemukan = false;
 
         try {
@@ -219,10 +191,6 @@ public class UjiAuthService {
         periksaSesiTidakAktif();
 
         System.out.println("LULUS: Username yang tidak terdaftar ditolak");
-
-        // ==========================================
-        // 7. USERNAME KOSONG
-        // ==========================================
 
         boolean usernameKosongDitolak = false;
 
@@ -247,10 +215,6 @@ public class UjiAuthService {
 
         System.out.println("LULUS: Username kosong ditolak");
 
-        // ==========================================
-        // 8. PASSWORD KOSONG
-        // ==========================================
-
         boolean passwordKosongDitolak = false;
 
         try {
@@ -274,10 +238,6 @@ public class UjiAuthService {
 
         System.out.println("LULUS: Password kosong ditolak");
 
-        // ==========================================
-        // 9. PASSWORD NULL
-        // ==========================================
-
         boolean passwordNullDitolak = false;
 
         try {
@@ -300,10 +260,6 @@ public class UjiAuthService {
         periksaSesiTidakAktif();
 
         System.out.println("LULUS: Password null ditolak");
-
-        // ==========================================
-        // 10. KONDISI AKHIR
-        // ==========================================
 
         authService.logout();
 

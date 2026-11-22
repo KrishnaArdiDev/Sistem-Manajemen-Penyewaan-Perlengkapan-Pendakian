@@ -25,7 +25,6 @@ public class UjiPelangganDAO {
 
         try {
 
-            // 1. Membaca pelanggan berdasarkan nomor identitas
             List<Pelanggan> pelangganGanda =
                     dao.ambilBerdasarkanNoIdentitas("510000000");
 
@@ -34,7 +33,6 @@ public class UjiPelangganDAO {
 
             System.out.println("LULUS: Membaca pelanggan berdasarkan identitas");
 
-            // 2. Menguji pencarian pelanggan yang tidak ditemukan
             List<Pelanggan> tidakDitemukan =
                     dao.ambilBerdasarkanNoIdentitas(identitasUji);
 
@@ -43,7 +41,6 @@ public class UjiPelangganDAO {
 
             System.out.println("LULUS: Pencarian pelanggan yang tidak ditemukan");
 
-            // 3. Menguji CREATE
             Pelanggan pelangganBaru = new Pelanggan();
 
             pelangganBaru.setNamaPelanggan(namaUji);
@@ -56,7 +53,6 @@ public class UjiPelangganDAO {
 
             System.out.println("LULUS: Penambahan pelanggan");
 
-            // 4. Membaca kembali pelanggan yang baru ditambahkan
             List<Pelanggan> hasilPencarian =
                     dao.ambilBerdasarkanNoIdentitas(identitasUji);
 
@@ -73,7 +69,6 @@ public class UjiPelangganDAO {
 
             System.out.println("LULUS: Membaca kembali pelanggan baru");
 
-            // 5. Menguji READ seluruh pelanggan
             List<Pelanggan> seluruhPelanggan =
                     dao.ambilSemuaPelanggan();
 
@@ -94,7 +89,6 @@ public class UjiPelangganDAO {
 
         } finally {
 
-            // Membersihkan data pengujian menggunakan JDBC langsung
             String sql = "DELETE FROM pelanggan "
                     + "WHERE no_identitas = ? AND nama_pelanggan = ?";
 
@@ -107,7 +101,6 @@ public class UjiPelangganDAO {
                 statement.executeUpdate();
             }
 
-            // Memastikan data pengujian sudah dibersihkan
             List<Pelanggan> hasilPembersihan =
                     dao.ambilBerdasarkanNoIdentitas(identitasUji);
 

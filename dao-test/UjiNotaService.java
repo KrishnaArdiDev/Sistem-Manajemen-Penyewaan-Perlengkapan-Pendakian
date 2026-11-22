@@ -37,9 +37,6 @@ public class UjiNotaService {
 
         System.out.println("=== PENGUJIAN NOTASERVICE ===");
 
-        // ==========================================
-        // 1. PENGUJIAN LAMA SEWA
-        // ==========================================
 
         cek(
                 NotaService.hitungLamaSewa(
@@ -74,10 +71,6 @@ public class UjiNotaService {
                 "LULUS: Perhitungan lama sewa dan batas minimum"
         );
 
-        // ==========================================
-        // 2. PENGUJIAN FORMAT RUPIAH
-        // ==========================================
-
         cek(
                 NotaService.formatRupiah(1234567)
                         .equals("Rp 1.234.567"),
@@ -93,10 +86,6 @@ public class UjiNotaService {
                 "LULUS: Format mata uang Rupiah"
         );
 
-        // ==========================================
-        // 3. MEMBUAT DATA TRANSAKSI UJI
-        // ==========================================
-
         Kompor kompor = new Kompor();
 
         kompor.setNamaPerlengkapan("Kompor Uji");
@@ -111,12 +100,6 @@ public class UjiNotaService {
         tas.setHargaPerlengkapan(300000);
         tas.setTipeTas("Carrier");
 
-        /*
-         * Tarif historis sengaja dibuat berbeda
-         * dari harga sewa harian perlengkapan saat ini.
-         *
-         * Nota harus menggunakan tarif historis.
-         */
 
         DetailTransaksi d1 = detail(kompor, 2, 50000);
         DetailTransaksi d2 = detail(tas, 1, 50000);
@@ -150,18 +133,10 @@ public class UjiNotaService {
                 0
         );
 
-        // ==========================================
-        // 4. PENGUJIAN HARGA PER HARI
-        // ==========================================
-
         cek(
                 NotaService.hitungHargaPerHari(transaksi) == 50000,
                 "Rata-rata harga sewa per unit per hari tidak sesuai"
         );
-
-        // ==========================================
-        // 5. MEMBUAT RINGKASAN NOTA AWAL
-        // ==========================================
 
         String notaAwal =
                 NotaService.buatRingkasanNota(transaksi);
@@ -261,9 +236,6 @@ public class UjiNotaService {
                 "LULUS: Total kuantitas, biaya, dan metode pembayaran"
         );
 
-        // ==========================================
-        // 6. PENGUJIAN INTERFACE DAPATDICETAK
-        // ==========================================
 
         transaksi.cetakNota();
 
@@ -291,9 +263,6 @@ public class UjiNotaService {
                 "LULUS: Implementasi DapatDicetak pada Transaksi"
         );
 
-        // ==========================================
-        // 7. PENGUJIAN NOTA SETELAH PENGEMBALIAN PARSIAL
-        // ==========================================
 
         Kompor komporParsial = new Kompor();
 
@@ -428,9 +397,6 @@ public class UjiNotaService {
                 "LULUS: Nota dan ringkasan Model setelah pengembalian"
         );
 
-        // ==========================================
-        // 8. PENGUJIAN DATA KOSONG DAN NULL
-        // ==========================================
 
         cek(
                 NotaService.buatRingkasanNota(null).isEmpty(),
@@ -478,10 +444,6 @@ public class UjiNotaService {
         System.out.println(
                 "LULUS: Penanganan transaksi null dan tanpa detail"
         );
-
-        // ==========================================
-        // SELESAI
-        // ==========================================
 
         System.out.println();
 

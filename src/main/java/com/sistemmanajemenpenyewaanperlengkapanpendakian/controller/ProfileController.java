@@ -24,6 +24,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import javafx.geometry.Rectangle2D;
 
 public class ProfileController {
 
@@ -511,11 +512,21 @@ public class ProfileController {
             if (uri == null || uri.trim().isEmpty()) {
                 foto.setImage(null);
             } else {
-                Image image = new Image(
-                    uri, 48, 48, true, true
-                );
+                Image image = new Image(uri, false);
 
-                foto.setImage(image.isError() ? null : image);
+                if (!image.isError() && image.getWidth() > 0 && image.getHeight() > 0){
+                    double sisi = Math.min(image.getWidth(), image.getHeight());
+
+                    foto.setImage(image);
+                    foto.setViewport(new Rectangle2D((image.getWidth() -sisi)/2, (image.getHeight()-sisi)/2, sisi, sisi));
+
+                    foto.setFitWidth(48);
+                    foto.setFitHeight(48);
+                    foto.setPreserveRatio(false);
+                } else{
+                    foto.setImage(null);
+                    foto.setViewport(null);
+                }
             }
         }
     }

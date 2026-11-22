@@ -164,23 +164,90 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
             }
         }
     }
+    public int hitungKuantitasSedangDisewa(int idPerlengkapan) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(kuantitas_per_alat), 0) AS jumlah "
+                + "FROM detail_transaksi "
+                + "WHERE id_perlengkapan = ? "
+                + "AND tanggal_pengembalian_barang IS NULL";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPerlengkapan);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getInt("jumlah") : 0;
+            }
+        }
+    }
+    public boolean adaRiwayatTransaksi(int idPerlengkapan) throws SQLException {
+        String sql = "SELECT 1 FROM detail_transaksi "
+                + "WHERE id_perlengkapan = ? LIMIT 1";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idPerlengkapan);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public String pesanTidakDapatDihapus(int idPerlengkapan) throws SQLException {
+        int sedangDisewa = hitungKuantitasSedangDisewa(idPerlengkapan);
+        if (sedangDisewa > 0) {
+            return "Perlengkapan tidak dapat dihapus karena masih ada "
+                    + sedangDisewa
+                    + " unit yang sedang disewa. Selesaikan pengembalian terlebih dahulu.";
+        }
+        return "Perlengkapan tidak dapat dihapus karena sudah tercatat pada riwayat transaksi.";
+    }
 
     public void hapusDataPerlengkapan(Perlengkapan perlengkapan, int idVendor) throws SQLException {
         if (perlengkapan == null) {
             throw new IllegalArgumentException("Data perlengkapan tidak boleh kosong");
         }
+
+        if (adaRiwayatTransaksi(perlengkapan.getIdPerlengkapan())) {
+            throw new SQLException(pesanTidakDapatDihapus(perlengkapan.getIdPerlengkapan()));
+        }
+
         String sql = "DELETE FROM perlengkapan " + "WHERE id_perlengkapan = ? AND id_vendor = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, perlengkapan.getIdPerlengkapan());
             ps.setInt(2, idVendor);
-            if (ps.executeUpdate() == 0) {
-                throw new SQLException("Perlengkapan tidak ditemukan atau bukan milik vendor ini.");
+            try {
+                if (ps.executeUpdate() == 0) {
+                    throw new SQLException("Perlengkapan tidak ditemukan atau bukan milik vendor ini.");
+                }
+            } catch (SQLException e) {
+                if (adalahPelanggaranForeignKey(e)) {
+                    throw new SQLException(pesanTidakDapatDihapus(perlengkapan.getIdPerlengkapan()), e);
+                }
+                throw e;
             }
         }
     }
 
+    private boolean adalahPelanggaranForeignKey(SQLException e) {
+        if (e.getErrorCode() == 1451) {
+            return true;
+        }
+        String state = e.getSQLState();
+        if (state != null && state.startsWith("23")) {
+            return true;
+        }
+        String pesan = e.getMessage();
+        if (pesan == null) {
+            return false;
+        }
+        String kecil = pesan.toLowerCase();
+        return kecil.contains("foreign key")
+                || kecil.contains("cannot delete")
+                || kecil.contains("constraint");
+    }
+
+    // ===== Helper =====
     private void periksa(Perlengkapan perlengkapan) {
         if (perlengkapan == null) {
             throw new IllegalArgumentException("Data perlengkapan tidak boleh kosong");

@@ -53,13 +53,19 @@ public class ControllerFormulirDataPerlengkapan {
     private Label labelFoto;
 
     @FXML
+    private Label labelJudulFormulir;
+
+    @FXML
+    private Button btnKonfirmasi;
+
+    @FXML
     private javafx.scene.image.ImageView imagePreviewFoto;
 
-    private final PerlengkapanService perlengkapanService =
-            new PerlengkapanService();
+    private final PerlengkapanService perlengkapanService = new PerlengkapanService();
 
     private String fotoTerpilih;
     private Runnable aksiKembali;
+    private Perlengkapan perlengkapanDiedit;
 
     @FXML
     private void initialize() {
@@ -67,15 +73,12 @@ public class ControllerFormulirDataPerlengkapan {
         comboJenisPerlengkapan.getItems().setAll(
                 "Tas",
                 "Kompor",
-                "Sepatu"
-        );
+                "Sepatu");
 
         comboJenisPerlengkapan.setValue("Tas");
 
         comboJenisPerlengkapan.valueProperty().addListener(
-                (observable, jenisLama, jenisBaru) ->
-                        aturDetailJenis(jenisBaru)
-        );
+                (observable, jenisLama, jenisBaru) -> aturDetailJenis(jenisBaru));
 
         aturDetailJenis(comboJenisPerlengkapan.getValue());
 
@@ -89,6 +92,83 @@ public class ControllerFormulirDataPerlengkapan {
 
     public void setAksiKembali(Runnable aksiKembali) {
         this.aksiKembali = aksiKembali;
+    }
+
+    // Mengisi formulir untuk mode edit. Jenis perlengkapan tidak diubah.
+    public void setDataUntukEdit(Perlengkapan perlengkapan) {
+        this.perlengkapanDiedit = perlengkapan;
+
+        if (perlengkapan == null) {
+            return;
+        }
+
+        if (labelJudulFormulir != null) {
+            labelJudulFormulir.setText("FORMULIR EDIT PERLENGKAPAN");
+        }
+
+        if (btnKonfirmasi != null) {
+            btnKonfirmasi.setText("Simpan Perubahan");
+        }
+
+        fieldNamaBarang.setText(
+                perlengkapan.getNamaPerlengkapan() == null
+                        ? ""
+                        : perlengkapan.getNamaPerlengkapan());
+
+        String jenis;
+        String detail;
+
+        if (perlengkapan instanceof Kompor) {
+            jenis = "Kompor";
+            detail = ((Kompor) perlengkapan).getTipeKompor();
+        } else if (perlengkapan instanceof Sepatu) {
+            jenis = "Sepatu";
+            int ukuran = ((Sepatu) perlengkapan).getUkuranSepatu();
+            detail = ukuran > 0 ? String.valueOf(ukuran) : "";
+        } else {
+            jenis = "Tas";
+            detail = perlengkapan instanceof Tas
+                    ? ((Tas) perlengkapan).getTipeTas()
+                    : "";
+        }
+
+        comboJenisPerlengkapan.setValue(jenis);
+        comboJenisPerlengkapan.setDisable(true);
+        fieldDetailJenis.setText(detail == null ? "" : detail);
+
+        fieldHargaPerlengkapan.setText(
+                String.valueOf(perlengkapan.getHargaPerlengkapan()));
+        fieldHargaSewaHarian.setText(
+                String.valueOf(perlengkapan.getHargaSewaHarian()));
+        fieldStok.setText(String.valueOf(perlengkapan.getStok()));
+
+        fotoTerpilih = perlengkapan.getFotoBarang();
+        tampilkanFotoAwal(fotoTerpilih);
+    }
+
+    private void tampilkanFotoAwal(String lokasiFoto) {
+        if (lokasiFoto == null || lokasiFoto.trim().isEmpty()) {
+            labelFoto.setText("Belum ada foto dipilih");
+            imagePreviewFoto.setImage(null);
+            imagePreviewFoto.setVisible(false);
+            imagePreviewFoto.setManaged(false);
+            return;
+        }
+
+        try {
+            Image gambar = new Image(lokasiFoto.trim(), 180, 100, true, true);
+            if (gambar.isError()) {
+                labelFoto.setText("Foto tersimpan (pratinjau tidak dapat dibuka)");
+                return;
+            }
+            imagePreviewFoto.setImage(gambar);
+            imagePreviewFoto.setVisible(true);
+            imagePreviewFoto.setManaged(true);
+            labelFoto.setText("Foto saat ini");
+            btnPilihFoto.setText("Ganti Foto");
+        } catch (RuntimeException e) {
+            labelFoto.setText("Foto tersimpan (pratinjau tidak dapat dibuka)");
+        }
     }
 
     @FXML
@@ -106,8 +186,7 @@ public class ControllerFormulirDataPerlengkapan {
         tampilkanPeringatan(
                 Alert.AlertType.INFORMATION,
                 "Navigasi Tidak Tersedia",
-                "Halaman daftar perlengkapan tidak terhubung. Buka formulir melalui menu Data Perlengkapan."
-        );
+                "Halaman daftar perlengkapan tidak terhubung. Buka formulir melalui menu Data Perlengkapan.");
     }
 
     // =========================
@@ -154,15 +233,12 @@ public class ControllerFormulirDataPerlengkapan {
                         "File gambar",
                         "*.png",
                         "*.jpg",
-                        "*.jpeg"
-                )
-        );
+                        "*.jpeg"));
 
         File file = chooser.showOpenDialog(
                 btnPilihFoto.getScene() == null
                         ? null
-                        : btnPilihFoto.getScene().getWindow()
-        );
+                        : btnPilihFoto.getScene().getWindow());
 
         if (file == null) {
             return;
@@ -176,8 +252,7 @@ public class ControllerFormulirDataPerlengkapan {
                 180,
                 100,
                 true,
-                true
-        );
+                true);
 
         if (!gambar.isError()) {
             imagePreviewFoto.setImage(gambar);
@@ -200,20 +275,17 @@ public class ControllerFormulirDataPerlengkapan {
 
         ButtonType batal = new ButtonType(
                 "Batal",
-                ButtonBar.ButtonData.CANCEL_CLOSE
-        );
+                ButtonBar.ButtonData.CANCEL_CLOSE);
 
         ButtonType konfirmasi = new ButtonType(
                 "Konfirmasi",
-                ButtonBar.ButtonData.OK_DONE
-        );
+                ButtonBar.ButtonData.OK_DONE);
 
         Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
         dialog.setTitle("Konfirmasi Perubahan");
         dialog.setHeaderText(null);
         dialog.setContentText(
-                "Apakah Anda yakin ingin konfirmasi perubahan ini?"
-        );
+                "Apakah Anda yakin ingin konfirmasi perubahan ini?");
         dialog.getButtonTypes().setAll(batal, konfirmasi);
 
         Optional<ButtonType> jawaban = dialog.showAndWait();
@@ -239,8 +311,7 @@ public class ControllerFormulirDataPerlengkapan {
             tampilkanPeringatan(
                     Alert.AlertType.WARNING,
                     "Data Belum Lengkap",
-                    "Nama barang wajib diisi."
-            );
+                    "Nama barang wajib diisi.");
             fieldNamaBarang.requestFocus();
             return false;
         }
@@ -249,8 +320,7 @@ public class ControllerFormulirDataPerlengkapan {
             tampilkanPeringatan(
                     Alert.AlertType.WARNING,
                     "Nama Barang Terlalu Panjang",
-                    "Nama perlengkapan maksimal 150 karakter."
-            );
+                    "Nama perlengkapan maksimal 150 karakter.");
             fieldNamaBarang.requestFocus();
             return false;
         }
@@ -259,8 +329,7 @@ public class ControllerFormulirDataPerlengkapan {
             tampilkanPeringatan(
                     Alert.AlertType.WARNING,
                     "Jenis Belum Dipilih",
-                    "Pilih jenis perlengkapan terlebih dahulu."
-            );
+                    "Pilih jenis perlengkapan terlebih dahulu.");
             comboJenisPerlengkapan.requestFocus();
             return false;
         }
@@ -269,8 +338,7 @@ public class ControllerFormulirDataPerlengkapan {
             tampilkanPeringatan(
                     Alert.AlertType.WARNING,
                     "Data Jenis Belum Lengkap",
-                    labelDetailJenis.getText() + " wajib diisi."
-            );
+                    labelDetailJenis.getText() + " wajib diisi.");
             fieldDetailJenis.requestFocus();
             return false;
         }
@@ -284,8 +352,7 @@ public class ControllerFormulirDataPerlengkapan {
                 tampilkanPeringatan(
                         Alert.AlertType.WARNING,
                         "Ukuran Sepatu Tidak Valid",
-                        "Ukuran sepatu harus berupa bilangan bulat lebih dari 0."
-                );
+                        "Ukuran sepatu harus berupa bilangan bulat lebih dari 0.");
                 fieldDetailJenis.requestFocus();
                 return false;
             }
@@ -296,29 +363,24 @@ public class ControllerFormulirDataPerlengkapan {
             int stok = Integer.parseInt(fieldStok.getText().trim());
 
             long hargaPerlengkapan = parsingNominal(
-                    fieldHargaPerlengkapan.getText()
-            );
+                    fieldHargaPerlengkapan.getText());
 
             long hargaSewa = parsingNominal(
-                    fieldHargaSewaHarian.getText()
-            );
+                    fieldHargaSewaHarian.getText());
 
             if (stok < 0) {
                 throw new IllegalArgumentException(
-                        "Stok tidak boleh negatif."
-                );
+                        "Stok tidak boleh negatif.");
             }
 
             if (hargaPerlengkapan <= 0) {
                 throw new IllegalArgumentException(
-                        "Harga perlengkapan harus lebih dari 0."
-                );
+                        "Harga perlengkapan harus lebih dari 0.");
             }
 
             if (hargaSewa <= 0) {
                 throw new IllegalArgumentException(
-                        "Harga sewa harian harus lebih dari 0."
-                );
+                        "Harga sewa harian harus lebih dari 0.");
             }
 
             return true;
@@ -328,8 +390,7 @@ public class ControllerFormulirDataPerlengkapan {
             tampilkanPeringatan(
                     Alert.AlertType.WARNING,
                     "Format Angka Tidak Valid",
-                    "Stok dan kedua harga harus diisi dengan angka yang valid."
-            );
+                    "Stok dan kedua harga harus diisi dengan angka yang valid.");
 
             return false;
 
@@ -338,8 +399,7 @@ public class ControllerFormulirDataPerlengkapan {
             tampilkanPeringatan(
                     Alert.AlertType.WARNING,
                     "Data Tidak Valid",
-                    e.getMessage()
-            );
+                    e.getMessage());
 
             return false;
         }
@@ -349,7 +409,7 @@ public class ControllerFormulirDataPerlengkapan {
     // MENYIMPAN KE DATABASE
     // =========================
 
-    private void simpanPerlengkapan() {
+        private void simpanPerlengkapan() {
 
         try {
 
@@ -357,29 +417,55 @@ public class ControllerFormulirDataPerlengkapan {
 
             Perlengkapan perlengkapan = buatObjekPerlengkapan();
 
-            perlengkapanService.tambahDataPerlengkapan(
-                    perlengkapan,
-                    idVendor
-            );
+            if (perlengkapanDiedit != null) {
 
-            tampilkanPeringatan(
-                    Alert.AlertType.INFORMATION,
-                    "Berhasil",
-                    "Data perlengkapan berhasil ditambahkan."
-            );
+                // MODE EDIT: pakai ID produk lama supaya data lama yang diubah
+                perlengkapan.setIdPerlengkapan(
+                        perlengkapanDiedit.getIdPerlengkapan()
+                );
+
+                perlengkapanService.updateDataPerlengkapan(
+                        perlengkapan,
+                        idVendor
+                );
+
+                tampilkanPeringatan(
+                        Alert.AlertType.INFORMATION,
+                        "Berhasil",
+                        "Data perlengkapan berhasil diperbarui."
+                );
+
+            } else {
+
+                // MODE TAMBAH
+                perlengkapanService.tambahDataPerlengkapan(
+                        perlengkapan,
+                        idVendor
+                );
+
+                tampilkanPeringatan(
+                        Alert.AlertType.INFORMATION,
+                        "Berhasil",
+                        "Data perlengkapan berhasil ditambahkan."
+                );
+            }
 
             kembaliKeDaftar();
 
         } catch (SQLException | IllegalArgumentException e) {
 
+            String judul = perlengkapanDiedit != null
+                    ? "Gagal Menyimpan Perubahan"
+                    : "Gagal Menambahkan Perlengkapan";
+
             tampilkanPeringatan(
                     Alert.AlertType.ERROR,
-                    "Gagal Menambahkan Perlengkapan",
+                    judul,
                     e.getMessage()
             );
         }
     }
-
+    
     private Perlengkapan buatObjekPerlengkapan() {
 
         String jenis = comboJenisPerlengkapan.getValue();
@@ -426,7 +512,6 @@ public class ControllerFormulirDataPerlengkapan {
 
         return perlengkapan;
     }
-
     // =========================
     // PARSING HARGA
     // =========================
@@ -465,8 +550,7 @@ public class ControllerFormulirDataPerlengkapan {
         alert.setContentText(
                 pesan == null || pesan.trim().isEmpty()
                         ? "Terjadi kesalahan yang tidak diketahui."
-                        : pesan
-        );
+                        : pesan);
         alert.showAndWait();
     }
 }

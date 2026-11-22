@@ -29,7 +29,6 @@ import javafx.scene.layout.*;
 
 
 public class DashboardController {
-//#region manggil komponen
     @FXML 
     private VBox containerDashboard;
 
@@ -75,9 +74,7 @@ public class DashboardController {
     @FXML private VBox containerDaftarProdukSewa;
     @FXML private HBox containerPagination;
     @FXML private ImageView gambarProduk;
-//#endregion
 
-//#region Style
     private final PerlengkapanService perlengkapanService = new PerlengkapanService();
     private final List<ItemDashboard> daftarProdukDipinjam = new ArrayList<>();
     private static final int ITEM_PER_HALAMAN = 3;
@@ -209,10 +206,6 @@ public class DashboardController {
             "-fx-text-fill: "+warnaTeks+";"
         );
     }
-//#endregion
-
-//#region Pagination
-
 private void tampilkanHalamanProduk(int halaman) {
     halamanAktif = halaman;
     containerDaftarProdukSewa.getChildren().clear();
@@ -393,175 +386,173 @@ private void bukaDetailPengembalian(ItemDashboard item, boolean langsungKonfirma
 }
 
 
+//#region
+// private void isiTemplateProduk(ItemDashboard item) {
+//     Perlengkapan barang = item.detail.getPerlengkapanYangDisewa();
 
+//     labelNamaPerlengkapan.setText(barang.getNamaPerlengkapan());
+//     labelNamaPenyewa.setText(namaPelanggan(item.transaksi));
+//     labelTanggalSewa.setText(formatTanggal(item.transaksi.getTanggalSewa()));
+//     labelTanggalSelesaiSewa.setText(
+//             formatTanggal(item.transaksi.getTanggalKembali())
+//     );
 
-private void isiTemplateProduk(ItemDashboard item) {
-    Perlengkapan barang = item.detail.getPerlengkapanYangDisewa();
+//     aturGambar(gambarProduk, barang.getFotoBarang());
+//     aturStatusProduk(
+//             labelStatusProduk,
+//             indikatorStatusProduk,
+//             item.terlambat
+//     );
+//     labelStatusProduk.setText(item.labelStatus());
+//     itemProduk1.setUserData(item);
+//     btnDetail.setUserData(item);
+//     btnKonfirmasi.setUserData(item);
+// }
 
-    labelNamaPerlengkapan.setText(barang.getNamaPerlengkapan());
-    labelNamaPenyewa.setText(namaPelanggan(item.transaksi));
-    labelTanggalSewa.setText(formatTanggal(item.transaksi.getTanggalSewa()));
-    labelTanggalSelesaiSewa.setText(
-            formatTanggal(item.transaksi.getTanggalKembali())
-    );
+// private HBox buatBarisProduk(ItemDashboard item) {
+//     Perlengkapan barang = item.detail.getPerlengkapanYangDisewa();
 
-    aturGambar(gambarProduk, barang.getFotoBarang());
-    aturStatusProduk(
-            labelStatusProduk,
-            indikatorStatusProduk,
-            item.terlambat
-    );
-    labelStatusProduk.setText(item.labelStatus());
+//     HBox baris = new HBox(12);
+//     baris.setAlignment(Pos.CENTER_LEFT);
+//     baris.setPrefHeight(120);
+//     baris.setMinHeight(120);
+//     baris.setPadding(new Insets(8));
+//     baris.setStyle(
+//             "-fx-background-color: #F5F5F5;" +
+//             "-fx-background-radius: 12;"
+//     );
 
-    // Menyimpan data item untuk integrasi tombol berikutnya.
-    itemProduk1.setUserData(item);
-    btnDetail.setUserData(item);
-    btnKonfirmasi.setUserData(item);
-}
+//     Region indikator = new Region();
+//     indikator.setMinWidth(10);
+//     indikator.setPrefWidth(10);
+//     indikator.setMaxWidth(10);
 
-private HBox buatBarisProduk(ItemDashboard item) {
-    Perlengkapan barang = item.detail.getPerlengkapanYangDisewa();
+//     ImageView foto = new ImageView();
+//     foto.setFitWidth(97);
+//     foto.setFitHeight(97);
+//     foto.setPreserveRatio(true);
+//     aturGambar(foto, barang.getFotoBarang());
 
-    HBox baris = new HBox(12);
-    baris.setAlignment(Pos.CENTER_LEFT);
-    baris.setPrefHeight(120);
-    baris.setMinHeight(120);
-    baris.setPadding(new Insets(8));
-    baris.setStyle(
-            "-fx-background-color: #F5F5F5;" +
-            "-fx-background-radius: 12;"
-    );
+//     Label namaBarang = new Label(barang.getNamaPerlengkapan());
+//     namaBarang.setStyle(
+//             "-fx-font-size: 18px;" +
+//             "-fx-text-fill: #000000;" +
+//             "-fx-font-weight: bold;"
+//     );
 
-    Region indikator = new Region();
-    indikator.setMinWidth(10);
-    indikator.setPrefWidth(10);
-    indikator.setMaxWidth(10);
+//     Label namaPenyewa = new Label(namaPelanggan(item.transaksi));
+//     namaPenyewa.setStyle(
+//             "-fx-font-size: 14px;" +
+//             "-fx-text-fill: #868686;"
+//     );
 
-    ImageView foto = new ImageView();
-    foto.setFitWidth(97);
-    foto.setFitHeight(97);
-    foto.setPreserveRatio(true);
-    aturGambar(foto, barang.getFotoBarang());
+//     Label tanggalSewa = new Label(
+//             formatTanggal(item.transaksi.getTanggalSewa())
+//     );
+//     Label pemisah = new Label("|");
+//     Label tanggalKembali = new Label(
+//             formatTanggal(item.transaksi.getTanggalKembali())
+//     );
 
-    Label namaBarang = new Label(barang.getNamaPerlengkapan());
-    namaBarang.setStyle(
-            "-fx-font-size: 18px;" +
-            "-fx-text-fill: #000000;" +
-            "-fx-font-weight: bold;"
-    );
+//     String styleTanggal =
+//             "-fx-font-size: 14px; -fx-text-fill: #868686;";
 
-    Label namaPenyewa = new Label(namaPelanggan(item.transaksi));
-    namaPenyewa.setStyle(
-            "-fx-font-size: 14px;" +
-            "-fx-text-fill: #868686;"
-    );
+//     tanggalSewa.setStyle(styleTanggal);
+//     pemisah.setStyle(styleTanggal);
+//     tanggalKembali.setStyle(styleTanggal);
 
-    Label tanggalSewa = new Label(
-            formatTanggal(item.transaksi.getTanggalSewa())
-    );
-    Label pemisah = new Label("|");
-    Label tanggalKembali = new Label(
-            formatTanggal(item.transaksi.getTanggalKembali())
-    );
+//     VBox informasi = new VBox(
+//             6,
+//             namaBarang,
+//             namaPenyewa,
+//             new HBox(8, tanggalSewa, pemisah, tanggalKembali)
+//     );
 
-    String styleTanggal =
-            "-fx-font-size: 14px; -fx-text-fill: #868686;";
+//     informasi.setAlignment(Pos.CENTER_LEFT);
+//     HBox.setHgrow(informasi, Priority.ALWAYS);
 
-    tanggalSewa.setStyle(styleTanggal);
-    pemisah.setStyle(styleTanggal);
-    tanggalKembali.setStyle(styleTanggal);
+//     Region spacer = new Region();
+//     HBox.setHgrow(spacer, Priority.ALWAYS);
 
-    VBox informasi = new VBox(
-            6,
-            namaBarang,
-            namaPenyewa,
-            new HBox(8, tanggalSewa, pemisah, tanggalKembali)
-    );
+//     Label status = new Label();
+//     status.setAlignment(Pos.CENTER);
+//     status.setMinSize(240, 28);
+//     status.setPrefSize(240, 28);
+//     status.setMaxSize(240, 28);
 
-    informasi.setAlignment(Pos.CENTER_LEFT);
-    HBox.setHgrow(informasi, Priority.ALWAYS);
+//     aturStatusProduk(status, indikator, item.terlambat);
 
-    Region spacer = new Region();
-    HBox.setHgrow(spacer, Priority.ALWAYS);
+//     Button detail = buatTombolProduk("Detail", false);
+//     Button konfirmasi = buatTombolProduk("Konfirmasi", true);
 
-    Label status = new Label();
-    status.setAlignment(Pos.CENTER);
-    status.setMinSize(240, 28);
-    status.setPrefSize(240, 28);
-    status.setMaxSize(240, 28);
+//     detail.setUserData(item);
+//     konfirmasi.setUserData(item);
 
-    aturStatusProduk(status, indikator, item.terlambat);
+//     HBox tombol = new HBox(12, detail, konfirmasi);
+//     tombol.setAlignment(Pos.CENTER_RIGHT);
 
-    Button detail = buatTombolProduk("Detail", false);
-    Button konfirmasi = buatTombolProduk("Konfirmasi", true);
+//     Region ruang = new Region();
+//     VBox.setVgrow(ruang, Priority.ALWAYS);
 
-    detail.setUserData(item);
-    konfirmasi.setUserData(item);
+//     VBox aksi = new VBox(12, status, ruang, tombol);
+//     aksi.setAlignment(Pos.TOP_RIGHT);
+//     aksi.setMinSize(328, 100);
+//     aksi.setPrefSize(328, 100);
+//     aksi.setMaxWidth(328);
 
-    HBox tombol = new HBox(12, detail, konfirmasi);
-    tombol.setAlignment(Pos.CENTER_RIGHT);
+//     baris.getChildren().addAll(
+//             indikator,
+//             foto,
+//             informasi,
+//             spacer,
+//             aksi
+//     );
 
-    Region ruang = new Region();
-    VBox.setVgrow(ruang, Priority.ALWAYS);
+//     baris.setUserData(item);
+//     return baris;
+// }
 
-    VBox aksi = new VBox(12, status, ruang, tombol);
-    aksi.setAlignment(Pos.TOP_RIGHT);
-    aksi.setMinSize(328, 100);
-    aksi.setPrefSize(328, 100);
-    aksi.setMaxWidth(328);
+// private Button buatTombolProduk(String teks, boolean utama) {
+//     Button tombol = new Button(teks);
 
-    baris.getChildren().addAll(
-            indikator,
-            foto,
-            informasi,
-            spacer,
-            aksi
-    );
+//     tombol.setMinSize(158, 28);
+//     tombol.setPrefSize(158, 28);
+//     tombol.setMaxSize(158, 28);
+//     tombol.setCursor(Cursor.HAND);
 
-    baris.setUserData(item);
-    return baris;
-}
+//     tombol.setStyle(utama
+//             ? "-fx-background-color: #005A32; -fx-border-color: #005A32;"
+//                 + "-fx-background-radius: 14; -fx-border-radius: 14;"
+//                 + "-fx-text-fill: #FFFFFF;"
+//             : "-fx-background-color: #FFFFFF; -fx-border-color: #005A32;"
+//                 + "-fx-background-radius: 14; -fx-border-radius: 14;"
+//                 + "-fx-text-fill: #005A32;"
+//     );
 
-private Button buatTombolProduk(String teks, boolean utama) {
-    Button tombol = new Button(teks);
+//     return tombol;
+// }
 
-    tombol.setMinSize(158, 28);
-    tombol.setPrefSize(158, 28);
-    tombol.setMaxSize(158, 28);
-    tombol.setCursor(Cursor.HAND);
+// private void aturStatusProduk(
+//         Label status, Region indikator, boolean terlambat) {
 
-    tombol.setStyle(utama
-            ? "-fx-background-color: #005A32; -fx-border-color: #005A32;"
-                + "-fx-background-radius: 14; -fx-border-radius: 14;"
-                + "-fx-text-fill: #FFFFFF;"
-            : "-fx-background-color: #FFFFFF; -fx-border-color: #005A32;"
-                + "-fx-background-radius: 14; -fx-border-radius: 14;"
-                + "-fx-text-fill: #005A32;"
-    );
+//     String latar = terlambat ? "#FFD6D6" : "#FFF3C4";
+//     String warna = terlambat ? "#861010" : "#B38600";
 
-    return tombol;
-}
+//     status.setText(terlambat ? "Terlambat" : "Akan Terlambat");
+//     status.setStyle(
+//             "-fx-background-color: " + latar + ";" +
+//             "-fx-border-color: " + warna + ";" +
+//             "-fx-border-radius: 14;" +
+//             "-fx-background-radius: 14;" +
+//             "-fx-text-fill: " + warna + ";"
+//     );
 
-private void aturStatusProduk(
-        Label status, Region indikator, boolean terlambat) {
-
-    String latar = terlambat ? "#FFD6D6" : "#FFF3C4";
-    String warna = terlambat ? "#861010" : "#B38600";
-
-    status.setText(terlambat ? "Terlambat" : "Akan Terlambat");
-    status.setStyle(
-            "-fx-background-color: " + latar + ";" +
-            "-fx-border-color: " + warna + ";" +
-            "-fx-border-radius: 14;" +
-            "-fx-background-radius: 14;" +
-            "-fx-text-fill: " + warna + ";"
-    );
-
-    indikator.setStyle(
-            "-fx-background-color: " + warna + ";" +
-            "-fx-background-radius: 8 0 0 8;"
-    );
-}
+//     indikator.setStyle(
+//             "-fx-background-color: " + warna + ";" +
+//             "-fx-background-radius: 8 0 0 8;"
+//     );
+// }
+//#endregion
 
 private void aturGambar(ImageView target, String uri) {
     target.setImage(null);
@@ -684,11 +675,7 @@ private void tampilkanPesan(
     alert.setContentText(pesan);
     alert.showAndWait();
 }
-//#endregion
 
-
-
-//#region controller konteks MVC
     public void muatDataDashboard(){
         final int idVendor;
 
@@ -793,10 +780,7 @@ private void tampilkanPesan(
     private String formatJumlah(long jumlah){
         return NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(jumlah) + " Barang";
     }
-//#endregion
-
-// >>> TAMBAHAN: DATA SATU PRODUK PADA DASHBOARD
-private static class ItemDashboard {
+    private static class ItemDashboard {
     private final Transaksi transaksi;
     private final DetailTransaksi detail;
 
@@ -844,6 +828,5 @@ private static class ItemDashboard {
         return 2;
     }
 }
-// <<< AKHIR TAMBAHAN: DATA ITEM DASHBOARD
 
 }
