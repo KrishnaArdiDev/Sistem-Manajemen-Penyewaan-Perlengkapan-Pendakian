@@ -23,6 +23,7 @@ public class Vendor {
     private final TransaksiDAO transaksiDAO;
     private Perlengkapan perlengkapanYangDikelola;
     private Transaksi transaksiYangDikelola;
+    private String fotoProfile;
     
     public String getEmailAtauUsername(){
         return emailAtauUsername;
@@ -41,7 +42,7 @@ public class Vendor {
         this.lokasiToko = lokasiToko;
     }
 
-    private String fotoProfile;
+    
 
     public String getFotoProfile(){
         return fotoProfile;
