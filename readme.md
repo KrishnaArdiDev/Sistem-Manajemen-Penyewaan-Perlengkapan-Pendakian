@@ -1,53 +1,70 @@
-# Sistem Manajemen Penyewaan Perlengkapan Pendakian
+PANDUAN MENJALANKAN APLIKASI TAPAK
+Sistem Manajemen Penyewaan Perlengkapan Pendakian
 
-Aplikasi Desktop berbasis **JavaFX** dan **Maven** yang terintegrasi dengan **MySQL Database** menggunakan JDBC untuk mengelola sistem penyewaan alat-alat pendakian gunung. Proyek ini dikembangkan untuk memenuhi tugas mata kuliah Pemrograman Berorientasi Objek (OOP).
+REPOSITORI PROYEK
+GitHub: https://github.com/KrishnaArdiDev/Sistem-Manajemen-Penyewaan-Perlengkapan-Pendakian.git
 
----
+1. PERSYARATAN
 
-## 🛠️ Prasyarat (Prerequisites)
-Sebelum menjalankan program, pastikan komputer Anda telah terinstal perangkat lunak berikut:
-1. **Java Development Kit (JDK)** versi 11 atau yang lebih baru.
-2. **Apache Maven** (biasanya sudah terbundel otomatis jika menggunakan VS Code dengan ekstensi Maven).
-3. **MySQL Server** (melalui XAMPP, Laragon, atau MySQL Installer).
+Pastikan perangkat telah memiliki:
+- JDK 24 atau lebih baru.
+- Apache Maven.
+- MySQL Server 8.0.16 atau lebih baru.
+- Koneksi internet untuk mengunduh dependensi Maven saat pertama kali dijalankan.
 
----
+Proyek menggunakan JavaFX 26.0.2 dan MySQL Connector/J 9.4.0. Pengaturan kompilasi Java pada pom.xml menggunakan release 11.
 
-## ⚙️ Panduan Instalasi dan Konfigurasi Database
+2. MENYIAPKAN DATABASE
 
-1. **Buat Database Baru:**
-   * Buka MySQL (phpMyAdmin atau terminal MySQL).
-   * Buat database baru dengan nama `sistem_penyewaan` (atau sesuaikan dengan kebutuhan kode Anda).
+1. Jalankan MySQL Server.
+2. Buka MySQL Workbench atau phpMyAdmin, lalu hubungkan ke server MySQL.
+3. Jalankan seluruh isi file database/schema.sql.
+4. Setelah schema.sql berhasil dijalankan, jalankan seluruh isi file database/seed.sql.
+5. Pastikan database TAPAK-SistemManagement-PenyewaanPerlengkapanPendakian telah terbentuk.
 
-2. **Clone / Buka Proyek:**
-   * Buka folder proyek ini di text editor Anda (misalnya **Visual Studio Code**).
-   * Pastikan ekstensi Java dan Maven di VS Code sudah aktif.
+3. KONFIGURASI KONEKSI DATABASE
 
-3. **Konfigurasi Koneksi Database:**
-   * Sesuaikan pengaturan *URL*, *username*, dan *password* database pada kelas koneksi (misalnya di `DatabaseConnection.java`) agar sesuai dengan konfigurasi lokal MySQL Anda:
-     ```java
-     private static final String URL = "jdbc:mysql://localhost:3306/nama_database_anda";
-     private static final String USER = "root";
-     private static final String PASSWORD = "";
-     ```
+Buka file:
+src/main/java/com/sistemmanajemenpenyewaanperlengkapanpendakian/DatabaseConnection.java
 
----
+Sesuaikan konfigurasi berikut dengan MySQL pada perangkat:
+- URL: jdbc:mysql://localhost:3306/TAPAK-SistemManagement-PenyewaanPerlengkapanPendakian
+- USER: root
+- PASSWORD: kosong secara default
 
-## 🚀 Panduan Menjalankan Program
+Jika menggunakan username, password, host, atau port yang berbeda, ubah nilai konfigurasi tersebut sebelum menjalankan aplikasi.
 
-Anda dapat menjalankan program ini melalui **Visual Studio Code** dengan langkah-langkah berikut:
+4. MENJALANKAN APLIKASI
 
-1. **Buka Panel Maven:**
-   * Di sidebar kiri VS Code, cari dan luaskan menu **Maven**.
-2. **Jalankan Perintah Jalankan (Run):**
-   * Cari proyek Anda, luaskan bagian *Plugins* > *javafx*, lalu klik dua kali pada **`javafx:run`**.
-   * *Atau alternatif melalui Terminal:* Buka terminal di direktori proyek, lalu ketik perintah:
-     ```bash
-     mvn clean javafx:run
-     ```
-3. Program akan otomatis mengunduh dependensi (jika baru pertama kali dijalankan) dan membuka jendela antarmuka (GUI) JavaFX.
+1. Ekstrak ZIP proyek.
+2. Buka terminal pada folder utama proyek, yaitu folder yang berisi pom.xml.
+3. Pastikan JDK dan Maven telah terpasang dengan menjalankan:
 
----
+   java -version
+   mvn -version
 
-## 👥 Anggota Kelompok / Pembuat
-* [Nama Anda / NIM]
-* [Nama Rekan Tim / NIM]
+4. Pastikan MySQL Server aktif dan database telah disiapkan.
+5. Jalankan aplikasi dengan perintah:
+
+   mvn clean javafx:run
+
+6. Tunggu hingga proses kompilasi selesai dan jendela aplikasi TAPAK terbuka.
+
+5. AKUN LOGIN
+
+Gunakan salah satu akun berikut untuk masuk ke aplikasi setelah menjalankan database/seed.sql.
+
+Akun 1
+Username: vendor_santai
+Email: vendorSantai@gmail.com
+Password: Admin123
+
+Akun 2
+Username: vendor_rumah
+Email: vendorRumah@gmail.com
+Password: 321Admin
+
+6. FILE DATABASE
+
+- database/schema.sql: membuat database, tabel, constraint, dan view.
+- database/seed.sql: memasukkan data awal untuk pengujian aplikasi.
