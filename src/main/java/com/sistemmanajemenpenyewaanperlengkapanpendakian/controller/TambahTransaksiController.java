@@ -1,21 +1,17 @@
-
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
 
-// >>> TAMBAHAN: SERVICE YANG DIGUNAKAN FORM TRANSAKSI
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.PelangganService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.PerlengkapanService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
-// <<< AKHIR TAMBAHAN: SERVICE
 
-// >>> TAMBAHAN: MODEL DAN EXCEPTION
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.DataTidakLengkapException;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.DetailTransaksi;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Pelanggan;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Transaksi;
-// <<< AKHIR TAMBAHAN: MODEL DAN EXCEPTION
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.RingkasanTransaksiController;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,15 +49,11 @@ import javafx.stage.FileChooser;
 
 public class TambahTransaksiController {
 
-    // >>> PERUBAHAN: KOMPONEN FXML
-
     @FXML
     private TextField fieldNama;
 
-    // >>> TAMBAHAN: NOMOR IDENTITAS PELANGGAN
     @FXML
     private TextField fieldNoIdentitas;
-    // <<< AKHIR TAMBAHAN
 
     @FXML
     private Label labelFoto;
@@ -72,12 +64,9 @@ public class TambahTransaksiController {
     @FXML
     private DatePicker dateKembali;
 
-    // >>> TAMBAHAN: METODE PEMBAYARAN
     @FXML
     private ComboBox<String> comboMetodePembayaran;
-    // <<< AKHIR TAMBAHAN
 
-    // >>> TAMBAHAN: KOMPONEN DROPDOWN PERLENGKAPAN DINAMIS
     @FXML
     private Button btnBukaDaftarPerlengkapan;
 
@@ -86,7 +75,6 @@ public class TambahTransaksiController {
 
     @FXML
     private VBox containerDaftarPerlengkapan;
-    // <<< AKHIR TAMBAHAN
 
     @FXML
     private Label labelTotal;
@@ -97,14 +85,10 @@ public class TambahTransaksiController {
     @FXML
     private Button tombolSimpan;
 
-    // <<< AKHIR PERUBAHAN: KOMPONEN FXML
-
     private File fotoIdentitas;
 
     private static final String PATH_TRANSAKSI =
             "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/transaksi.fxml";
-
-    // >>> TAMBAHAN: SERVICE DAN DAFTAR PILIHAN
 
     private final PerlengkapanService perlengkapanService =
             new PerlengkapanService();
@@ -112,16 +96,8 @@ public class TambahTransaksiController {
     private final List<PilihanPerlengkapan> daftarPilihan =
             new ArrayList<>();
 
-    // <<< AKHIR TAMBAHAN: SERVICE DAN DAFTAR PILIHAN
-
-    // =========================
-    // INITIALIZE
-    // =========================
-
     @FXML
     public void initialize() {
-
-        // >>> TAMBAHAN: METODE PEMBAYARAN
 
         comboMetodePembayaran.setItems(
                 FXCollections.observableArrayList(
@@ -130,21 +106,13 @@ public class TambahTransaksiController {
                 )
         );
 
-        // <<< AKHIR TAMBAHAN: METODE PEMBAYARAN
-
         dateSewa.setValue(LocalDate.now());
         dateKembali.setValue(LocalDate.now().plusDays(1));
-
-        // >>> TAMBAHAN: KONDISI AWAL DAFTAR BARANG
 
         scrollDaftarPerlengkapan.setVisible(false);
         scrollDaftarPerlengkapan.setManaged(false);
         scrollDaftarPerlengkapan.setFitToWidth(true);
         containerDaftarPerlengkapan.setSpacing(8);
-
-        // <<< AKHIR TAMBAHAN: KONDISI AWAL DAFTAR BARANG
-
-        // >>> TAMBAHAN: LISTENER TANGGAL
 
         dateSewa.valueProperty().addListener(
                 (observable, lama, baru) -> hitungTotal()
@@ -154,18 +122,10 @@ public class TambahTransaksiController {
                 (observable, lama, baru) -> hitungTotal()
         );
 
-        // <<< AKHIR TAMBAHAN: LISTENER TANGGAL
-
         styleForm();
         muatPerlengkapan();
         hitungTotal();
     }
-
-    // =========================
-    // STYLING
-    // =========================
-
-    // >>> TAMBAHAN: STYLING FORM
 
     private void styleForm() {
 
@@ -207,14 +167,6 @@ public class TambahTransaksiController {
         );
     }
 
-    // <<< AKHIR TAMBAHAN: STYLING FORM
-
-    // =========================
-    // MEMUAT PERLENGKAPAN
-    // =========================
-
-    // >>> TAMBAHAN: MEMUAT INVENTARIS VENDOR DARI DATABASE
-
     private void muatPerlengkapan() {
 
         daftarPilihan.clear();
@@ -245,7 +197,6 @@ public class TambahTransaksiController {
 
         } catch (IllegalArgumentException e) {
 
-            // Main Layout dapat dibuka tanpa login untuk pemeriksaan UI.
             tampilkanStatusDaftar(
                     "Login vendor diperlukan untuk memuat perlengkapan."
             );
@@ -295,12 +246,6 @@ public class TambahTransaksiController {
         perbaruiTeksTombolDaftar();
     }
 
-    // =========================
-    // MEMBENTUK BARIS PERLENGKAPAN
-    // =========================
-
-    // >>> TAMBAHAN: SATU BARIS UNTUK SETIAP PERLENGKAPAN
-
     private HBox buatBarisPerlengkapan(
             PilihanPerlengkapan pilihan) {
 
@@ -319,7 +264,6 @@ public class TambahTransaksiController {
                 "-fx-background-radius: 8;"
         );
 
-        // FOTO BARANG
         ImageView foto = new ImageView();
         foto.setFitWidth(58);
         foto.setFitHeight(58);
@@ -334,7 +278,6 @@ public class TambahTransaksiController {
             foto.setImage(gambar);
         }
 
-        // INFORMASI BARANG
         Label namaBarang = new Label(
                 barang.getNamaPerlengkapan()
         );
@@ -354,7 +297,6 @@ public class TambahTransaksiController {
         informasi.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(informasi, Priority.ALWAYS);
 
-        // STATUS STOK
         Label statusStok = new Label(
                 barang.getStok() > 0
                         ? "Tersedia: " + barang.getStok()
@@ -379,7 +321,6 @@ public class TambahTransaksiController {
                           "-fx-border-radius: 12;"
         );
 
-        // TOMBOL KURANG DAN TAMBAH
         Button kurang = new Button("−");
         Button tambah = new Button("+");
         Label jumlah = new Label("00");
@@ -503,14 +444,6 @@ public class TambahTransaksiController {
         }
     }
 
-    // <<< AKHIR TAMBAHAN: BARIS PERLENGKAPAN
-
-    // =========================
-    // KUANTITAS DAN DROPDOWN
-    // =========================
-
-    // >>> TAMBAHAN: PENGATURAN KUANTITAS SESUAI STOK
-
     private void ubahJumlah(
             PilihanPerlengkapan pilihan,
             int perubahan) {
@@ -578,12 +511,6 @@ public class TambahTransaksiController {
         perbaruiTeksTombolDaftar();
     }
 
-    // <<< AKHIR TAMBAHAN: KUANTITAS DAN DROPDOWN
-
-    // =========================
-    // FOTO IDENTITAS
-    // =========================
-
     @FXML
     private void pilihFoto() {
 
@@ -623,12 +550,6 @@ public class TambahTransaksiController {
         }
     }
 
-    // =========================
-    // DURASI SEWA DAN TOTAL HARGA
-    // =========================
-
-    // >>> TAMBAHAN: MENGHITUNG DURASI SEWA
-
     private int ambilDurasiSewa() {
 
         if (dateSewa.getValue() == null
@@ -647,10 +568,6 @@ public class TambahTransaksiController {
 
         return (int) durasi;
     }
-
-    // <<< AKHIR TAMBAHAN: DURASI SEWA
-
-    // >>> PERUBAHAN: PERHITUNGAN TOTAL HARGA DARI SUBCLASS PERLENGKAPAN
 
     private void hitungTotal() {
 
@@ -671,8 +588,6 @@ public class TambahTransaksiController {
                     continue;
                 }
 
-                // Polymorphism: tarif mengikuti implementasi
-                // hitungHargaSewa() dari Tas, Kompor, atau Sepatu.
                 long subtotalPerUnit =
                         pilihan.perlengkapan.hitungHargaSewa(durasi);
 
@@ -694,19 +609,12 @@ public class TambahTransaksiController {
         }
     }
 
-    // <<< AKHIR PERUBAHAN: PERHITUNGAN TOTAL
-
-    // =========================
-    // SIMPAN TRANSAKSI
-    // =========================
-
     @FXML
     private void simpan() {
 
         String nama = fieldNama.getText();
         String nomorIdentitas = fieldNoIdentitas.getText();
 
-        // VALIDASI NAMA
         if (nama == null || nama.trim().isEmpty()) {
             tampilkanPesan(
                     Alert.AlertType.WARNING,
@@ -725,7 +633,6 @@ public class TambahTransaksiController {
             return;
         }
 
-        // VALIDASI NOMOR IDENTITAS
         if (nomorIdentitas == null
                 || nomorIdentitas.trim().isEmpty()) {
 
@@ -746,7 +653,6 @@ public class TambahTransaksiController {
             return;
         }
 
-        // VALIDASI FOTO IDENTITAS
         if (fotoIdentitas == null
                 || !fotoIdentitas.isFile()
                 || !fotoIdentitas.canRead()) {
@@ -758,7 +664,6 @@ public class TambahTransaksiController {
             return;
         }
 
-        // VALIDASI TANGGAL
         LocalDate tanggalSewa = dateSewa.getValue();
         LocalDate tanggalKembali = dateKembali.getValue();
 
@@ -788,7 +693,6 @@ public class TambahTransaksiController {
             return;
         }
 
-        // VALIDASI METODE PEMBAYARAN
         String metodePembayaran =
                 comboMetodePembayaran.getValue();
 
@@ -803,7 +707,6 @@ public class TambahTransaksiController {
             return;
         }
 
-        // MEMBENTUK DAFTAR DETAIL TRANSAKSI
         List<DetailTransaksi> daftarDetail =
                 new ArrayList<>();
 
@@ -834,7 +737,6 @@ public class TambahTransaksiController {
             return;
         }
 
-        // VALIDASI PERHITUNGAN TOTAL SEBELUM SIMPAN
         try {
 
             long totalSebelumSimpan = 0;
@@ -873,17 +775,14 @@ public class TambahTransaksiController {
 
         try {
 
-            // ID VENDOR DIAMBIL DARI SESI YANG SEDANG AKTIF.
             int idVendor = TransaksiService.getIdVendorAktif();
 
-            // MENCARI ATAU MENAMBAHKAN DATA PELANGGAN.
             Pelanggan pelanggan =
                     PelangganService.prosesDataPelanggan(
                             nama.trim(),
                             nomorIdentitas.trim()
                     );
 
-            // MEMBUAT OBJEK TRANSAKSI SESUAI KONSTRUKTOR MODEL.
             Transaksi transaksi = new Transaksi(
                     pelanggan,
                     daftarDetail,
@@ -893,25 +792,16 @@ public class TambahTransaksiController {
                     metodePembayaran
             );
 
-            // MENYIMPAN URI FOTO IDENTITAS.
             transaksi.setFotoIdentitas(
                     fotoIdentitas.toURI().toString()
             );
 
-            // SERVICE MEMVALIDASI ULANG STOK DAN MENYIMPAN TRANSAKSI.
             TransaksiService.tambah(
                     transaksi,
                     idVendor
             );
 
-            tampilkanPesan(
-                    Alert.AlertType.INFORMATION,
-                    "Transaksi untuk " + nama.trim()
-                            + " berhasil disimpan.\nTotal: "
-                            + rupiah(transaksi.getTotalHarga())
-            );
-
-            kembaliKeTransaksi();
+            tampilkanRingkasan(transaksi);
 
         } catch (DataTidakLengkapException | SQLException e) {
 
@@ -934,9 +824,52 @@ public class TambahTransaksiController {
         }
     }
 
-    // =========================
-    // BATAL DAN NAVIGASI
-    // =========================
+
+private void tampilkanRingkasan(Transaksi transaksi) {
+
+    try {
+
+        FXMLLoader loader = new FXMLLoader(
+                App.class.getResource(
+                        "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/ringkasan-transaksi.fxml"
+                )
+        );
+
+        Parent halamanRingkasan = loader.load();
+
+        RingkasanTransaksiController controller =
+                loader.getController();
+
+        controller.setDataTransaksi(transaksi);
+
+        BorderPane layout = (BorderPane)
+                tombolSimpan.getScene().lookup("#layoutPage");
+
+        if (layout == null) {
+            throw new IllegalStateException(
+                    "Layout utama tidak ditemukan."
+            );
+        }
+
+        BorderPane.setMargin(
+                halamanRingkasan,
+                new Insets(16)
+        );
+
+        layout.setCenter(halamanRingkasan);
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        tampilkanPesan(
+                Alert.AlertType.ERROR,
+                "Transaksi berhasil disimpan, tetapi halaman ringkasan gagal dibuka.\n"
+                        + e.getMessage()
+        );
+    }
+}
+
 
     @FXML
     private void batal() {
@@ -1007,10 +940,6 @@ public class TambahTransaksiController {
         }
     }
 
-    // =========================
-    // FORMAT DAN PESAN
-    // =========================
-
     private static String rupiah(long nilai) {
 
         return "Rp " + NumberFormat.getIntegerInstance(
@@ -1029,12 +958,6 @@ public class TambahTransaksiController {
         alert.showAndWait();
     }
 
-    // =========================
-    // DATA PILIHAN PERLENGKAPAN
-    // =========================
-
-    // >>> TAMBAHAN: STATE PILIHAN BARANG DI FORM
-
     private static class PilihanPerlengkapan {
 
         private final Perlengkapan perlengkapan;
@@ -1051,6 +974,4 @@ public class TambahTransaksiController {
             this.jumlah = 0;
         }
     }
-
-    // <<< AKHIR TAMBAHAN: STATE PILIHAN BARANG
 }

@@ -53,11 +53,6 @@ public class PerlengkapanController {
     private static final String PATH_DETAIL =
             "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/detail-perlengkapan.fxml";
 
-
-    // =========================
-    // KOMPONEN FXML
-    // =========================
-
     @FXML
     private GridPane gridProduk;
 
@@ -67,37 +62,24 @@ public class PerlengkapanController {
     @FXML
     private HBox containerPagination;
 
-
-    // =========================
-    // DATA DAN SERVICE
-    // =========================
-
     private final PerlengkapanService perlengkapanService =
             new PerlengkapanService();
 
     private final List<Perlengkapan> daftarPerlengkapan =
             new ArrayList<>();
 
+    private final List<Perlengkapan> daftarPerlengkapanAsli = new ArrayList<>();
+
     private int idVendorAktif;
     private int halamanAktif;
 
     private BorderPane layoutUtama;
-
-
-    // =========================
-    // INITIALIZE
-    // =========================
 
     @FXML
     private void initialize() {
 
         muatPerlengkapan();
     }
-
-
-    // =========================
-    // MEMUAT DATA PERLENGKAPAN
-    // =========================
 
     private void muatPerlengkapan() {
 
@@ -114,6 +96,8 @@ public class PerlengkapanController {
                             idVendorAktif
                     )
             );
+            daftarPerlengkapanAsli.clear();
+            daftarPerlengkapanAsli.addAll(daftarPerlengkapan);
 
             tampilkanDaftar();
 
@@ -140,11 +124,6 @@ public class PerlengkapanController {
             );
         }
     }
-
-
-    // =========================
-    // MENAMPILKAN DAFTAR PRODUK
-    // =========================
 
     private void tampilkanDaftar() {
 
@@ -208,11 +187,6 @@ public class PerlengkapanController {
         aturPagination();
     }
 
-
-    // =========================
-    // KARTU PRODUK
-    // =========================
-
     private VBox buatKartuProduk(
             Perlengkapan perlengkapan) {
 
@@ -230,9 +204,6 @@ public class PerlengkapanController {
                 "-fx-border-color: #D3D3D3;" +
                 "-fx-border-radius: 10;"
         );
-
-
-        // AREA GAMBAR
 
         StackPane areaGambar = new StackPane();
 
@@ -266,9 +237,6 @@ public class PerlengkapanController {
 
             areaGambar.getChildren().add(ikon);
         }
-
-
-        // NAMA DAN STATUS PRODUK
 
         HBox barisNama = new HBox(8);
 
@@ -329,8 +297,6 @@ public class PerlengkapanController {
         );
 
 
-        // HARGA SEWA
-
         HBox barisHarga = new HBox(4);
 
         barisHarga.setAlignment(
@@ -365,9 +331,6 @@ public class PerlengkapanController {
                 satuan
         );
 
-
-        // TOMBOL DETAIL
-
         Button detail = new Button("Detail");
 
         detail.setMaxWidth(Double.MAX_VALUE);
@@ -399,11 +362,6 @@ public class PerlengkapanController {
         return kartu;
     }
 
-
-    // =========================
-    // PAGINATION
-    // =========================
-
     private int hitungJumlahHalaman() {
 
         return Math.max(
@@ -421,9 +379,6 @@ public class PerlengkapanController {
         containerPagination.getChildren().clear();
 
         int jumlahHalaman = hitungJumlahHalaman();
-
-
-        // TOMBOL SEBELUMNYA
 
         Button sebelumnya =
                 buatTombolPagination("‹");
@@ -445,9 +400,6 @@ public class PerlengkapanController {
         containerPagination.getChildren().add(
                 sebelumnya
         );
-
-
-        // NOMOR HALAMAN
 
         for (int i = 0; i < jumlahHalaman; i++) {
 
@@ -479,9 +431,6 @@ public class PerlengkapanController {
                     nomor
             );
         }
-
-
-        // TOMBOL BERIKUTNYA
 
         Button berikutnya =
                 buatTombolPagination("›");
@@ -530,11 +479,6 @@ public class PerlengkapanController {
 
         return tombol;
     }
-
-
-    // =========================
-    // MEMBUKA FORM TAMBAH PRODUK
-    // =========================
 
     @FXML
     private void tambahProduk() {
@@ -600,11 +544,6 @@ public class PerlengkapanController {
         }
     
 
-
-    // =========================
-    // MENEMUKAN LAYOUT UTAMA
-    // =========================
-
     private boolean siapkanLayoutUtama() {
 
         if (layoutUtama != null) {
@@ -634,11 +573,6 @@ public class PerlengkapanController {
 
         return layoutUtama != null;
     }
-
-
-    // =========================
-    // KEMBALI KE DAFTAR PERLENGKAPAN
-    // =========================
 
     private void kembaliKeDaftar() {
 
@@ -681,11 +615,6 @@ public class PerlengkapanController {
             );
         }
     }
-
-
-    // =========================
-    // DETAIL PERLENGKAPAN
-    // =========================
 
     @FXML
     private void lihatDetail(ActionEvent event) {
@@ -756,11 +685,6 @@ public class PerlengkapanController {
             );
         }
     }
-
-
-    // =========================
-    // FOTO PERLENGKAPAN
-    // =========================
 
     private ImageView buatGambar(
             Perlengkapan perlengkapan) {
@@ -847,11 +771,6 @@ public class PerlengkapanController {
         return "🎒";
     }
 
-
-    // =========================
-    // MENAMPILKAN DATA KOSONG
-    // =========================
-
     private void tampilkanPesanKosong(String pesan) {
 
         gridProduk.getChildren().clear();
@@ -877,11 +796,6 @@ public class PerlengkapanController {
         aturPagination();
     }
 
-
-    // =========================
-    // FORMAT RUPIAH
-    // =========================
-
     private String formatRupiah(long nominal) {
 
         NumberFormat format =
@@ -891,11 +805,6 @@ public class PerlengkapanController {
 
         return format.format(nominal);
     }
-
-
-    // =========================
-    // ALERT
-    // =========================
 
     private void tampilkanPeringatan(
             Alert.AlertType tipe,
@@ -915,4 +824,28 @@ public class PerlengkapanController {
 
         alert.showAndWait();
     }
+
+    public void terapkanPencarian(String kataKunci) {
+
+    daftarPerlengkapan.clear();
+
+    if (kataKunci == null || kataKunci.trim().isEmpty()) {
+        daftarPerlengkapan.addAll(daftarPerlengkapanAsli);
+    } else {
+        String kataKunciBersih = kataKunci.trim().toLowerCase();
+
+        List<Perlengkapan> hasilPencarian = daftarPerlengkapanAsli.stream()
+                .filter(p -> p.getNamaPerlengkapan() != null
+                        && p.getNamaPerlengkapan()
+                        .toLowerCase()
+                        .contains(kataKunciBersih))
+                .collect(java.util.stream.Collectors.toList());
+
+        daftarPerlengkapan.addAll(hasilPencarian);
+    }
+
+    halamanAktif = 0;
+    tampilkanDaftar();
+    }
+
 }

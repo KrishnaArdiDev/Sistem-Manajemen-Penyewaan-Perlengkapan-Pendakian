@@ -17,8 +17,6 @@ import java.sql.Types;
 
 public class TransaksiDAO {
 
-// CREATE
-// CREATE dengan koneksi sendiri
     public void tambahDataTransaksi(
             Transaksi transaksi, int idVendor) throws SQLException {
 
@@ -27,7 +25,6 @@ public class TransaksiDAO {
         }
     }
 
-// CREATE menggunakan Connection dari luar
 public void tambahDataTransaksi(
         Connection connection,
         Transaksi transaksi,
@@ -104,7 +101,6 @@ public void tambahDataTransaksi(
             statement.setInt(1, idVendor);
             try (ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
-                    // Memetakan data pelanggan
                     Pelanggan pelanggan = new Pelanggan();
 
                     pelanggan.setIdPelanggan(result.getInt("id_pelanggan"));
@@ -112,13 +108,10 @@ public void tambahDataTransaksi(
                     pelanggan.setNoIdentitasPelanggan(result.getString("no_identitas"));
                     int idTransaksi = result.getInt("id_transaksi");
                     
-                    // Mengambil seluruh detail perlengkapan transaksi
                     List <DetailTransaksi> daftarDetail = detailDAO.ambilDetailBerdasarkanTransaksi(idTransaksi);
 
-                    // Membuat objek transaksi berdasarkan data MySQL
                     Transaksi transaksi = new Transaksi(idTransaksi, pelanggan, daftarDetail, result.getDate("tanggal_transaksi").toLocalDate(), result.getDate("tanggal_sewa").toLocalDate(), result.getInt("durasi_sewa"), result.getString("metode_pembayaran"), result.getDate("tanggal_kembali").toLocalDate(), result.getLong("total_harga"), result.getLong("denda"));
 
-                    // Penambahan, mengambil lokasi foto identitas
                     transaksi.setFotoIdentitas(result.getString("foto_identitas"));
                     daftarTransaksi.add(transaksi);    
                 }
@@ -127,8 +120,6 @@ public void tambahDataTransaksi(
         return daftarTransaksi;
     }
 
-// READ
-// Digunakan untuk mengambil dan mengunci header transaksi saat pengembalian
     public Transaksi ambilTransaksiBerdasarkanId(Connection connection, int idTransaksi, int idVendor) throws SQLException{
         if (connection == null){
             throw new IllegalArgumentException("Koneksi database tidak boleh null");
@@ -195,8 +186,7 @@ public void tambahDataTransaksi(
                 }
             }
     }
-// UPDATE
-// Memperbarui data transaksi milik Vendor
+
     public void updateDataTransaksi(Transaksi transaksi, int idVendor) throws SQLException {
         validasiTransaksi(transaksi, idVendor);
 
@@ -222,7 +212,6 @@ public void tambahDataTransaksi(
             statement.setLong(7, transaksi.hitungDenda());
             statement.setString(8, transaksi.getMetodePembayaran());
 
-            // penambahan, memperbarui lokasi foto identitas
             if (transaksi.getFotoIdentitas() == null || transaksi.getFotoIdentitas().trim().isEmpty()){
                 statement.setNull(9, Types.VARCHAR);
             } else{
@@ -235,7 +224,6 @@ public void tambahDataTransaksi(
             int affectedRows = statement.executeUpdate();
 
             if (affectedRows == 0){
-                // Ngecek apakah transaksi benar benar tidak ditemukan
                 String sqlPeriksa = "SELECT 1 FROM transaksi " + "WHERE id_transaksi = ? AND id_vendor = ?";
 
                 try (PreparedStatement pemeriksaan = connection.prepareStatement(sqlPeriksa)){
@@ -252,7 +240,6 @@ public void tambahDataTransaksi(
         }
     }
 
-// UPDATE DENDA menggunakan koneksi dari luar
     public void updateDendaTransaksi(Connection connection, int idTransaksi, int idVendor, long denda) throws SQLException{
         if (connection == null){
             throw new IllegalArgumentException("Koneksi database tidak boleh null");
@@ -290,8 +277,6 @@ public void tambahDataTransaksi(
             }
         }
     }
-    
-// DELETE
 
     public void hapusTransaksi(int idTransaksi) throws SQLException {
 
@@ -302,8 +287,6 @@ public void tambahDataTransaksi(
         throw new SQLException("Penghapusan transaksi langsung tidak diizinkan. "+ "Pembatalan harus melalui proses yang mengelola pengembalian stok "+ "dan riwayat transaksi.");            
     }
 
-// HELPER
-// Memvalidasi data transaksi sebelum disimpan atau diperbarui
     private void validasiTransaksi(Transaksi transaksi, int idVendor){
         if (transaksi == null){
             throw new IllegalArgumentException("Data transaksi tidak boleh null");
@@ -333,7 +316,6 @@ public void tambahDataTransaksi(
             throw new IllegalArgumentException("Detail perlengkapan transaksi belum tersedia");
         }
 
-        // memastikan setiap detail memiliki perlengkapan dan kuantitas yang valid
         for (DetailTransaksi detail :transaksi.getDaftarDetail()){
             if (detail == null || detail.getPerlengkapanYangDisewa() == null || detail.getPerlengkapanYangDisewa().getIdPerlengkapan() <= 0||detail.getKuantitasPerAlat() <=0){
                 throw new IllegalArgumentException("Data detail perlengkapan transaksi tidak valid");

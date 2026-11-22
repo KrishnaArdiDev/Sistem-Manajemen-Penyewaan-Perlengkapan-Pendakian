@@ -1,4 +1,3 @@
-
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
@@ -6,7 +5,13 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.AuthService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.*;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.PerlengkapanService;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
 
+import javafx.geometry.Side;
+
+import java.sql.SQLException;
+import java.util.stream.Collectors;
 import javafx.scene.image.Image;
 
 import java.io.IOException;
@@ -26,14 +31,21 @@ import javafx.scene.shape.Circle;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.geometry.Rectangle2D;
 
+
+import javafx.application.Platform;
 
 public class MainLayoutController {
+
+    
 //#region ini adalah section fxml untuk manggil field
     private Button tombolAktif;
 
     @FXML
     private VBox paneVbox;
+    @FXML
+    private StackPane wadahFotoProfile;
 
     @FXML 
     private Button tombolProfile;
@@ -95,6 +107,11 @@ public class MainLayoutController {
 
     @FXML
     private TextField searchField;
+        private final PerlengkapanService perlengkapanService = new PerlengkapanService();
+
+        private final ContextMenu menuPencarian = new ContextMenu();
+
+        private List<Perlengkapan> daftarSemuaPerlengkapan = new java.util.ArrayList<>();
 
     @FXML
     private HBox headerAction;
@@ -108,15 +125,103 @@ public class MainLayoutController {
     @FXML
     private ImageView elementHeader;
 
+    private void muatDataPencarian() {
+    try {
+        int idVendor = TransaksiService.getIdVendorAktif();
+
+        daftarSemuaPerlengkapan =
+                perlengkapanService.ambilPerlengkapanVendor(idVendor);
+
+    } catch (SQLException | IllegalArgumentException e) {
+        e.printStackTrace();
+        daftarSemuaPerlengkapan = new java.util.ArrayList<>();
+    }
+}
+
+    private void tampilkanRekomendasi(String kataKunci) {
+
+    menuPencarian.getItems().clear();
+
+    if (kataKunci == null || kataKunci.trim().isEmpty()) {
+        menuPencarian.hide();
+        return;
+    }
+
+    List<Perlengkapan> hasilPencarian = daftarSemuaPerlengkapan.stream()
+            .filter(p -> p.getNamaPerlengkapan() != null
+                    && p.getNamaPerlengkapan()
+                    .toLowerCase()
+                    .contains(kataKunci.toLowerCase().trim()))
+            .limit(8)
+            .collect(Collectors.toList());
+
+    if (hasilPencarian.isEmpty()) {
+        menuPencarian.hide();
+        return;
+    }
+
+    for (Perlengkapan perlengkapan : hasilPencarian) {
+
+        Label label = new Label(perlengkapan.getNamaPerlengkapan());
+
+        label.setMaxWidth(300);
+        label.setStyle(
+                "-fx-padding: 10 15 10 15;"
+                + "-fx-font-size: 13px;"
+                + "-fx-cursor: hand;"
+        );
+
+        CustomMenuItem item = new CustomMenuItem(label, true);
+
+        item.setOnAction(event -> {
+            searchField.setText(perlengkapan.getNamaPerlengkapan());
+            menuPencarian.hide();
+
+            cariPerlengkapan(perlengkapan.getNamaPerlengkapan());
+        });
+
+        menuPencarian.getItems().add(item);
+    }
+
+    if (!menuPencarian.isShowing()) {
+        menuPencarian.show(searchField, Side.BOTTOM, 0, 0);
+    }
+}
+
+    private void cariPerlengkapan(String namaPerlengkapan) {
+    try {
+        String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/perlengkapan.fxml";
+
+        FXMLLoader loader = new FXMLLoader(App.class.getResource(path));
+
+        Parent halaman = loader.load();
+
+        PerlengkapanController controller = loader.getController();
+
+        controller.terapkanPencarian(namaPerlengkapan);
+
+        BorderPane.setMargin(halaman, new Insets(16));
+        layoutPage.setCenter(halaman);
+
+        aturTombolAktif(tombolDataPerleng);
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
     @FXML void initialize(){
+        muatDataPencarian();
+
+        searchField.textProperty().addListener((observable, nilaiLama, nilaiBaru) -> {
+        tampilkanRekomendasi(nilaiBaru);
+    });
         styleSidebar();
         aturTombolAktif(tombolDashboard);
         
         styleHeader();
 
-        muatInformasiVendor();
-
-        fotoProfile.setClip(new Circle(24, 24, 24));
+        fotoProfile.setClip(new Circle(24, 24, 22));
         muatInformasiVendor();
 
         try{
@@ -124,7 +229,11 @@ public class MainLayoutController {
         } catch (IOException e){
             throw new RuntimeException(e);
         }
-        
+
+        tombolProfile.setMinHeight(48);
+        tombolProfile.setPrefHeight(48);
+        tombolProfile.setMaxHeight(48);
+        tombolProfile.setPadding(Insets.EMPTY);
     }
     private void styleSidebar(){
         paneVbox.setStyle(
@@ -152,10 +261,19 @@ public class MainLayoutController {
 
         List<Button> tombolNavigasi = Arrays.asList(
             tombolDashboard, tombolDataPerleng, tombolKeluar,
-            tombolPengembalian, tombolTransaksi, tombolProfile
+            tombolPengembalian, tombolTransaksi, tombolProfile, tombolNotifikasi
         );
 
         for (Button tombol: tombolNavigasi){
+            if (tombol == tombolNotifikasi){
+             tombol.setStyle(
+                (tombolAktif == tombolNotifikasi ? "-fx-background-color: #005A32;" : "-fx-background-color: transparent;") +
+                "-fx-background-radius: 10;" +
+                "-fx-border-color: transparent;" +
+                "-fx-border-width: 0;"
+            );
+            continue;   
+            }
             if (tombol == tombolAktif){
                 tombol.setStyle(
                     "-fx-background-color: #005A32;"+
@@ -187,6 +305,7 @@ public class MainLayoutController {
         ikonAktifSide(iconPengembalian, tombolAktif == tombolPengembalian, "/images/logo-pengembalian-hijau.png", "/images/logo-pengembalian-putih.png");
         ikonAktifSide(iconTransaksi, tombolAktif == tombolTransaksi, "/images/logo-transaksi-hijau.png", "/images/logo-transaksi-putih.png");
         ikonAktifSide(iconKeluar, tombolAktif == tombolKeluar, "/images/logo-keluar-hijau.png", "/images/logo-keluar-hijau.png");
+        ikonAktifSide(iconNotifikasi, tombolAktif == tombolNotifikasi, "/images/logo-notif.png", "/images/iconNotifikasi-Aktif.png");
     }
 
     private void styleHeader(){
@@ -235,20 +354,35 @@ public class MainLayoutController {
 
         labelUsername.setText(vendor.getUsernameAdm());
 
-        fotoProfile.setClip(new Circle(24, 24, 24));
-        String uriFoto = vendor.getFotoProfile();
+        aturFotoProfileSidebar(vendor.getFotoProfile());
+    }
 
+    private void aturFotoProfileSidebar(String uriFoto){
+        fotoProfile.setImage(null);
+        fotoProfile.setViewport(null);
+        
+        fotoProfile.setFitWidth(48);
+        fotoProfile.setFitHeight(48);
+        fotoProfile.setPreserveRatio(false);
+        fotoProfile.setSmooth(true);
+        fotoProfile.setClip(new Circle(24, 24, 24));
+        
         if (uriFoto == null || uriFoto.trim().isEmpty()){
-            fotoProfile.setImage(null);
             return;
         }
+        
+        Image foto = new Image(uriFoto, false);
+        fotoProfile.setImage(foto);
+        
+        if (!foto.isError() && foto.getWidth() > 0 && foto.getHeight() > 0){
+            double sisi = Math.min(foto.getWidth(), foto.getHeight());
 
-        Image foto = new Image(uriFoto, 48, 48, true, true);
-        if (!foto.isError()){
             fotoProfile.setImage(foto);
-        } else {
-            fotoProfile.setImage(null);
+            fotoProfile.setViewport(new Rectangle2D((foto.getWidth() - sisi) / 2, (foto.getHeight() - sisi) / 2, sisi, sisi));
         }
+
+        
+
     }
 
     private void tampilkanHalaman(String namaFxml) throws IOException {
@@ -292,6 +426,11 @@ public class MainLayoutController {
     private void bukaProfile() throws IOException {
         tampilkanHalaman("profile");
         aturTombolAktif(tombolProfile);
+    }
+    @FXML
+    private void bukaNotifikasi() throws IOException {
+        tampilkanHalaman("notifikasi");
+        aturTombolAktif(tombolNotifikasi);
     }
     
     @FXML

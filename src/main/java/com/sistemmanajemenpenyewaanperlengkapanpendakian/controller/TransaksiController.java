@@ -34,6 +34,10 @@ import javafx.scene.layout.VBox;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.Arrays;
+import java.util.Optional;
+import javafx.scene.control.ChoiceDialog;
+import java.net.URL;
 
 public class TransaksiController {
 
@@ -42,6 +46,7 @@ public class TransaksiController {
 
     private static final String PATH_ITEM = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/item-transaksi.fxml";
     private static final String PATH_NOTA = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/nota.fxml";
+    private static final String PATH_RINGKASAN = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/ringkasan-transaksi.fxml";
     private static final String PATH_TAMBAH = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/tambah-transaksi.fxml";
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -54,59 +59,76 @@ public class TransaksiController {
     private final List<Transaksi> daftarTransaksi = new ArrayList<>();
     private int halamanAktif = 0;
 
-        @FXML
+    @FXML
     public void initialize() {
         if (containerPagination != null) {
             containerPagination.setAlignment(Pos.CENTER);
         }
         muatTransaksi();
     }
-
     private void muatTransaksi() {
         daftarTransaksi.clear();
         halamanAktif = 0;
         containerTransaksi.getChildren().clear();
-
         try {
             daftarTransaksi.addAll(TransaksiService.semua());
         } catch (IllegalArgumentException e) {
-            tampilkanStatusKosong("Login vendor diperlukan untuk melihat transaksi.");
+            tampilkanStatusKosong(
+                    "Login vendor diperlukan untuk melihat transaksi."
+            );
             aturPagination();
             return;
         }
-
+        if (daftarTransaksi.isEmpty()) {
+            tampilkanStatusKosong(
+                    "Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama."
+            );
+            aturPagination();
+            return;
+        }
         tampilkanHalamanAktif();
     }
 
-    private void tampilkanStatusKosong(String pesan) {
+        private void tampilkanStatusKosong(String pesan) {
         containerTransaksi.getChildren().clear();
+
         Label kosong = new Label(pesan);
         kosong.setStyle("-fx-font-size: 14px; -fx-text-fill: #7A7A7A;");
         containerTransaksi.getChildren().add(kosong);
     }
 
     private int hitungJumlahHalaman() {
-        return Math.max(1, (int) Math.ceil((double) daftarTransaksi.size() / ITEM_PER_HALAMAN));
+        return Math.max(
+                1,
+                (int) Math.ceil((double) daftarTransaksi.size() / ITEM_PER_HALAMAN)
+        );
     }
 
     private void tampilkanHalamanAktif() {
         containerTransaksi.getChildren().clear();
 
         if (daftarTransaksi.isEmpty()) {
-            tampilkanStatusKosong("Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama.");
+            tampilkanStatusKosong(
+                    "Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama."
+            );
             aturPagination();
             return;
         }
 
         int jumlahHalaman = hitungJumlahHalaman();
-        if (halamanAktif >= jumlahHalaman) halamanAktif = jumlahHalaman - 1;
-        if (halamanAktif < 0) halamanAktif = 0;
+
+        if (halamanAktif >= jumlahHalaman) {
+            halamanAktif = jumlahHalaman - 1;
+        }
+        if (halamanAktif < 0) {
+            halamanAktif = 0;
+        }
 
         int indeksAwal = halamanAktif * ITEM_PER_HALAMAN;
         int indeksAkhir = Math.min(indeksAwal + ITEM_PER_HALAMAN, daftarTransaksi.size());
 
         for (int i = indeksAwal; i < indeksAkhir; i++) {
-            tambahKartu(daftarTransaksi.get(i), "/images/tas.png");
+             tambahKartu(daftarTransaksi.get(i));
         }
 
         aturPagination();
@@ -114,11 +136,12 @@ public class TransaksiController {
 
     private void aturPagination() {
         containerPagination.getChildren().clear();
+
         int jumlahHalaman = hitungJumlahHalaman();
 
-        Button sebelumnya = buatTombolPagination("<");
+        Button sebelumnya = buatTombolPagination("‹");
         sebelumnya.setDisable(halamanAktif == 0);
-        sebelumnya.setOnAction(e -> {
+        sebelumnya.setOnAction(event -> {
             if (halamanAktif > 0) {
                 halamanAktif--;
                 tampilkanHalamanAktif();
@@ -137,25 +160,29 @@ public class TransaksiController {
                         "-fx-background-radius: 6;" +
                         "-fx-border-color: #005A32;" +
                         "-fx-border-radius: 6;" +
-                        "-fx-font-weight: bold;");
+                        "-fx-font-weight: bold;"
+                );
             }
 
-            nomor.setOnAction(e -> {
+            nomor.setOnAction(event -> {
                 halamanAktif = nomorHalaman;
                 tampilkanHalamanAktif();
             });
             containerPagination.getChildren().add(nomor);
         }
 
-        Button berikutnya = buatTombolPagination(">");
+        Button berikutnya = buatTombolPagination("›");
         berikutnya.setDisable(halamanAktif >= jumlahHalaman - 1);
-        berikutnya.setOnAction(e -> {
+        berikutnya.setOnAction(event -> {
             if (halamanAktif < jumlahHalaman - 1) {
                 halamanAktif++;
                 tampilkanHalamanAktif();
             }
         });
         containerPagination.getChildren().add(berikutnya);
+
+        containerPagination.setVisible(true);
+        containerPagination.setManaged(true);
     }
 
     private Button buatTombolPagination(String teks) {
@@ -166,14 +193,19 @@ public class TransaksiController {
         tombol.setCursor(Cursor.HAND);
         tombol.setStyle(
                 "-fx-background-color: #FFFFFF;" +
-                "-fx-text-fill: #9E9E9E;" +
-                "-fx-border-color: #CFCFCF;" +
+                "-fx-text-fill: #005A32;" +
+                "-fx-border-color: #005A32;" +
                 "-fx-border-radius: 6;" +
-                "-fx-background-radius: 6;");
+                "-fx-background-radius: 6;" +
+                "-fx-font-weight: bold;"
+        );
         return tombol;
     }
 
-    private void tambahKartu(Transaksi t, String gambar) {
+    private void tambahKartu(Transaksi t) {
+
+        String gambar = ambilGambarTransaksi(t);
+
         try {
             var res = App.class.getResource(PATH_ITEM);
             if (res == null) {
@@ -196,7 +228,7 @@ public class TransaksiController {
             String status = buatRingkasanStatusPengembalian(t);
 
             item.setData(barang, penyewa, tglSewa, tglKembali, status, gambar, () -> tampilkanDetail(t, gambar));
-            item.setAksiUnduh(() -> tampilkanNota(t));
+            item.setAksiCetak(() -> tampilkanNota(t));
 
             kartu.setMaxWidth(Double.MAX_VALUE);
             containerTransaksi.getChildren().add(kartu);
@@ -208,6 +240,25 @@ public class TransaksiController {
         }
     }
 
+    private String ambilGambarTransaksi(Transaksi transaksi){
+        if (transaksi == null || transaksi.getDaftarDetail() == null){
+            return null;
+        }
+
+        for (DetailTransaksi detail : transaksi.getDaftarDetail()){
+            if (detail == null || detail.getPerlengkapanYangDisewa() == null){
+                continue;
+            }
+
+            String foto = detail.getPerlengkapanYangDisewa().getFotoBarang();
+
+            if (foto != null && !foto.trim().isEmpty()){
+                return foto.trim();
+            }
+        }
+        return null;
+    }
+
     private String buatRingkasanStatusPengembalian(Transaksi transaksi){
         if (transaksi == null || transaksi.getDaftarDetail() == null || transaksi.getDaftarDetail().isEmpty()){
             return "Berhasil";
@@ -215,13 +266,20 @@ public class TransaksiController {
 
         StringBuilder hasil = new StringBuilder();
         for (DetailTransaksi detail : transaksi.getDaftarDetail()){
-            if (detail == null || detail.getPerlengkapanYangDisewa() == null || detail.getTanggalPengembalianBarang() == null){
+            if (detail == null || detail.getPerlengkapanYangDisewa() == null){
                 continue;
             }
+
+            String namaBarang = detail.getPerlengkapanYangDisewa().getNamaPerlengkapan();
+            if (namaBarang == null || namaBarang.trim().isEmpty()){
+                namaBarang = "Perlengkapan tidak diketahui";
+            }
+
+
             if (hasil.length() > 0){
                 hasil.append("\n");
             }
-            hasil.append(statusPengembalian(transaksi, detail));
+            hasil.append(namaBarang).append(": ").append(statusPengembalian(transaksi, detail));
         }
         return hasil.length() == 0 ? "Berhasil" : hasil.toString();
     }
@@ -233,7 +291,7 @@ public class TransaksiController {
         if (tanggalAktual == null){
             boolean terlambat = tanggalJatuhTempo != null && LocalDate.now().isAfter(tanggalJatuhTempo);
 
-            return terlambat ? "Masih Disewa • Terlambat" : "Sedang Disewa";
+            return terlambat ? "Terlambat" : "Sedang Disewa";
         }
 
         String kondisi = detail.getStatusPengembalianBarang();
@@ -281,23 +339,80 @@ public class TransaksiController {
         return true;
     }
 
-    private void tampilkanNota(Transaksi t) {
-        if (!siapkanLayoutUtama())
-            return;
-        try {
-            FXMLLoader loader = new FXMLLoader(App.class.getResource(PATH_NOTA));
-            Parent nota = loader.load();
-            NotaController controller = loader.getController();
-            controller.setTransaksi(t);
-            controller.setAksiKembali(this::kembaliKeTransaksi);
-            halamanTransaksi = layoutUtama.getCenter();
-            BorderPane.setMargin(nota, new Insets(16));
-            layoutUtama.setCenter(nota);
-        } catch (IOException e) {
-            e.printStackTrace();
-            new Alert(Alert.AlertType.ERROR, "Gagal membuka nota:\n" + e).showAndWait();
-        }
+    
+private void tampilkanNota(Transaksi t) {
+
+    if (!siapkanLayoutUtama()) {
+        return;
     }
+
+    ChoiceDialog<String> dialog = new ChoiceDialog<>(
+            "Nota",
+            Arrays.asList("Nota", "Ringkasan")
+    );
+
+    dialog.setTitle("Cetak Transaksi");
+    dialog.setHeaderText("Pilih jenis dokumen yang akan dicetak");
+    dialog.setContentText("Jenis dokumen:");
+
+    Optional<String> pilihan = dialog.showAndWait();
+
+    if (!pilihan.isPresent()) {
+        return;
+    }
+
+    try {
+
+        // Simpan halaman transaksi sebelumnya
+        halamanTransaksi = layoutUtama.getCenter();
+
+        // Jika pengguna memilih Ringkasan
+        if ("Ringkasan".equals(pilihan.get())) {
+
+            FXMLLoader loader = new FXMLLoader(
+                    App.class.getResource(PATH_RINGKASAN)
+            );
+
+            Parent ringkasan = loader.load();
+
+            RingkasanTransaksiController controller =
+                    loader.getController();
+
+            // Masukkan data transaksi yang dipilih
+            controller.setDataTransaksi(t);
+
+            BorderPane.setMargin(ringkasan, new Insets(16));
+            layoutUtama.setCenter(ringkasan);
+
+            return;
+        }
+
+        // Jika pengguna memilih Nota
+        FXMLLoader loader = new FXMLLoader(
+                App.class.getResource(PATH_NOTA)
+        );
+
+        Parent nota = loader.load();
+
+        NotaController controller = loader.getController();
+
+        controller.setTransaksi(t, pilihan.get());
+        controller.setAksiKembali(this::kembaliKeTransaksi);
+
+        BorderPane.setMargin(nota, new Insets(16));
+        layoutUtama.setCenter(nota);
+
+    } catch (IOException e) {
+
+        e.printStackTrace();
+
+        new Alert(
+                Alert.AlertType.ERROR,
+                "Gagal membuka preview dokumen:\n" + e.getMessage()
+        ).showAndWait();
+    }
+}
+
 
     private void tampilkanDetail(Transaksi transaksi, String gambar) {
         if (containerTransaksi.getScene() == null || transaksi == null)
@@ -351,9 +466,9 @@ public class TransaksiController {
         foto.setPreserveRatio(true);
         foto.setSmooth(true);
         
-        java.net.URL url = App.class.getResource(gambar);
-        if (url != null){
-            foto.setImage(new Image(url.toExternalForm()));
+        Image gambarPreview = muatGambar(gambar, 100, 100);
+        if (gambarPreview != null){
+            foto.setImage(gambarPreview);
         }
 
         HBox wadahFoto = new HBox(foto);
@@ -466,6 +581,43 @@ public class TransaksiController {
         if (layoutUtama != null && halamanTransaksi != null) {
             BorderPane.setMargin(halamanTransaksi, new Insets(16));
             layoutUtama.setCenter(halamanTransaksi);
+        }
+    }
+
+    private Image muatGambar(String lokasi, double lebar, double tinggi){
+        if (lokasi == null || lokasi.trim().isEmpty()){
+            return null;
+        }
+
+        try{
+            String sumber = lokasi.trim();
+            if (sumber.startsWith("file:") || sumber.startsWith("http://") || sumber.startsWith("https://")){
+                String pathResource = sumber.startsWith("/") ?  sumber : "/" + sumber;
+                URL resource = getClass().getResource(pathResource);
+
+                if (resource != null){
+                    sumber = resource.toExternalForm();
+                } else {
+                java.io.File file = new java.io.File(sumber);
+                if (!file.isFile() || !file.canRead()){
+                    System.err.println("Gambar tidak ditemukan: " + lokasi);
+                    return null;
+                }
+                sumber = file.toURI().toString();
+            } 
+            }
+            Image gambar = new Image(sumber, lebar, tinggi, true, true);
+
+            if (gambar.isError()){
+                System.err.println("Gambar gagal dimuat: " + lokasi);
+                return null;
+            }
+            return gambar;
+        } catch (RuntimeException e){
+            System.err.println("Gagal memuat gambar: " + lokasi);
+
+            e.printStackTrace();
+            return null;
         }
     }
 }

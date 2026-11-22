@@ -17,7 +17,6 @@ public class PerlengkapanDAO {
             + "FROM perlengkapan p "
             + "JOIN vendor v ON v.id_vendor = p.id_vendor ";
 
-    // ===== Create =====
     public void tambahDataPerlengkapan(Perlengkapan perlengkapan, int idVendor) throws SQLException {
         periksa(perlengkapan);
         String sql = "INSERT INTO perlengkapan (id_vendor, nama_perlengkapan, jenis_perlengkapan, stok, "
@@ -41,7 +40,6 @@ public class PerlengkapanDAO {
         }
     }
 
-    // ===== Read =====
     public List<Perlengkapan> ambilSemuaPerlengkapan() throws SQLException {
         String sql = SELECT_DASAR + "ORDER BY p.nama_perlengkapan";
         List<Perlengkapan> hasil = new ArrayList<>();
@@ -112,9 +110,6 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
     }
 }
 
-
-
-    // ===== Update =====
     public void updateDataPerlengkapan(Perlengkapan perlengkapan, int idVendor) throws SQLException {
         periksa(perlengkapan);
         String sql = "UPDATE perlengkapan SET " +"nama_perlengkapan = ?, " +" jenis_perlengkapan = ?, " + "stok = ?, " 
@@ -206,7 +201,6 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
         return "Perlengkapan tidak dapat dihapus karena sudah tercatat pada riwayat transaksi.";
     }
 
-    // ===== Delete =====
     public void hapusDataPerlengkapan(Perlengkapan perlengkapan, int idVendor) throws SQLException {
         if (perlengkapan == null) {
             throw new IllegalArgumentException("Data perlengkapan tidak boleh kosong");
@@ -260,7 +254,6 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
         }
     }
 
-    // Mengisi data perlengkapan ke PreparedStatement, mulai dari indeks awal
     private void isiKolomPerlengkapan(PreparedStatement ps, Perlengkapan p, int awal) throws SQLException {
         String jenis;
         String tipeKompor = null;
@@ -292,7 +285,6 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
         } else {
             ps.setInt(awal + 7, ukuranSepatu);
         }
-        // penambahan, buat menyimpan lokasi foto barang
         if (p.getFotoBarang() == null ||p.getFotoBarang().trim().isEmpty()){
             ps.setNull(awal + 8, Types.VARCHAR);
         } else {
@@ -300,7 +292,6 @@ public Perlengkapan ambilPerlengkapanBerdasarkanId(
         }
     }
 
-    // Memetakan hasil query menjadi objek sesuai jenis perlengkapan
     private Perlengkapan petakan(ResultSet rs) throws SQLException {
         String jenis = rs.getString("jenis_perlengkapan");
         Perlengkapan p;
