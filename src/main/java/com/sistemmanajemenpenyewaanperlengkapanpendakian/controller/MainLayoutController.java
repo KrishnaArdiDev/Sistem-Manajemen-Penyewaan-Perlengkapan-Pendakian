@@ -1,4 +1,3 @@
-
 package com.sistemmanajemenpenyewaanperlengkapanpendakian.controller;
 
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.App;
@@ -6,7 +5,13 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.AuthService;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.dao.*;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.exception.*;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.PerlengkapanService;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiService;
 
+import javafx.geometry.Side;
+
+import java.sql.SQLException;
+import java.util.stream.Collectors;
 import javafx.scene.image.Image;
 
 import java.io.IOException;
@@ -27,8 +32,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.geometry.Rectangle2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.shape.Circle;
 
 
 import javafx.application.Platform;
@@ -104,6 +107,11 @@ public class MainLayoutController {
 
     @FXML
     private TextField searchField;
+        private final PerlengkapanService perlengkapanService = new PerlengkapanService();
+
+        private final ContextMenu menuPencarian = new ContextMenu();
+
+        private List<Perlengkapan> daftarSemuaPerlengkapan = new java.util.ArrayList<>();
 
     @FXML
     private HBox headerAction;
@@ -118,7 +126,97 @@ public class MainLayoutController {
     private ImageView elementHeader;
 //#endregion
 
+    private void muatDataPencarian() {
+    try {
+        int idVendor = TransaksiService.getIdVendorAktif();
+
+        daftarSemuaPerlengkapan =
+                perlengkapanService.ambilPerlengkapanVendor(idVendor);
+
+    } catch (SQLException | IllegalArgumentException e) {
+        e.printStackTrace();
+        daftarSemuaPerlengkapan = new java.util.ArrayList<>();
+    }
+}
+
+    private void tampilkanRekomendasi(String kataKunci) {
+
+    menuPencarian.getItems().clear();
+
+    if (kataKunci == null || kataKunci.trim().isEmpty()) {
+        menuPencarian.hide();
+        return;
+    }
+
+    List<Perlengkapan> hasilPencarian = daftarSemuaPerlengkapan.stream()
+            .filter(p -> p.getNamaPerlengkapan() != null
+                    && p.getNamaPerlengkapan()
+                    .toLowerCase()
+                    .contains(kataKunci.toLowerCase().trim()))
+            .limit(8)
+            .collect(Collectors.toList());
+
+    if (hasilPencarian.isEmpty()) {
+        menuPencarian.hide();
+        return;
+    }
+
+    for (Perlengkapan perlengkapan : hasilPencarian) {
+
+        Label label = new Label(perlengkapan.getNamaPerlengkapan());
+
+        label.setMaxWidth(300);
+        label.setStyle(
+                "-fx-padding: 10 15 10 15;"
+                + "-fx-font-size: 13px;"
+                + "-fx-cursor: hand;"
+        );
+
+        CustomMenuItem item = new CustomMenuItem(label, true);
+
+        item.setOnAction(event -> {
+            searchField.setText(perlengkapan.getNamaPerlengkapan());
+            menuPencarian.hide();
+
+            cariPerlengkapan(perlengkapan.getNamaPerlengkapan());
+        });
+
+        menuPencarian.getItems().add(item);
+    }
+
+    if (!menuPencarian.isShowing()) {
+        menuPencarian.show(searchField, Side.BOTTOM, 0, 0);
+    }
+}
+
+    private void cariPerlengkapan(String namaPerlengkapan) {
+    try {
+        String path = "/com/sistemmanajemenpenyewaanperlengkapanpendakian/fxml/pages/perlengkapan.fxml";
+
+        FXMLLoader loader = new FXMLLoader(App.class.getResource(path));
+
+        Parent halaman = loader.load();
+
+        PerlengkapanController controller = loader.getController();
+
+        controller.terapkanPencarian(namaPerlengkapan);
+
+        BorderPane.setMargin(halaman, new Insets(16));
+        layoutPage.setCenter(halaman);
+
+        aturTombolAktif(tombolDataPerleng);
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
     @FXML void initialize(){
+        muatDataPencarian();
+
+        searchField.textProperty().addListener((observable, nilaiLama, nilaiBaru) -> {
+        tampilkanRekomendasi(nilaiBaru);
+    });
         styleSidebar();
         aturTombolAktif(tombolDashboard);
         
