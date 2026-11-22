@@ -29,7 +29,7 @@ public class UjiPengembalianGandaService {
         }
     }
 
-    // Memilih perlengkapan Vendor 1 dengan stok tersedia.
+
     private static Perlengkapan pilihPerlengkapan()
             throws Exception {
 
@@ -47,7 +47,6 @@ public class UjiPengembalianGandaService {
         );
     }
 
-    // Membaca stok aktual dari database.
     private static int ambilStok(int idPerlengkapan)
             throws Exception {
 
@@ -65,7 +64,6 @@ public class UjiPengembalianGandaService {
         return p.getStok();
     }
 
-    // Mencari detail berdasarkan ID.
     private static DetailTransaksi cariDetail(
             Transaksi transaksi,
             int idDetail) {
@@ -85,7 +83,6 @@ public class UjiPengembalianGandaService {
         return null;
     }
 
-    // Membersihkan transaksi uji setelah stok dipastikan pulih.
     private static void bersihkan(
             int idTransaksi,
             String marker,
@@ -104,8 +101,6 @@ public class UjiPengembalianGandaService {
 
         if (tersimpan != null) {
 
-            // Jika proses pengujian berhenti sebelum pengembalian,
-            // kembalikan barang sebagai utuh untuk memulihkan stok.
             for (DetailTransaksi d : tersimpan.getDaftarDetail()) {
 
                 if (d.getTanggalPengembalianBarang() == null) {
@@ -217,10 +212,6 @@ public class UjiPengembalianGandaService {
 
         try {
 
-            // ==========================================
-            // 1. MEMBUAT TRANSAKSI UJI
-            // ==========================================
-
             Pelanggan pelanggan = new Pelanggan();
 
             pelanggan.setIdPelanggan(ID_PELANGGAN);
@@ -278,10 +269,6 @@ public class UjiPengembalianGandaService {
                     "LULUS: Transaksi uji berhasil dibuat dan stok berkurang"
             );
 
-            // ==========================================
-            // 2. PENGEMBALIAN PERTAMA
-            // ==========================================
-
             LocalDate tanggalJatuhTempo =
                     transaksi.getTanggalKembali();
 
@@ -321,10 +308,6 @@ public class UjiPengembalianGandaService {
             System.out.println(
                     "LULUS: Pengembalian pertama berhasil"
             );
-
-            // ==========================================
-            // 3. MEMERIKSA DATA PENGEMBALIAN PERTAMA
-            // ==========================================
 
             Transaksi setelahPertama =
                     TransaksiService.cariById(
@@ -378,10 +361,6 @@ public class UjiPengembalianGandaService {
                     "LULUS: Tanggal, status, ganti rugi, dan denda pertama tersimpan"
             );
 
-            // ==========================================
-            // 4. MENCATAT KONDISI SEBELUM PENGEMBALIAN GANDA
-            // ==========================================
-
             int stokSebelumDuplikat =
                     ambilStok(idPerlengkapan);
 
@@ -397,9 +376,6 @@ public class UjiPengembalianGandaService {
             long gantiRugiSebelumDuplikat =
                     detailTersimpan.getBiayaGantiRugi();
 
-            // ==========================================
-            // 5. MENCOBA PENGEMBALIAN KEDUA
-            // ==========================================
 
             boolean pengembalianGandaDitolak = false;
             String pesanPenolakan = null;
@@ -433,10 +409,6 @@ public class UjiPengembalianGandaService {
             System.out.println(
                     "LULUS: Pengembalian kedua pada detail yang sama ditolak"
             );
-
-            // ==========================================
-            // 6. MEMERIKSA DATA SETELAH PENOLAKAN
-            // ==========================================
 
             Transaksi setelahPercobaanGanda =
                     TransaksiService.cariById(

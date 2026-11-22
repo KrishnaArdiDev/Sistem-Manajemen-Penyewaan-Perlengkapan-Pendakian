@@ -28,7 +28,6 @@ public class UjiRollbackPengembalianService {
         }
     }
 
-    // Memilih satu perlengkapan berdasarkan jenisnya.
     private static Perlengkapan pilihPerlengkapan(
             List<Perlengkapan> daftar,
             String jenis) {
@@ -53,7 +52,6 @@ public class UjiRollbackPengembalianService {
         return null;
     }
 
-    // Mengambil stok aktual.
     private static int ambilStok(int idPerlengkapan)
             throws Exception {
 
@@ -71,7 +69,6 @@ public class UjiRollbackPengembalianService {
         return p.getStok();
     }
 
-    // Membaca kondisi detail langsung dari database.
     private static DetailState bacaDetail(
             int idTransaksi,
             int idDetail) throws Exception {
@@ -116,7 +113,6 @@ public class UjiRollbackPengembalianService {
         }
     }
 
-    // Membaca denda transaksi langsung dari database.
     private static long bacaDenda(int idTransaksi)
             throws Exception {
 
@@ -143,7 +139,6 @@ public class UjiRollbackPengembalianService {
         }
     }
 
-    // Mengisi nilai ganti rugi maksimum hanya pada detail uji.
     private static void injeksiNilaiGantiRugi(
             int idTransaksi,
             int idDetail) throws Exception {
@@ -176,8 +171,6 @@ public class UjiRollbackPengembalianService {
         );
     }
 
-    // Mengembalikan stok dan menghapus transaksi sementara
-    // menggunakan satu transaksi SQL.
     private static void bersihkan(
             int idTransaksi,
             String marker,
@@ -213,8 +206,6 @@ public class UjiRollbackPengembalianService {
                     );
                 }
 
-                // Mengembalikan stok ketiga perlengkapan
-                // persis seperti sebelum pengujian.
                 String pulihkan =
                         "UPDATE perlengkapan SET stok = ? "
                         + "WHERE id_perlengkapan = ? "
@@ -237,7 +228,6 @@ public class UjiRollbackPengembalianService {
                     }
                 }
 
-                // Memastikan transaksi sudah tidak ada.
                 String hitung =
                         "SELECT COUNT(*) FROM transaksi "
                         + "WHERE id_transaksi = ? "
@@ -262,7 +252,6 @@ public class UjiRollbackPengembalianService {
                     }
                 }
 
-                // Verifikasi stok setelah pemulihan.
                 for (int i = 0; i < idPerlengkapan.length; i++) {
 
                     String periksaStok =
@@ -375,10 +364,6 @@ public class UjiRollbackPengembalianService {
 
         try {
 
-            // ==========================================
-            // 1. MEMBUAT TRANSAKSI TIGA DETAIL
-            // ==========================================
-
             Pelanggan pelanggan = new Pelanggan();
 
             pelanggan.setIdPelanggan(ID_PELANGGAN);
@@ -456,10 +441,6 @@ public class UjiRollbackPengembalianService {
                     "LULUS: Stok ketiga perlengkapan berkurang"
             );
 
-            // ==========================================
-            // 2. MENGEMBALIKAN KOMPONEN PERTAMA SEBAGAI RUSAK
-            // ==========================================
-
             LocalDate tanggalJatuhTempo =
                     transaksi.getTanggalKembali();
 
@@ -486,10 +467,6 @@ public class UjiRollbackPengembalianService {
                     "LULUS: Detail pertama berhasil dikembalikan sebagai rusak"
             );
 
-            // ==========================================
-            // 3. INJEKSI NILAI PEMICU OVERFLOW
-            // ==========================================
-
             injeksiNilaiGantiRugi(
                     idTransaksi,
                     detailInjeksi.getIdDetailTransaksi()
@@ -498,10 +475,6 @@ public class UjiRollbackPengembalianService {
             System.out.println(
                     "LULUS: Nilai pemicu overflow tersimpan pada detail uji"
             );
-
-            // ==========================================
-            // 4. MENYIAPKAN PENGEMBALIAN TARGET
-            // ==========================================
 
             long tarifHistoris =
                     detailTarget.getHargaSewaHarianSaatTransaksi();
@@ -516,10 +489,6 @@ public class UjiRollbackPengembalianService {
             // Pengembalian satu hari terlambat.
             LocalDate tanggalAktual =
                     tanggalJatuhTempo.plusDays(1);
-
-            // ==========================================
-            // 5. MEMICU KEGAGALAN DI TENGAH TRANSAKSI
-            // ==========================================
 
             boolean overflowTerjadi = false;
 
@@ -552,10 +521,6 @@ public class UjiRollbackPengembalianService {
                     "LULUS: Kegagalan terjadi setelah operasi UPDATE dijalankan"
             );
 
-            // ==========================================
-            // 6. MEMERIKSA ROLLBACK DETAIL TARGET
-            // ==========================================
-
             DetailState targetSetelahRollback =
                     bacaDetail(
                             idTransaksi,
@@ -581,10 +546,6 @@ public class UjiRollbackPengembalianService {
                     "LULUS: UPDATE tanggal, status, dan ganti rugi dibatalkan"
             );
 
-            // ==========================================
-            // 7. MEMERIKSA ROLLBACK STOK
-            // ==========================================
-
             int stokTargetSesudah =
                     ambilStok(idPerlengkapan[2]);
 
@@ -596,10 +557,6 @@ public class UjiRollbackPengembalianService {
             System.out.println(
                     "LULUS: UPDATE stok target dibatalkan"
             );
-
-            // ==========================================
-            // 8. MEMERIKSA ROLLBACK DENDA TRANSAKSI
-            // ==========================================
 
             long dendaSetelahRollback =
                     bacaDenda(idTransaksi);
@@ -617,10 +574,6 @@ public class UjiRollbackPengembalianService {
             System.out.println(
                     "LULUS: UPDATE denda transaksi dibatalkan"
             );
-
-            // ==========================================
-            // 9. MEMASTIKAN DATA SEBELUM KEGAGALAN TETAP ADA
-            // ==========================================
 
             DetailState rusakTersimpan =
                     bacaDetail(

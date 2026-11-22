@@ -64,8 +64,6 @@ public class UjiPengembalianParsialService {
         return null;
     }
 
-    // Membersihkan transaksi sementara setelah semua barang
-    // berhasil dikembalikan dan stok sudah kembali ke kondisi awal.
     private static void bersihkan(
             int idTransaksi,
             String marker,
@@ -83,8 +81,6 @@ public class UjiPengembalianParsialService {
 
         if (tersimpan != null) {
 
-            // Jika pengujian terhenti di tengah proses,
-            // kembalikan detail yang belum selesai terlebih dahulu.
             for (DetailTransaksi detail : tersimpan.getDaftarDetail()) {
 
                 if (detail.getTanggalPengembalianBarang() == null) {
@@ -215,10 +211,6 @@ public class UjiPengembalianParsialService {
 
         try {
 
-            // ==========================================
-            // 1. MEMBUAT TRANSAKSI DENGAN DUA DETAIL
-            // ==========================================
-
             Pelanggan pelanggan = new Pelanggan();
 
             pelanggan.setIdPelanggan(ID_PELANGGAN);
@@ -278,10 +270,6 @@ public class UjiPengembalianParsialService {
                     "LULUS: Transaksi dengan dua detail berhasil dibuat"
             );
 
-            // ==========================================
-            // 2. MEMERIKSA PENGURANGAN KEDUA STOK
-            // ==========================================
-
             periksa(
                     stok(kompor.getIdPerlengkapan())
                             == stokKomporAwal - 1,
@@ -297,10 +285,6 @@ public class UjiPengembalianParsialService {
             System.out.println(
                     "LULUS: Stok kedua perlengkapan berkurang"
             );
-
-            // ==========================================
-            // 3. MENGEMBALIKAN DETAIL PERTAMA
-            // ==========================================
 
             LocalDate tanggalJatuhTempo =
                     transaksi.getTanggalKembali();
@@ -350,9 +334,6 @@ public class UjiPengembalianParsialService {
                     "LULUS: Pengembalian detail pertama"
             );
 
-            // ==========================================
-            // 4. MEMERIKSA STATUS PENGEMBALIAN PARSIAL
-            // ==========================================
 
             Transaksi setelahParsial =
                     TransaksiService.cariById(
@@ -409,9 +390,6 @@ public class UjiPengembalianParsialService {
                     "LULUS: Denda sementara hanya menghitung detail yang kembali"
             );
 
-            // ==========================================
-            // 5. MENGEMBALIKAN DETAIL KEDUA
-            // ==========================================
 
             LocalDate tanggalKembaliTas =
                     tanggalJatuhTempo.plusDays(3);
@@ -440,10 +418,6 @@ public class UjiPengembalianParsialService {
                     hasilKedua.getGantiRugi() == 0,
                     "Ganti rugi total seharusnya nol"
             );
-
-            // ==========================================
-            // 6. MEMERIKSA TRANSAKSI SELESAI
-            // ==========================================
 
             Transaksi selesai =
                     TransaksiService.cariById(

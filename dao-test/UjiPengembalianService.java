@@ -30,8 +30,6 @@ public class UjiPengembalianService {
         }
     }
 
-    // Memilih perlengkapan milik Vendor 1 dengan stok minimal 3.
-    // Stok 3 diperlukan untuk menjalankan tiga transaksi pengujian.
     private static Perlengkapan pilihPerlengkapanUji()
             throws Exception {
 
@@ -51,7 +49,6 @@ public class UjiPengembalianService {
         );
     }
 
-    // Mengambil stok terbaru dari database.
     private static int ambilStok(int idPerlengkapan)
             throws Exception {
 
@@ -69,7 +66,6 @@ public class UjiPengembalianService {
         return perlengkapan.getStok();
     }
 
-    // Membuat satu transaksi sementara melalui TransaksiService.
     private static Transaksi buatTransaksiUji(
             int idPerlengkapan,
             String marker) throws Exception {
@@ -134,7 +130,6 @@ public class UjiPengembalianService {
         return transaksi;
     }
 
-    // Mencari detail berdasarkan ID dari transaksi yang dibaca ulang.
     private static DetailTransaksi cariDetail(
             Transaksi transaksi,
             int idDetail) {
@@ -153,7 +148,6 @@ public class UjiPengembalianService {
         return null;
     }
 
-    // Menguji satu kondisi pengembalian.
     private static void ujiKasus(
             String namaKasus,
             String kondisi,
@@ -161,7 +155,6 @@ public class UjiPengembalianService {
             int idPerlengkapan,
             String marker) throws Exception {
 
-        // Stok sebelum transaksi dibuat.
         int stokSebelum = ambilStok(idPerlengkapan);
 
         periksa(
@@ -169,7 +162,6 @@ public class UjiPengembalianService {
                 "Stok tidak tersedia untuk " + namaKasus
         );
 
-        // Membuat transaksi melalui Service.
         Transaksi transaksi = buatTransaksiUji(
                 idPerlengkapan,
                 marker
@@ -178,7 +170,6 @@ public class UjiPengembalianService {
         DetailTransaksi detail =
                 transaksi.getDaftarDetail().get(0);
 
-        // Memastikan stok sudah berkurang setelah penyewaan.
         int stokSetelahSewa = ambilStok(idPerlengkapan);
 
         periksa(
@@ -192,7 +183,6 @@ public class UjiPengembalianService {
         LocalDate tanggalAktual =
                 tanggalJatuhTempo.plusDays(hariTerlambat);
 
-        // Mengambil tarif historis dan harga perlengkapan.
         long tarifHistoris =
                 detail.getHargaSewaHarianSaatTransaksi();
 
@@ -200,7 +190,6 @@ public class UjiPengembalianService {
                 detail.getPerlengkapanYangDisewa()
                         .getHargaPerlengkapan();
 
-        // Menghitung denda yang seharusnya.
         long dendaSeharusnya = Math.multiplyExact(
                 Math.multiplyExact(
                         (long) hariTerlambat,
@@ -209,7 +198,6 @@ public class UjiPengembalianService {
                 KUANTITAS
         );
 
-        // Menghitung ganti rugi yang seharusnya.
         long gantiRugiSeharusnya = 0;
 
         if ("rusak".equals(kondisi)
@@ -221,7 +209,6 @@ public class UjiPengembalianService {
             );
         }
 
-        // Memproses pengembalian melalui PengembalianService.
         PengembalianService.HasilPengembalian hasil =
                 PengembalianService.prosesPengembalian(
                         transaksi,
@@ -231,7 +218,6 @@ public class UjiPengembalianService {
                         ID_VENDOR
                 );
 
-        // Memeriksa denda.
         periksa(
                 hasil.getDenda() == dendaSeharusnya,
                 "Denda tidak sesuai pada " + namaKasus
@@ -239,7 +225,6 @@ public class UjiPengembalianService {
                 + ", hasil Rp" + hasil.getDenda()
         );
 
-        // Memeriksa ganti rugi.
         periksa(
                 hasil.getGantiRugi() == gantiRugiSeharusnya,
                 "Ganti rugi tidak sesuai pada " + namaKasus
@@ -247,14 +232,12 @@ public class UjiPengembalianService {
                 + ", hasil Rp" + hasil.getGantiRugi()
         );
 
-        // Memeriksa total tagihan.
         periksa(
                 hasil.getTotalTagihan()
                         == dendaSeharusnya + gantiRugiSeharusnya,
                 "Total tagihan tidak sesuai pada " + namaKasus
         );
 
-        // Memeriksa stok setelah pengembalian.
         int stokSetelahPengembalian =
                 ambilStok(idPerlengkapan);
 
@@ -270,7 +253,6 @@ public class UjiPengembalianService {
                 + ", hasil " + stokSetelahPengembalian
         );
 
-        // Membaca ulang transaksi dari database.
         Transaksi tersimpan = TransaksiService.cariById(
                 ID_VENDOR,
                 transaksi.getIdTransaksi()
@@ -286,7 +268,6 @@ public class UjiPengembalianService {
                 "Denda tidak tersimpan dengan benar pada tabel transaksi"
         );
 
-        // Membaca ulang detail transaksi.
         DetailTransaksi detailTersimpan = cariDetail(
                 tersimpan,
                 detail.getIdDetailTransaksi()
@@ -325,7 +306,6 @@ public class UjiPengembalianService {
         System.out.println("  Perubahan stok sesuai kondisi barang");
     }
 
-    // Membersihkan transaksi sementara dan mengembalikan stok.
     private static void bersihkanDataUji(
             String markerAwal,
             int idPerlengkapan,
@@ -355,8 +335,6 @@ public class UjiPengembalianService {
 
             try {
 
-                // Menghapus transaksi uji berdasarkan marker khusus.
-                // Detail transaksi akan terhapus melalui ON DELETE CASCADE.
                 try (PreparedStatement statement =
                         connection.prepareStatement(hapusTransaksi)) {
 
@@ -366,7 +344,6 @@ public class UjiPengembalianService {
                     statement.executeUpdate();
                 }
 
-                // Memastikan seluruh transaksi uji sudah terhapus.
                 try (PreparedStatement statement =
                         connection.prepareStatement(hitungSisa)) {
 
@@ -384,7 +361,6 @@ public class UjiPengembalianService {
                     }
                 }
 
-                // Memulihkan stok ke nilai sebelum pengujian.
                 try (PreparedStatement statement =
                         connection.prepareStatement(pulihkanStok)) {
 
@@ -398,7 +374,6 @@ public class UjiPengembalianService {
                     );
                 }
 
-                // Memeriksa stok setelah pemulihan.
                 try (PreparedStatement statement =
                         connection.prepareStatement(bacaStok)) {
 
@@ -440,7 +415,6 @@ public class UjiPengembalianService {
 
     public static void main(String[] args) throws Exception {
 
-        // Memilih perlengkapan milik Vendor 1 dengan stok minimal 3.
         Perlengkapan perlengkapanUji = pilihPerlengkapanUji();
 
         int idPerlengkapan =
@@ -475,8 +449,6 @@ public class UjiPengembalianService {
 
         try {
 
-            // KASUS 1
-            // Barang utuh terlambat 2 hari.
             ujiKasus(
                     "Barang utuh terlambat 2 hari",
                     "utuh",
@@ -485,8 +457,6 @@ public class UjiPengembalianService {
                     markerAwal + "-UTUH"
             );
 
-            // KASUS 2
-            // Barang rusak dikembalikan tepat waktu.
             ujiKasus(
                     "Barang rusak dikembalikan tepat waktu",
                     "rusak",
@@ -495,8 +465,6 @@ public class UjiPengembalianService {
                     markerAwal + "-RUSAK"
             );
 
-            // KASUS 3
-            // Barang hilang terlambat 3 hari.
             ujiKasus(
                     "Barang hilang terlambat 3 hari",
                     "hilang",

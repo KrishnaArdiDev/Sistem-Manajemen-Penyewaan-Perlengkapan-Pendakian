@@ -29,20 +29,17 @@ public class UjiTransaksiDAO {
 
         System.out.println("=== PENGUJIAN TRANSAKSIDao ===");
 
-        // Menyiapkan pelanggan dari data seed
         Pelanggan pelanggan = new Pelanggan();
         pelanggan.setIdPelanggan(1);
         pelanggan.setNamaPelanggan("Budi");
         pelanggan.setNoIdentitasPelanggan("510000000");
 
-        // Menyiapkan perlengkapan dari data seed
         Kompor kompor = new Kompor();
         kompor.setIdPerlengkapan(1);
         kompor.setNamaPerlengkapan("Kompor Portable");
         kompor.setHargaSewaHarian(30000);
         kompor.setHargaPerlengkapan(50000);
 
-        // Menyiapkan detail sementara untuk perhitungan harga
         DetailTransaksi detail = new DetailTransaksi();
         detail.setPerlengkapanYangDisewa(kompor);
         detail.setKuantitasPerAlat(1);
@@ -65,7 +62,6 @@ public class UjiTransaksiDAO {
 
         try {
 
-            // 1. CREATE
             dao.tambahDataTransaksi(transaksi, idVendor);
 
             idTransaksiUji = transaksi.getIdTransaksi();
@@ -80,7 +76,6 @@ public class UjiTransaksiDAO {
 
             System.out.println("LULUS: Perhitungan total harga transaksi");
 
-            // 2. READ berdasarkan vendor
             List<Transaksi> daftarTransaksi =
                     dao.ambilSemuaTransaksiByVendor(idVendor);
 
@@ -103,7 +98,6 @@ public class UjiTransaksiDAO {
 
             System.out.println("LULUS: Membaca transaksi berdasarkan vendor");
 
-            // 3. READ pembatasan kepemilikan vendor
             List<Transaksi> daftarVendorLain =
                     dao.ambilSemuaTransaksiByVendor(2);
 
@@ -121,7 +115,6 @@ public class UjiTransaksiDAO {
 
             System.out.println("LULUS: Pembatasan pembacaan berdasarkan vendor");
 
-            // 4. UPDATE
             Transaksi perubahan = new Transaksi(
                     idTransaksiUji,
                     pelanggan,
@@ -137,7 +130,6 @@ public class UjiTransaksiDAO {
 
             dao.updateDataTransaksi(perubahan, idVendor);
 
-            // 5. READ kembali hasil UPDATE
             List<Transaksi> hasilDaftarUpdate =
                     dao.ambilSemuaTransaksiByVendor(idVendor);
 
@@ -182,7 +174,6 @@ public class UjiTransaksiDAO {
 
             System.out.println("LULUS: Memperbarui transaksi");
 
-            // 6. Menguji penolakan update oleh vendor lain
             boolean ditolak = false;
 
             try {
@@ -197,10 +188,6 @@ public class UjiTransaksiDAO {
             System.out.println("LULUS: Penolakan update oleh vendor lain");
 
         } finally {
-
-            // Membersihkan transaksi sementara menggunakan JDBC langsung.
-            // Tidak menggunakan DELETE TransaksiDAO karena DELETE langsung
-            // memang sengaja dinonaktifkan.
 
             if (idTransaksiUji > 0) {
 
@@ -218,7 +205,6 @@ public class UjiTransaksiDAO {
                     statement.executeUpdate();
                 }
 
-                // Memastikan transaksi uji telah dibersihkan
                 String sqlPeriksa =
                         "SELECT 1 FROM transaksi WHERE id_transaksi = ?";
 

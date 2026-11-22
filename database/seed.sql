@@ -39,16 +39,16 @@ INSERT INTO perlengkapan (
 )
 VALUES
     (1, 1, 'Kompor Portable', 'kompor',
-     5, 50000, 30000, '2 sumbu', NULL, NULL, NULL),
+     5, 50000, 30000, '2 sumbu', NULL, NULL, 'kompor.png'),
 
     (2, 1, 'Carrier 60L', 'tas',
-     3, 90000, 50000, NULL, 'Carrier', NULL, NULL),
+     3, 90000, 50000, NULL, 'Carrier', NULL, 'tas.png'),
 
     (3, 1, 'Sepatu Gunung 42', 'sepatu',
-     4, 70000, 40000, NULL, NULL, 42, NULL),
+     4, 70000, 40000, NULL, NULL, 42, 'sepatu.png'),
 
     (4, 2, 'Kompor Outdoor', 'kompor',
-     6, 65000, 35000, '1 sumbu', NULL, NULL, NULL);
+     6, 65000, 35000, '1 sumbu', NULL, NULL, 'kompor.png');
         
 
 -- Transaksi
