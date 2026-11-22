@@ -3,7 +3,6 @@ package com.sistemmanajemenpenyewaanperlengkapanpendakian.model;
 public class Pelanggan {
     private String namaPelanggan;
     private String noIdentitas;
-    // penambahan, ini untuk id pelanggan
     private int idPelanggan;
 
     public int getIdPelanggan(){

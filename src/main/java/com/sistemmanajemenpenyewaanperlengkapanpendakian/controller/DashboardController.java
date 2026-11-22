@@ -29,7 +29,6 @@ import javafx.scene.layout.*;
 
 
 public class DashboardController {
-//#region manggil komponen
     @FXML 
     private VBox containerDashboard;
 
@@ -75,9 +74,7 @@ public class DashboardController {
     @FXML private VBox containerDaftarProdukSewa;
     @FXML private HBox containerPagination;
     @FXML private ImageView gambarProduk;
-//#endregion
 
-//#region Style
     private final PerlengkapanService perlengkapanService = new PerlengkapanService();
     private final List<ItemDashboard> daftarProdukDipinjam = new ArrayList<>();
     private static final int ITEM_PER_HALAMAN = 3;
@@ -209,10 +206,6 @@ public class DashboardController {
             "-fx-text-fill: "+warnaTeks+";"
         );
     }
-//#endregion
-
-//#region Pagination
-
 private void tampilkanHalamanProduk(int halaman) {
     halamanAktif = halaman;
     containerDaftarProdukSewa.getChildren().clear();
@@ -391,10 +384,6 @@ private void bukaDetailPengembalian(ItemDashboard item, boolean langsungKonfirma
         tampilkanPesan(Alert.AlertType.ERROR, "Gagal Membuka Detail", e.getMessage() == null ? e.toString() : e.getMessage());
     }
 }
-
-
-
-
 private void isiTemplateProduk(ItemDashboard item) {
     Perlengkapan barang = item.detail.getPerlengkapanYangDisewa();
 
@@ -412,8 +401,6 @@ private void isiTemplateProduk(ItemDashboard item) {
             item.terlambat
     );
     labelStatusProduk.setText(item.labelStatus());
-
-    // Menyimpan data item untuk integrasi tombol berikutnya.
     itemProduk1.setUserData(item);
     btnDetail.setUserData(item);
     btnKonfirmasi.setUserData(item);
@@ -684,11 +671,7 @@ private void tampilkanPesan(
     alert.setContentText(pesan);
     alert.showAndWait();
 }
-//#endregion
 
-
-
-//#region controller konteks MVC
     public void muatDataDashboard(){
         final int idVendor;
 
@@ -793,10 +776,7 @@ private void tampilkanPesan(
     private String formatJumlah(long jumlah){
         return NumberFormat.getIntegerInstance(Locale.forLanguageTag("id-ID")).format(jumlah) + " Barang";
     }
-//#endregion
-
-// >>> TAMBAHAN: DATA SATU PRODUK PADA DASHBOARD
-private static class ItemDashboard {
+    private static class ItemDashboard {
     private final Transaksi transaksi;
     private final DetailTransaksi detail;
 
@@ -844,6 +824,5 @@ private static class ItemDashboard {
         return 2;
     }
 }
-// <<< AKHIR TAMBAHAN: DATA ITEM DASHBOARD
 
 }

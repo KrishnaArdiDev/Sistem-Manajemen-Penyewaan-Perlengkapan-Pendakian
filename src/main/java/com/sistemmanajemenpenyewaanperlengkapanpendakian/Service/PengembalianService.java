@@ -45,7 +45,6 @@ public class PengembalianService {
 
     public static HasilPengembalian prosesPengembalian(Transaksi t, DetailTransaksi detail, LocalDate tglKembaliAktual, String kondisi, int idVendor) throws DataTidakLengkapException, SQLException {
 
-        // Validasi data awal
         if (t == null || t.getIdTransaksi() <=0) {
             throw new DataTidakLengkapException("Transaksi tidak ditemukan atau tidak valid");
         }
@@ -74,16 +73,12 @@ public class PengembalianService {
         try (Connection connection = DatabaseConnection.getConnection()){
             connection.setAutoCommit(false);
             try {
-                // Mengambil dan mengunci header transaksi terbaru dari database
                 Transaksi transaksiDatabase = transaksiDAO.ambilTransaksiBerdasarkanId(connection, t.getIdTransaksi(), idVendor);
 
                 if (transaksiDatabase == null){
                     throw new DataTidakLengkapException("Transaksi tidak ditemukan atau bukan milik vendor ini.");
                 }
-
-                // Mengambil seluruh detail terbaru dan mengunci barisnya
                 List<DetailTransaksi> daftarDetail = detailDAO.ambilDetailBerdasarkanTransaksi(connection, t.getIdTransaksi(), true);
-                // Mencari detail yang akan dikembalikan
                 DetailTransaksi detailDatabase = null;
                 for (DetailTransaksi d :daftarDetail){
                     if (d.getIdDetailTransaksi() == detail.getIdDetailTransaksi()){
@@ -99,7 +94,6 @@ public class PengembalianService {
                 if (detailDatabase.getTanggalPengembalianBarang() != null){
                     throw new DataTidakLengkapException("Barang ini sudah dikembalikan.");
                 }
-                // Mengambil perlengkapan aktual dan mengunci stoknya
                 int idPerlengkapan = detailDatabase.getPerlengkapanYangDisewa().getIdPerlengkapan();
 
                 Perlengkapan perlengkapan = perlengkapanDAO.ambilPerlengkapanBerdasarkanId(connection, idPerlengkapan, idVendor);
@@ -109,15 +103,11 @@ public class PengembalianService {
                 }
 
                 detailDatabase.setPerlengkapanYangDisewa(perlengkapan);
-                // Memproses pengembalian menggunakan Model
                 gantiRugi = detailDatabase.prosesPengembalianBarang(tglKembaliAktual, kondisiNormal);
 
-                // Mengembalikan stok hanya jika kondisi barang utuh
                 if (kondisiNormal.equals("utuh")){
                     perlengkapanDAO.updateStokPerlengkapan(connection, idPerlengkapan, perlengkapan.getStok());
                 }
-
-                // Menghitung denda seluruh detail menggunakan header terbaru dari database
                 LocalDate tanggalJatuhTempo = transaksiDatabase.getTanggalKembali();
 
                 if (tanggalJatuhTempo == null){
@@ -138,13 +128,8 @@ public class PengembalianService {
                 );
 
                 denda = transaksiPerhitungan.hitungDenda();
-                // Menyimpan perubahan detail
                 detailDAO.updateDetailTransaksi(connection, detailDatabase);
-
-                // Menyimpan perubahan denda transaksi
                 transaksiDAO.updateDendaTransaksi(connection, t.getIdTransaksi(), idVendor, denda);
-
-                // Menghitung total ganti rugi seluruh detail transaksi
                 gantiRugi = 0;
                 for (DetailTransaksi detailSelesai : daftarDetail){
                     if (detailSelesai != null){
@@ -152,10 +137,7 @@ public class PengembalianService {
                     }
                 }
                 
-                // Semua perubahan berhasil
                 connection.commit();
-
-                // Menyelaraskan objek detail yang dikirim pemanggil
                 detail.setTanggalPengembalianBarang(detailDatabase.getTanggalPengembalianBarang());
                 detail.setStatusPengembalianBarang(detailDatabase.getStatusPengembalianBarang());
                 detail.setBiayaGantiRugi(detailDatabase.getBiayaGantiRugi());
@@ -176,8 +158,6 @@ public class PengembalianService {
         return new HasilPengembalian(denda, gantiRugi);
     }
 
-
-    // Menampung hasil perhitungan pengembalian
     public static class HasilPengembalian {
         private final long denda;
         private final long gantiRugi;

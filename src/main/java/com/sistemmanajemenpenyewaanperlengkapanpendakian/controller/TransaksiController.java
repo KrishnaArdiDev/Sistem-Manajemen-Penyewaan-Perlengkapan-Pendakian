@@ -5,9 +5,13 @@ import com.sistemmanajemenpenyewaanperlengkapanpendakian.Service.TransaksiServic
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Transaksi;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.DetailTransaksi;
 import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Perlengkapan;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Kompor;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Sepatu;
+import com.sistemmanajemenpenyewaanperlengkapanpendakian.model.Tas;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javafx.scene.control.ScrollPane;
@@ -16,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -50,43 +55,155 @@ public class TransaksiController {
 
     private BorderPane layoutUtama;
     private Node halamanTransaksi;
+    
+    @FXML
+    private HBox containerPagination;
+    private static final int ITEM_PER_HALAMAN = 4;
+    private final List<Transaksi> daftarTransaksi = new ArrayList<>();
+    private int halamanAktif = 0;
 
     @FXML
     public void initialize() {
+        if (containerPagination != null) {
+            containerPagination.setAlignment(Pos.CENTER);
+        }
         muatTransaksi();
     }
-
     private void muatTransaksi() {
-    containerTransaksi.getChildren().clear();
+        daftarTransaksi.clear();
+        halamanAktif = 0;
+        containerTransaksi.getChildren().clear();
+        try {
+            daftarTransaksi.addAll(TransaksiService.semua());
+        } catch (IllegalArgumentException e) {
+            tampilkanStatusKosong(
+                    "Login vendor diperlukan untuk melihat transaksi."
+            );
+            aturPagination();
+            return;
+        }
+        if (daftarTransaksi.isEmpty()) {
+            tampilkanStatusKosong(
+                    "Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama."
+            );
+            aturPagination();
+            return;
+        }
+        tampilkanHalamanAktif();
+    }
 
-    List<Transaksi> daftarTransaksi;
+        private void tampilkanStatusKosong(String pesan) {
+        containerTransaksi.getChildren().clear();
 
-    try {
-        daftarTransaksi = TransaksiService.semua();
-    } catch (IllegalArgumentException e) {
-        Label kosong = new Label("Login vendor diperlukan untuk melihat transaksi.");
-        kosong.setStyle(
-                "-fx-font-size: 14px; -fx-text-fill: #7A7A7A;"
-        );
+        Label kosong = new Label(pesan);
+        kosong.setStyle("-fx-font-size: 14px; -fx-text-fill: #7A7A7A;");
         containerTransaksi.getChildren().add(kosong);
-        return;
     }
 
-    if (daftarTransaksi.isEmpty()) {
-        Label kosong = new Label(
-                "Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama."
+    private int hitungJumlahHalaman() {
+        return Math.max(
+                1,
+                (int) Math.ceil((double) daftarTransaksi.size() / ITEM_PER_HALAMAN)
         );
-        kosong.setStyle(
-                "-fx-font-size: 14px; -fx-text-fill: #7A7A7A;"
-        );
-        containerTransaksi.getChildren().add(kosong);
-        return;
     }
 
-    for (Transaksi t : daftarTransaksi) {
-        tambahKartu(t);
+    private void tampilkanHalamanAktif() {
+        containerTransaksi.getChildren().clear();
+
+        if (daftarTransaksi.isEmpty()) {
+            tampilkanStatusKosong(
+                    "Belum ada transaksi. Klik \"Tambah Transaksi\" untuk membuat yang pertama."
+            );
+            aturPagination();
+            return;
+        }
+
+        int jumlahHalaman = hitungJumlahHalaman();
+
+        if (halamanAktif >= jumlahHalaman) {
+            halamanAktif = jumlahHalaman - 1;
+        }
+        if (halamanAktif < 0) {
+            halamanAktif = 0;
+        }
+
+        int indeksAwal = halamanAktif * ITEM_PER_HALAMAN;
+        int indeksAkhir = Math.min(indeksAwal + ITEM_PER_HALAMAN, daftarTransaksi.size());
+
+        for (int i = indeksAwal; i < indeksAkhir; i++) {
+             tambahKartu(daftarTransaksi.get(i));
+        }
+
+        aturPagination();
     }
-}
+
+    private void aturPagination() {
+        containerPagination.getChildren().clear();
+
+        int jumlahHalaman = hitungJumlahHalaman();
+
+        Button sebelumnya = buatTombolPagination("‹");
+        sebelumnya.setDisable(halamanAktif == 0);
+        sebelumnya.setOnAction(event -> {
+            if (halamanAktif > 0) {
+                halamanAktif--;
+                tampilkanHalamanAktif();
+            }
+        });
+        containerPagination.getChildren().add(sebelumnya);
+
+        for (int i = 0; i < jumlahHalaman; i++) {
+            final int nomorHalaman = i;
+            Button nomor = buatTombolPagination(String.valueOf(i + 1));
+
+            if (i == halamanAktif) {
+                nomor.setStyle(
+                        "-fx-background-color: #005A32;" +
+                        "-fx-text-fill: #FFFFFF;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-border-color: #005A32;" +
+                        "-fx-border-radius: 6;" +
+                        "-fx-font-weight: bold;"
+                );
+            }
+
+            nomor.setOnAction(event -> {
+                halamanAktif = nomorHalaman;
+                tampilkanHalamanAktif();
+            });
+            containerPagination.getChildren().add(nomor);
+        }
+
+        Button berikutnya = buatTombolPagination("›");
+        berikutnya.setDisable(halamanAktif >= jumlahHalaman - 1);
+        berikutnya.setOnAction(event -> {
+            if (halamanAktif < jumlahHalaman - 1) {
+                halamanAktif++;
+                tampilkanHalamanAktif();
+            }
+        });
+        containerPagination.getChildren().add(berikutnya);
+
+        containerPagination.setVisible(true);
+        containerPagination.setManaged(true);
+    }
+
+    private Button buatTombolPagination(String teks) {
+        Button tombol = new Button(teks);
+        tombol.setMinSize(34, 30);
+        tombol.setPrefSize(34, 30);
+        tombol.setMaxSize(34, 30);
+        tombol.setCursor(Cursor.HAND);
+        tombol.setStyle(
+                "-fx-background-color: #FFFFFF;" +
+                "-fx-text-fill: #005A32;" +
+                "-fx-border-color: #005A32;" +
+                "-fx-border-radius: 6;" +
+                "-fx-background-radius: 6;" +
+                "-fx-font-weight: bold;"
+        );
+        return tombol;
+    }
 
     private void tambahKartu(Transaksi t) {
 
@@ -126,7 +243,7 @@ public class TransaksiController {
         }
     }
 
-    private String ambilGambarTransaksi(Transaksi transaksi){
+        private String ambilGambarTransaksi(Transaksi transaksi){
         if (transaksi == null || transaksi.getDaftarDetail() == null){
             return null;
         }
@@ -136,15 +253,34 @@ public class TransaksiController {
                 continue;
             }
 
-            String foto = detail.getPerlengkapanYangDisewa().getFotoBarang();
+            Perlengkapan barang = detail.getPerlengkapanYangDisewa();
+            String foto = barang.getFotoBarang();
 
             if (foto != null && !foto.trim().isEmpty()){
                 return foto.trim();
+            }
+
+            String gambarBawaan = gambarBawaanPerlengkapan(barang);
+            if (gambarBawaan != null){
+                return gambarBawaan;
             }
         }
         return null;
     }
 
+    private String gambarBawaanPerlengkapan(Perlengkapan barang){
+        if (barang instanceof Kompor){
+            return "/images/kompor.png";
+        }
+        if (barang instanceof Sepatu){
+            return "/images/sepatu.png";
+        }
+        if (barang instanceof Tas){
+            return "/images/tas.png";
+        }
+        return null;
+    }
+    
     private String buatRingkasanStatusPengembalian(Transaksi transaksi){
         if (transaksi == null || transaksi.getDaftarDetail() == null || transaksi.getDaftarDetail().isEmpty()){
             return "Berhasil";

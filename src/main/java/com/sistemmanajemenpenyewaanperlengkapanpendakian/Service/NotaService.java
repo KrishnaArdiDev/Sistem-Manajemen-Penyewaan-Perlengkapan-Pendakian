@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class NotaService {
-
-    // Ini menghitung lamanya penyewaan berdasarkan pada tanggal sewa dan tanggal kembali
     public static long hitungLamaSewa(LocalDate tanggalSewa, LocalDate tanggalKembali) {
         if (tanggalSewa == null || tanggalKembali == null){
             return 1;
@@ -18,7 +16,7 @@ public class NotaService {
         long hari = ChronoUnit.DAYS.between(tanggalSewa, tanggalKembali);
         return Math.max(hari, 1);
     }
-    // Menghitung total seluruh kuantitas perlengkapan dalam transaksi
+
     private static long hitungTotalKuantitas(Transaksi transaksi){
         if (transaksi == null || transaksi.getDaftarDetail() == null){
             return 0;
@@ -31,8 +29,6 @@ public class NotaService {
         }
         return totalKuantitas;
     }
-
-    // Hitung rata rata harga sewa per hari
     public static long hitungHargaPerHari(Transaksi transaksi) {
         if (transaksi == null){
             return 0;
@@ -48,7 +44,6 @@ public class NotaService {
         return transaksi.getTotalHarga()/pembagi;
     }
 
-    // Mengambil tanggal kembali, termasuk menghitungnya jika belum tersedia
     private static LocalDate ambilTanggalKembali(Transaksi transaksi){
 
         if (transaksi == null){
@@ -64,12 +59,9 @@ public class NotaService {
         return null;
     }
 
-     // Mengubah nilai angka menjadi format Rupiah
     public static String formatRupiah(long nilai) {
         return String.format(Locale.forLanguageTag("id-ID"), "Rp %,d", nilai);
     }
-
-    // Membuat ringkasan nota berdasarkan seluruh detail transaksi
     public static String buatRingkasanNota(Transaksi transaksi) {
         if (transaksi == null){
             return "";
@@ -126,22 +118,15 @@ public class NotaService {
         ringkasan.append("===========");
         return ringkasan.toString();
     }
-
-    // Mengubah lama sewa ke int karena method getSubTotal menerima int
     private static int hariAsInt(long hari){
         if (hari <=0 || hari > Integer.MAX_VALUE){
             throw new IllegalArgumentException("Lama sewa tidak valid");
         }
         return (int) hari;
     }
-
-    // Menghindari nilai null atau teks kosong pada ringkasan nota
     private static String nilaiAtauStrip(String nilai){
         return nilai == null || nilai.trim().isEmpty() ? "-" : nilai;
     }
-
-// HELPER
-    // Memeriksa apakah sudah ada barang yang dikembalikan
     private static boolean adaPengembalianTercatat(Transaksi transaksi) {
         if (transaksi == null || transaksi.getDaftarDetail() == null) {
             return false;
@@ -156,7 +141,6 @@ public class NotaService {
         return false;
     }
 
-    // Menghitung seluruh biaya ganti rugi dari detail transaksi
     private static long hitungTotalGantiRugi(Transaksi transaksi) {
         if (transaksi == null || transaksi.getDaftarDetail() == null) {
             return 0;

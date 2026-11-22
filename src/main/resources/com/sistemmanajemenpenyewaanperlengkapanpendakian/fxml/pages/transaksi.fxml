@@ -8,27 +8,22 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="16.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.TransaksiController">
+<VBox spacing="16.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sistemmanajemenpenyewaanperlengkapanpendakian.controller.TransaksiController">
     <children>
 
         <!-- Judul + tombol tambah -->
         <HBox alignment="CENTER_LEFT">
             <children>
-                <Label text="Transaksi"
-                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #00572B;" />
+                <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #00572B;" text="Transaksi" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="tombolTambah" mnemonicParsing="false" onAction="#tambahTransaksi"
-                        text="+  |  Tambah Transaksi"
-                        style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;" />
+                <Button fx:id="tombolTambah" mnemonicParsing="false" onAction="#tambahTransaksi" style="-fx-background-color: #00572B; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 8; -fx-padding: 8 16 8 16; -fx-cursor: hand;" text="+  |  Tambah Transaksi" />
             </children>
         </HBox>
 
         <!-- Panel putih  -->
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" VBox.vgrow="ALWAYS"
-                    style="-fx-background: white; -fx-background-color: white; -fx-background-radius: 30; -fx-border-radius: 30;">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: white; -fx-background-color: white; -fx-background-radius: 30; -fx-border-radius: 30;" VBox.vgrow="ALWAYS">
             <content>
-                <VBox fx:id="containerTransaksi" spacing="24.0" style="-fx-background-color: white;">
+                <VBox fx:id="containerTransaksi" spacing="12.0" style="-fx-background-color: white;">
                     <padding>
                         <Insets bottom="30.0" left="40.0" right="40.0" top="25.0" />
                     </padding>
@@ -36,9 +31,13 @@
             </content>
         </ScrollPane>
 
+        <HBox fx:id="containerPagination"
+              alignment="CENTER"
+              spacing="8.0"
+              minHeight="38.0"
+              prefHeight="38.0"/>   
     </children>
     <padding>
         <Insets bottom="0.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 </VBox>
-
